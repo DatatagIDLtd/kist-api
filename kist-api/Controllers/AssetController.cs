@@ -36,7 +36,7 @@ namespace kist_api.Controllers
         //[HttpPost]
         [Authorize]
       
-        public async Task<List<Asset>> Get()
+        public async Task<List<AssetView>> Get()
         {
             // should be via company id or user id 
             var userId = (string)HttpContext.Items["User"];
@@ -60,7 +60,7 @@ namespace kist_api.Controllers
        // [Authorize]
         [Route("Search/{search}")]
        // [HttpGet("{search}")]
-        public async Task<List<Asset>> Search(string search)
+        public async Task<List<AssetView>> Search(string search)
         {
             // should be via company id or user id 
             var userId = (string)HttpContext.Items["User"];
@@ -101,7 +101,7 @@ namespace kist_api.Controllers
         {
             var userId = (string)HttpContext.Items["User"];
             asset.modifiedBy = userId;
-
+            asset.modifiedOn = DateTime.Now;
             return _kistService.PutAsset(asset);
         }
     }

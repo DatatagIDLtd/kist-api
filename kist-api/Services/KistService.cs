@@ -16,6 +16,9 @@ using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using System.Numerics;
 using Microsoft.AspNetCore.Components.Forms;
+using System.Reflection.PortableExecutable;
+using System.IO;
+using kist_api.Model.dashboard;
 
 namespace kist_api.Services
 {
@@ -97,7 +100,41 @@ namespace kist_api.Services
             return userDetailsResponse.Value.First();
         }
 
-        public async Task<List<Asset>> GetAssets()
+
+        public async Task<Dashboard> Dashboard(UserDetailsRequest userDetailsRequest)
+        {
+            GetDashboardResponse dashboardResponse = new GetDashboardResponse();
+
+            StringContent content = new StringContent(JsonConvert.SerializeObject(userDetailsRequest), Encoding.UTF8, "application/json");
+
+            var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("api:apiUser") + ":" + _configuration.GetValue<string>("api:apiPassword"));
+            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+
+
+            using (var response = await _client.PostAsync(_configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:GetDashboard"), content))
+            {
+                string apiResponse = await response.Content.ReadAsStringAsync();
+                //var options = new JsonSerializerOptions
+                //{
+                //    PropertyNameCaseInsensitive = true,
+                //};
+                //File.WriteAllText(@"c:\temp\payload.json", apiResponse);
+                //apiResponse = apiResponse.Replace("\\\"", "\"");  //savs frig
+                apiResponse = apiResponse.Replace("\"dashboard\": \"", "\"dashboard\": ");  //savs frig
+                apiResponse = apiResponse.Replace("}]}]\"", "}]}]");  //savs frig
+                apiResponse = apiResponse.Replace("\\\"", "\"");  //savs frig
+
+                File.WriteAllText(@"c:\temp\payload2.json", apiResponse);
+                // loginRes = System.Text.Json.JsonSerializer.Deserialize<GetUserDetailsResponse>(apiResponse, options);
+                dashboardResponse = JsonConvert.DeserializeObject<GetDashboardResponse>(apiResponse);
+
+
+            }
+            // proc should only return one row , but comes back as a list regardless from API
+            return dashboardResponse.Value.First().dashboard.First();
+        }
+
+        public async Task<List<AssetView>> GetAssets()
         {
             GetAssetResponse userDetailsResponse = new GetAssetResponse();
 
@@ -116,7 +153,7 @@ namespace kist_api.Services
             return userDetailsResponse.Value;
         }
 
-        public async Task<List<Asset>> GetAssetsByUser(UserDetailsRequest userDetailsRequest)
+        public async Task<List<AssetView>> GetAssetsByUser(UserDetailsRequest userDetailsRequest)
         {
             GetAssetResponse userDetailsResponse = new GetAssetResponse();
 
@@ -181,6 +218,47 @@ namespace kist_api.Services
             }
             // proc should only return one row , but comes back as a list regardless from API
             return userDetailsResponse;
+        }
+
+        public async Task<List<Attachment>> GetAttachments(Attachment attachments)
+        {
+            GetAttachmentResponse attachmentResponse = new GetAttachmentResponse();
+
+            StringContent content = new StringContent(JsonConvert.SerializeObject(attachments), Encoding.UTF8, "application/json");
+
+            var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("api:apiUser") + ":" + _configuration.GetValue<string>("api:apiPassword"));
+            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+
+            using (var response = await _client.PostAsync(_configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:GetAttachments"), content)) //, content))
+            {
+                string apiResponse = await response.Content.ReadAsStringAsync();
+                attachmentResponse = JsonConvert.DeserializeObject<GetAttachmentResponse>(apiResponse);
+
+            }
+            // proc should only return one row , but comes back as a list regardless from API
+            return attachmentResponse.Value;
+        }
+
+        public async Task<Attachment> PutAttachment(Attachment attachment)
+        {
+            Attachment attachmentResponse = new Attachment();
+
+            //  asset.modifiedBy = (string)HttpContext.Items["User"];
+
+            StringContent content = new StringContent(JsonConvert.SerializeObject(attachment), Encoding.UTF8, "application/json");
+
+            var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("api:apiUser") + ":" + _configuration.GetValue<string>("api:apiPassword"));
+            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+
+            //using (var response = await _client.PutAsync(_configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:PutAttachment") + "(" + asset.ID.ToString() + ")", content)) //, content))
+            using (var response = await _client.PostAsync(_configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:PutAttachment") , content)) //, content))
+            {
+                string apiResponse = await response.Content.ReadAsStringAsync();
+                attachmentResponse = JsonConvert.DeserializeObject<Attachment>(apiResponse);
+
+            }
+            // proc should only return one row , but comes back as a list regardless from API
+            return attachmentResponse;
         }
 
 

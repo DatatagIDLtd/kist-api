@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using kist_api.Model;
+using kist_api.Model.dashboard;
 using kist_api.Model.dtcusid;
 using kist_api.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -62,7 +63,28 @@ namespace kist_api.Controllers
 
         }
 
+        [Authorize]
 
+        [Route("Dashboard")]
+        [HttpPost]
+        public async Task<Dashboard> Dashboard(UserDetailsRequest userDetailsRequest)
+        {
+            var userId = (string)HttpContext.Items["User"];
+            UserDetailsRequest userDetailsRequest2 = new UserDetailsRequest();
+            userDetailsRequest2.id = userId;
+
+            var userDetails = await _kistService.UsersDetails(userDetailsRequest2);
+
+
+
+
+
+            ////UserDetailsRequest userDetailsRequest3 = new UserDetailsRequest();
+            //    userDetailsRequest.id = userDetails.ID.ToString();
+
+            return await _kistService.Dashboard(userDetailsRequest);
+
+        }
 
 
     }

@@ -1,4 +1,4 @@
-﻿using kist_api.Models.Account;
+﻿using kist_api.Model.dtcusid;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace kist_api.Model
 {
-    public class GetAssetResponse
+    public class GetAttachmentResponse
     {
-        public List<AssetView> Value { get; set; }
+        public List<Attachment> Value { get; set; }
     }
 }
