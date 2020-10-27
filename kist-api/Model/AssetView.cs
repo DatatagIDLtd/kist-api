@@ -9,6 +9,11 @@ namespace kist_api.Model
 	{
 	
 		public string assetType { get; set; }
-		
+		public string assetStatus { get; set; }
+
+		public string make { get; set; }
+		public string model { get; set; }
+
+		public string? uniqueID { get; set; }
 	}
 }

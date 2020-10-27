@@ -7,14 +7,14 @@ using System.Threading.Tasks;
 
 namespace kist_api.Model
 {
-    public class GetDashboardResponse
+    public class GetLookupDataResponse
     {
         public List<Value> Value { get; set; }
+        //public class Value
+        //{
+           
+        //}
     }
-    public class Value
-    {
-        public List<Dashboard> dashboard { get; set; }
-        public List<LookupData> lookupData { get; set; }
-    }
+   
 
 }

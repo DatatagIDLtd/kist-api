@@ -76,7 +76,7 @@ namespace kist_api.Controllers
             var userDetails = await _kistService.UsersDetails(userDetailsRequest2);
 
 
-
+            userDetailsRequest.id = userDetails.ID.ToString() ;
 
 
             ////UserDetailsRequest userDetailsRequest3 = new UserDetailsRequest();

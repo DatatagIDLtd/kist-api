@@ -7,7 +7,9 @@ namespace kist_api.Model
 {
     public class Lookup
     {
-        public int ID { get; set; }
+        public long ID { get; set; }
+        public long? parentid { get; set; }
+
         public string value { get; set; }
     }
     

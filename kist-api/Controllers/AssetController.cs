@@ -81,6 +81,33 @@ namespace kist_api.Controllers
 
         }
 
+        [Route("Search2/")]
+        // [HttpGet("{search}")]
+        public async Task<List<AssetView>> Search2(GetAssetRequest asset)
+        {
+            // should be via company id or user id 
+            var userId = (string)HttpContext.Items["User"];
+
+            UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
+            userDetailsRequest.id = userId;
+
+            var userDetails = await _kistService.UsersDetails(userDetailsRequest);
+
+
+
+
+
+            //UserDetailsRequest userDetailsRequest2 = new UserDetailsRequest();
+            //userDetailsRequest2.id = userDetails.ID.ToString();
+            //userDetailsRequest2.searchQuery = search;
+
+            asset.userId = userDetails.ID; // fudge for now to pass in user id 
+
+
+            return await _kistService.GetAssetsByUser(asset);
+
+        }
+
         [HttpGet("{id}")]
         public  Task<Asset> Get(long id)
         {
@@ -97,12 +124,46 @@ namespace kist_api.Controllers
 
         // PUT: api/Default/5
         [HttpPut("{id}")]
-        public Task<Asset> Put(int id, [FromBody] Asset asset)
+        public async Task<Asset> Put(int id, [FromBody] Asset asset)
         {
             var userId = (string)HttpContext.Items["User"];
-            asset.modifiedBy = userId;
+            UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
+            userDetailsRequest.id = userId;
+
+            var userDetails = await _kistService.UsersDetails(userDetailsRequest);
+
+
+            asset.modifiedBy = userDetails.Forename;
             asset.modifiedOn = DateTime.Now;
-            return _kistService.PutAsset(asset);
+            return await _kistService.PutAsset(asset);
+        }
+        
+        [HttpGet("Identity/{id}")]
+        public Task<AssetIdentity> Identity(long id)
+        {
+            var userId = (string)HttpContext.Items["User"];
+
+        
+
+            return _kistService.GetAssetIdentity(id);
+        }
+        [HttpGet("System/{id}")]
+        public Task<AssetSystem> System(long id)
+        {
+            var userId = (string)HttpContext.Items["User"];
+
+
+
+            return _kistService.GetAssetSystem(id);
+        }
+        [HttpGet("StatusHistory/{id}")]
+        public async Task<List<AssetStatusHistory>> StatusHistory(long id)
+        {
+            var userId = (string)HttpContext.Items["User"];
+
+            var aList = await _kistService.GetAssetStatusHistory(id);
+
+            return aList;
         }
     }
 }

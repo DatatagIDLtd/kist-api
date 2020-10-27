@@ -5,21 +5,18 @@ using System.Threading.Tasks;
 
 namespace kist_api.Model
 {
-    public class Asset
+    public class AssetIdentity
     {
 		public long? id { get; set; }
+		public long? assetId { get; set; }
 		public long? OperatorId { get; set; }
 
-		//public string? uniqueID { get; set; }
-		public string? name { get; set; }
-		public long? assetTypeID { get; set; }
-		//public string? assetType { get; set; }
-		//public string? searchQuery { get; set; }
-		public string description { get; set; }
-		public long? oemID { get; set; }
-		public long modelId { get; set; }
-		public long? assetStatusID { get; set; }
-		//public string location { get; set; }
+		public string? serialNumber { get; set; }
+		public string? VRN { get; set; }
+		public string? engineNumber { get; set; }
+		public string? UniqueReference { get; set; }
+
+
 
 		public bool isActive { get; set; }
 		public DateTime? createdOn { get; set; }
