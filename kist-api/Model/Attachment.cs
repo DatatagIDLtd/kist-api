@@ -16,12 +16,13 @@ namespace kist_api.Model
 		public string area { get; set; }
 		public long key { get; set; }
 		public long subKey { get; set; }
-		public string attachmentType { get; set; }
+		public long attachmentType { get; set; }
 		public string fileName { get; set; }
 		public string fileExtension { get; set; }
 		public string notes { get; set; }
 		public string storageLocation { get; set; }
 		public string uploadedFileName { get; set; }
+		public string tags { get; set; }
 
 		public bool isActive { get; set; }
 		public DateTime createdOn { get; set; }

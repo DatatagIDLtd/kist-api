@@ -41,7 +41,10 @@ namespace kist_api.Services
         public async Task<LoginResponse> Login(LoginRequest loginReq)
         {
             LoginResponse loginRes = new LoginResponse();
-          
+
+            var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("AuthUser") + ":" + _configuration.GetValue<string>("AuthPassword"));
+            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+
             StringContent content = new StringContent(JsonConvert.SerializeObject(loginReq), Encoding.UTF8, "application/json");
 
             using (var response = await _client.PostAsync(_configuration.GetValue<string>("AuthEndPoint"), content))
@@ -272,18 +275,18 @@ namespace kist_api.Services
 
         public async Task<AssetIdentity> GetAssetIdentity(long id)
         {
-            AssetIdentity assetIndentity = new AssetIdentity();
+            GetAssetIndentyResponse assetIndentity = new GetAssetIndentyResponse();
 
             //   StringContent content = new StringContent(JsonConvert.SerializeObject(getAssetRequest), Encoding.UTF8, "application/json");
 
             var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("api:apiUser") + ":" + _configuration.GetValue<string>("api:apiPassword"));
             _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
-            var url = _configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:GetAssetIdentity") + "(" + id.ToString() + ")";
+            var url = _configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:GetAssetIdentity") + "?$filter=AssetId eq " + id.ToString() ;
 
             using (var response = await _client.GetAsync(url)) //, content))
             {
                 string apiResponse = await response.Content.ReadAsStringAsync();
-                assetIndentity = JsonConvert.DeserializeObject<AssetIdentity>(apiResponse);
+                assetIndentity = JsonConvert.DeserializeObject<GetAssetIndentyResponse>(apiResponse);
 
             }
             // proc should only return one row , but comes back as a list regardless from API
@@ -294,7 +297,7 @@ namespace kist_api.Services
             //    // requested asset for in correct company id , fail ! 
 
             //}
-            return assetIndentity;
+            return assetIndentity.Value.First();
         }
         public async Task<AssetSystem> GetAssetSystem(long id)
         {
@@ -304,7 +307,7 @@ namespace kist_api.Services
 
             var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("api:apiUser") + ":" + _configuration.GetValue<string>("api:apiPassword"));
             _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
-            var url = _configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:GetAssetSystem") + "(" + id.ToString() + ")";
+            var url = _configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:GetAssetSystem") + "?$filter=AssetId eq " + id.ToString();
 
             using (var response = await _client.GetAsync(url)) //, content))
             {
@@ -407,6 +410,7 @@ namespace kist_api.Services
                                 itemContent.assetId = (long)rdr["assetid"];
                                 itemContent.assetstatusId = (long)rdr["assetstatusId"];
                                 itemContent.assetstatus = rdr["assetstatus"].ToString();
+                                itemContent.reasonForChange = rdr["reasonForChange"].ToString();
 
                                 itemContent.modifiedBy = rdr["modifiedby"].ToString();
                                 itemContent.modifiedOn = (DateTime)rdr["modifiedon"];

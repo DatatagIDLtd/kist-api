@@ -133,7 +133,7 @@ namespace kist_api.Controllers
             var userDetails = await _kistService.UsersDetails(userDetailsRequest);
 
 
-            asset.modifiedBy = userDetails.Forename;
+            asset.modifiedBy = userDetails.Forename + " " + userDetails.Surname;
             asset.modifiedOn = DateTime.Now;
             return await _kistService.PutAsset(asset);
         }

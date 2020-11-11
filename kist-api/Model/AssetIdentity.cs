@@ -16,7 +16,7 @@ namespace kist_api.Model
 		public string? engineNumber { get; set; }
 		public string? UniqueReference { get; set; }
 
-
+		public string? vin_Chassis { get; set; }
 
 		public bool isActive { get; set; }
 		public DateTime? createdOn { get; set; }

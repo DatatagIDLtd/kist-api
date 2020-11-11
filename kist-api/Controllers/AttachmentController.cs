@@ -65,9 +65,13 @@ namespace kist_api.Controllers
                     attachment.appName = kFile.AppName;
                     attachment.area = kFile.Area;
                     attachment.key = Convert.ToInt64(kFile.Key);
+                    attachment.subKey = Convert.ToInt64(kFile.SubKey);
+
                     attachment.uploadedFileName = kFile.File.FileName;
                     attachment.storageLocation = Path.Combine(uploads, newFileName);
-                    attachment.attachmentType = "file";
+                    attachment.attachmentType = 1;
+                    attachment.notes = kFile.Notes;
+                    attachment.tags = kFile.Tags;
 
 
                     attachment.createdBy = "system";
@@ -79,6 +83,25 @@ namespace kist_api.Controllers
             }
             //}
             return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+
+        [HttpPost]
+        [Route("AddNote")]
+        public async Task<Attachment> AddNote(Attachment attachment)
+        //     public async Task<IActionResult> Index([FromForm]IFormFile file)
+        {
+            var userId = (string)HttpContext.Items["User"];
+            UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
+            userDetailsRequest.id = userId;
+
+            var userDetails = await _kistService.UsersDetails(userDetailsRequest);
+
+
+            attachment.createdBy = userDetails.Forename + " " + userDetails.Surname;
+                    attachment.createdOn = DateTime.Now;
+                    return await _kistService.PutAttachment(attachment);
+
+    
         }
 
         [HttpPost]
