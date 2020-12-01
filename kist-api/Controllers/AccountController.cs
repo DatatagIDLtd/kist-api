@@ -38,6 +38,7 @@ namespace kist_api.Controllers
 
         {
 
+            _logger.LogInformation(@"Controller\Account\Login(Post)");
             return _kistService.Login(loginReq);
 
             //LoginResponse loginRes = new LoginResponse();

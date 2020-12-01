@@ -21,6 +21,8 @@ using System.IO;
 using kist_api.Model.dashboard;
 using System.Data.SqlClient;
 using System.Data;
+using kist_api.Model.dtcore;
+using Microsoft.Extensions.Logging;
 
 namespace kist_api.Services
 {
@@ -30,47 +32,73 @@ namespace kist_api.Services
         private readonly HttpClient _client;
         readonly IConfiguration _configuration;
         public string _connStr = String.Empty;
+        private readonly ILogger<KistService> _logger;
 
-        public KistService(HttpClient client, IConfiguration configuration)
+        public KistService(HttpClient client, IConfiguration configuration , ILogger<KistService> logger)
         {
             _client = client;
             _configuration = configuration;
             _connStr = _configuration.GetConnectionString("DevConnection");
+            _logger = logger;
         }
 
         public async Task<LoginResponse> Login(LoginRequest loginReq)
         {
+            _logger.LogInformation(@"KistService\Login");
+
+          
             LoginResponse loginRes = new LoginResponse();
+            _logger.LogInformation(@"Created loginRes");
 
             var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("AuthUser") + ":" + _configuration.GetValue<string>("AuthPassword"));
+            _logger.LogInformation(@"Created byteArray");
+
             _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+            _logger.LogInformation(@"Created Headers");
 
             StringContent content = new StringContent(JsonConvert.SerializeObject(loginReq), Encoding.UTF8, "application/json");
+            _logger.LogInformation(@"Created String Content");
 
-            using (var response = await _client.PostAsync(_configuration.GetValue<string>("AuthEndPoint"), content))
+            var url = _configuration.GetValue<string>("AuthEndPoint");
+            _logger.LogInformation(@"Url End Point " + url);
+
+            using (var response = await _client.PostAsync(url, content))
             {
-                string apiResponse = await response.Content.ReadAsStringAsync();
-                loginRes = JsonConvert.DeserializeObject<LoginResponse>(apiResponse);
+                _logger.LogInformation(@"getting Response");
 
-                
+                string apiResponse = await response.Content.ReadAsStringAsync();
+                _logger.LogInformation(@"Response:" + apiResponse);
+
+                loginRes = JsonConvert.DeserializeObject<LoginResponse>(apiResponse);
+                _logger.LogInformation(@"Convert Response");
+
+
                 if (loginRes.userDetails != null )
                 {
                     // fetch userdetails to find company
-                   // UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
+                    // UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
                     //userDetailsRequest.id = loginRes.userDetails._ProviderUserKey.ToString();
 
-                  //  UserDetails userDetails = await UsersDetails(userDetailsRequest);
+                    //  UserDetails userDetails = await UsersDetails(userDetailsRequest);
+                    _logger.LogInformation(@"We have Login Details , so lets call Kist API and get user Details");
 
                     if (loginRes.userDetails._IsApproved)
                     {
+                        _logger.LogInformation(@"User Approved - Generate token");
+
                         loginRes.userDetails.token = generateJwtToken(loginRes.userDetails);
                     } else
                     {
+                        _logger.LogWarning(@"User Not Approved");
+
                         loginRes.response = "User not approved";
                     }
                     //  loginRes.userDetails.token = generateJwtToken(loginRes.userDetails);
                        
 
+                }else
+                {
+                    _logger.LogWarning(@"Invalid Credentials " + content.ToString());
                 }
                     // authentication successful so generate jwt token
               
@@ -219,6 +247,7 @@ namespace kist_api.Services
 
             if (asset.location == null) { asset.location = ""; };
             if (asset.uniqueID == null) { asset.uniqueID = ""; };
+            if (asset.fleetNo == null) { asset.fleetNo = ""; };
             if (asset.assetTypeID == null) { asset.assetTypeID = 0; };
             if (asset.make == null) { asset.make = ""; };
             if (asset.model == null) { asset.model = ""; };
@@ -301,7 +330,7 @@ namespace kist_api.Services
         }
         public async Task<AssetSystem> GetAssetSystem(long id)
         {
-            AssetSystem assetsystem = new AssetSystem();
+            GetAssetSystemResponse assetsystem = new GetAssetSystemResponse();
 
             //   StringContent content = new StringContent(JsonConvert.SerializeObject(getAssetRequest), Encoding.UTF8, "application/json");
 
@@ -312,11 +341,16 @@ namespace kist_api.Services
             using (var response = await _client.GetAsync(url)) //, content))
             {
                 string apiResponse = await response.Content.ReadAsStringAsync();
-                assetsystem = JsonConvert.DeserializeObject<AssetSystem>(apiResponse);
+                assetsystem = JsonConvert.DeserializeObject<GetAssetSystemResponse>(apiResponse);
 
             }
+            if (assetsystem.Value.First().membershipNumber.Length > 1)
+            {
+                assetsystem.Value.First().systemTypeInfo = await GetDTCore_SystemType(assetsystem.Value.First().membershipNumber.Substring(0, 2));
+            }
 
-            return assetsystem;
+
+            return assetsystem.Value.First();
         }
 
 
@@ -340,6 +374,8 @@ namespace kist_api.Services
             // proc should only return one row , but comes back as a list regardless from API
             return userDetailsResponse;
         }
+
+       
 
         public async Task<List<Attachment>> GetAttachments(Attachment attachments)
         {
@@ -382,7 +418,150 @@ namespace kist_api.Services
             return attachmentResponse;
         }
 
+        public async Task<Note> PutNote(Note attachment)
+        {
+            Note attachmentResponse = new Note();
+
+            //  asset.modifiedBy = (string)HttpContext.Items["User"];
+
+            StringContent content = new StringContent(JsonConvert.SerializeObject(attachment), Encoding.UTF8, "application/json");
+
+            var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("api:apiUser") + ":" + _configuration.GetValue<string>("api:apiPassword"));
+            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+
+            //using (var response = await _client.PutAsync(_configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:PutAttachment") + "(" + asset.ID.ToString() + ")", content)) //, content))
+            using (var response = await _client.PostAsync(_configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:PutNote"), content)) //, content))
+            {
+                string apiResponse = await response.Content.ReadAsStringAsync();
+                attachmentResponse = JsonConvert.DeserializeObject<Note>(apiResponse);
+
+            }
+            // proc should only return one row , but comes back as a list regardless from API
+            return attachmentResponse;
+        }
+
+        public async Task<AssetIdentity> PutIdentity(AssetIdentity ai)
+        {
+            AssetIdentity attachmentResponse = new AssetIdentity();
+
+            //  asset.modifiedBy = (string)HttpContext.Items["User"];
+
+            StringContent content = new StringContent(JsonConvert.SerializeObject(ai), Encoding.UTF8, "application/json");
+
+            var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("api:apiUser") + ":" + _configuration.GetValue<string>("api:apiPassword"));
+            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+
+            var url = _configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:PutAssetIdentity") + "(" + ai.id + ")";
+            //using (var response = await _client.PutAsync(_configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:PutAttachment") + "(" + asset.ID.ToString() + ")", content)) //, content))
+            using (var response = await _client.PutAsync(url, content)) //, content))
+            {
+                string apiResponse = await response.Content.ReadAsStringAsync();
+                attachmentResponse = JsonConvert.DeserializeObject<AssetIdentity>(apiResponse);
+
+            }
+            // proc should only return one row , but comes back as a list regardless from API
+            return attachmentResponse;
+        }
+
+        public async Task<AssetSystem> PutAssetSystem(AssetSystem ai)
+        {
+            AssetSystem attachmentResponse = new AssetSystem();
+
+            //  asset.modifiedBy = (string)HttpContext.Items["User"];
+
+            StringContent content = new StringContent(JsonConvert.SerializeObject(ai), Encoding.UTF8, "application/json");
+
+            var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("api:apiUser") + ":" + _configuration.GetValue<string>("api:apiPassword"));
+            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+
+            var url = _configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:PutAssetSystem") + "(" + ai.id + ")";
+            //using (var response = await _client.PutAsync(_configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:PutAttachment") + "(" + asset.ID.ToString() + ")", content)) //, content))
+            using (var response = await _client.PutAsync(url, content)) //, content))
+            {
+                string apiResponse = await response.Content.ReadAsStringAsync();
+                attachmentResponse = JsonConvert.DeserializeObject<AssetSystem>(apiResponse);
+
+            }
+            // proc should only return one row , but comes back as a list regardless from API
+            return attachmentResponse;
+        }
+
+        public async Task<List<Note>> GetNotes(Note note)
+        {
+            GetNoteResponse aList = new GetNoteResponse();
+
+            //   StringContent content = new StringContent(JsonConvert.SerializeObject(getAssetRequest), Encoding.UTF8, "application/json");
+
+            var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("api:apiUser") + ":" + _configuration.GetValue<string>("api:apiPassword"));
+            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+            var url = _configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:GetNotes") + "?$filter=key eq " + note.key.ToString() + " and system eq " + note.system + " and area eq " + note.area;
+
+            using (var response = await _client.GetAsync(url)) //, content))
+            {
+                string apiResponse = await response.Content.ReadAsStringAsync();
+                aList = JsonConvert.DeserializeObject<GetNoteResponse>(apiResponse);
+
+            }
+            var f = new List<Note>();
+
+            foreach (Note note1 in aList.Value)
+            {
+        
+                var n2 = note1.notes?.Replace(@"\n", @"</br>");
+
+
+                note1.notes = n2;
+                f.Add(note1);
+            }
+
+            // frig
+
+            return f;
+        }
+
         public async Task<List<AssetStatusHistory>> GetAssetStatusHistory(long id)
+        {
+            GetStatusHistoryResponse aList = new GetStatusHistoryResponse();
+
+            //   StringContent content = new StringContent(JsonConvert.SerializeObject(getAssetRequest), Encoding.UTF8, "application/json");
+
+            var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("api:apiUser") + ":" + _configuration.GetValue<string>("api:apiPassword"));
+            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+            var url = _configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:GetStatusHistory") + "?$filter=AssetId eq " + id.ToString();
+
+            using (var response = await _client.GetAsync(url)) //, content))
+            {
+                string apiResponse = await response.Content.ReadAsStringAsync();
+                aList = JsonConvert.DeserializeObject<GetStatusHistoryResponse> (apiResponse);
+
+            }
+
+            return aList.Value;
+        }
+
+        public async Task<SystemType> GetDTCore_SystemType(string id)
+        {
+            GetSystemTypeResponse aList = new GetSystemTypeResponse();
+            //$filter=TypeCode eq TC
+            //   StringContent content = new StringContent(JsonConvert.SerializeObject(getAssetRequest), Encoding.UTF8, "application/json");
+
+            var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("DTCore:apiUser") + ":" + _configuration.GetValue<string>("DTCore:apiPassword"));
+            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+            var url = _configuration.GetValue<string>("DTCore:APIEndPoint") + _configuration.GetValue<string>("DTCore:GetSystemType") + "?$filter=TypeCode eq " + id;
+
+            using (var response = await _client.GetAsync(url)) //, content))
+            {
+                string apiResponse = await response.Content.ReadAsStringAsync();
+                aList = JsonConvert.DeserializeObject<GetSystemTypeResponse>(apiResponse);
+
+            }
+
+            return aList.Value.First();
+        }
+
+
+
+        public async Task<List<AssetStatusHistory>> GetAssetStatusHistory_SQL(long id)
        // public List<AssetStatusHistory> GetAssetStatusHistory(long id)
         {
             List<AssetStatusHistory> aList = new List<AssetStatusHistory>();

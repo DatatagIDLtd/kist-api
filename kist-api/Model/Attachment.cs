@@ -11,8 +11,8 @@ namespace kist_api.Model
 
 	
 		public long ID { get; set; }
-	
-		public string appName { get; set; }
+		public long operatorId { get; set; }
+		public string system { get; set; }
 		public string area { get; set; }
 		public long key { get; set; }
 		public long subKey { get; set; }

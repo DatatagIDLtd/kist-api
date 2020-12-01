@@ -9,6 +9,7 @@ namespace kist_api.Model
 
     {
         public long? userId { get; set; }
+        public string? fleetNo { get; set; }
         public string? uniqueID { get; set; }
         public long? assetTypeID { get; set; }
         public string? location { get; set; }

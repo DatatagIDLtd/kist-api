@@ -24,14 +24,14 @@ namespace kist_api.Controllers
     [ApiController]
     [Route("[controller]")]
                  
-    public class AttachmentController : ControllerBase
+    public class NoteController : ControllerBase
     {
 
         private readonly ILogger<AccountController> _logger;
         readonly IConfiguration _configuration;
         readonly IKistService _kistService;
 
-        public AttachmentController(ILogger<AccountController> logger, IConfiguration configuration , IKistService kistService)
+        public NoteController(ILogger<AccountController> logger, IConfiguration configuration , IKistService kistService)
         {
             _logger = logger;
             _configuration = configuration;
@@ -41,59 +41,10 @@ namespace kist_api.Controllers
 
         private readonly string[] ACCEPTED_FILE_TYPES = new[] { ".jpg", ".jpeg", ".png" };
 
-        //public filesController(IHostingEnvironment host)
-        //{
-        //    this.context = context;
-        //    this.host = host;
-        //}
-
-        [HttpPost]
-        public async Task<IActionResult> Index([FromForm]KistFile kFile)
-        //     public async Task<IActionResult> Index([FromForm]IFormFile file)
-        {
-            var uploads = _configuration.GetValue<string>("Attachments:Path") ;
-
-            _logger.LogInformation(@"uploading file to path " + uploads);
-
-            var newFileName = kFile.system + "_" + kFile.Area + "_" + kFile.Key + "_" + DateTime.Now.ToString("yyyyMMddHHmmssfff") + "_" + kFile.File.FileName;
-
-            _logger.LogInformation(@"New File Name will be " + newFileName);
-            //foreach (var file in files)
-            //{
-            if (kFile.File.Length > 0)
-            {
-                using (var fileStream = new FileStream(Path.Combine(uploads, newFileName), FileMode.Create))
-                {
-                    await kFile.File.CopyToAsync(fileStream);
-
-                    Attachment attachment = new Attachment();
-                    attachment.system = kFile.system;
-                    attachment.area = kFile.Area;
-                    attachment.key = Convert.ToInt64(kFile.Key);
-                    attachment.subKey = Convert.ToInt64(kFile.SubKey);
-
-                    attachment.uploadedFileName = kFile.File.FileName;
-                    attachment.storageLocation = Path.Combine(uploads, newFileName);
-                    attachment.attachmentType = kFile.attachmentType;
-                    attachment.notes = kFile.Notes;
-                    attachment.tags = kFile.Tags;
-
-
-                    attachment.createdBy = "system";
-                    attachment.createdOn = DateTime.Now;
-                    _logger.LogInformation(@"Creating matching DB record");
-                    await _kistService.PutAttachment(attachment);
-
-                    return StatusCode(StatusCodes.Status201Created);
-                }
-            }
-            //}
-            return StatusCode(StatusCodes.Status500InternalServerError);
-        }
-
+  
         [HttpPost]
         [Route("AddNote")]
-        public async Task<Attachment> AddNote(Attachment attachment)
+        public async Task<Note> AddNote(Note note)
         //     public async Task<IActionResult> Index([FromForm]IFormFile file)
         {
             var userId = (string)HttpContext.Items["User"];
@@ -102,17 +53,15 @@ namespace kist_api.Controllers
 
             var userDetails = await _kistService.UsersDetails(userDetailsRequest);
 
-
-            attachment.createdBy = userDetails.Forename + " " + userDetails.Surname;
-                    attachment.createdOn = DateTime.Now;
-                    return await _kistService.PutAttachment(attachment);
-
+            note.createdBy = userDetails.Forename + " " + userDetails.Surname;
+                    note.createdOn = DateTime.Now;
+                    return await _kistService.PutNote(note);
     
         }
 
         [HttpPost]
-        [Route("GetAttachments")]
-        public async Task<List<Attachment>> GetAttachments(Attachment attachment)
+        [Route("GetNotes")]
+        public async Task<List<Note>> GetAttachments(Note note)
         {
             var userId = (string)HttpContext.Items["User"];
 
@@ -124,7 +73,7 @@ namespace kist_api.Controllers
             //userDetailsRequest.id = userId;
 
             //var userDetails = await _kistService.UsersDetails(userDetailsRequest);
-            return await _kistService.GetAttachments(attachment);
+            return await _kistService.GetNotes(note);
 
            // return  attachmentResults;
         }

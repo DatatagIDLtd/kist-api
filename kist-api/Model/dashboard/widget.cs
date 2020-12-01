@@ -12,5 +12,8 @@ namespace kist_api.Model.dashboard
         public string textSmall { get; set; }
         public string bgColor { get; set; }
         public string urlRoute { get; set; }
+
+        public string faIcon { get; set; }
+
     }
 }

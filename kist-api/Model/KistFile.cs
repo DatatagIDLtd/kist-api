@@ -8,13 +8,13 @@ namespace kist_api.Model
 {
     public class KistFile
     {
-        public string AppName { get; set; }
+        public string system { get; set; }
         public string Area { get; set; }
         public string Key { get; set; }
         public string SubKey { get; set; }
         public string FileName { get; set; }
         public IFormFile File { get; set; }
-
+        public long attachmentType { get; set; }
         public string MimeType { get; set; }
         public string FileExtenstion { get; set; }
         public string Notes { get; set; }

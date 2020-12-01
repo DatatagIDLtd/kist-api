@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace kist_api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("Test")]
     [ApiController]
     public class DefaultController : ControllerBase
     {
@@ -15,7 +15,7 @@ namespace kist_api.Controllers
         [HttpGet]
         public IEnumerable<string> Get()
         {
-            return new string[] { "value1", "value2" };
+            return new string[] { "test", "value1" };
         }
 
         // GET: api/Default/5

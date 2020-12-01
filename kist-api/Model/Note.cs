@@ -1,31 +1,33 @@
-﻿using kist_api.Model.dtcore;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace kist_api.Model
 {
-    public class AssetSystem
+    public class Note
     {
-		public long? id { get; set; }
-		public long? assetId { get; set; }
-		public long? operatorId { get; set; }
-		public string? idNumber { get; set; }
-		public string? membershipNumber { get; set; }
-		public string? productCode { get; set; }
-		public string? productShortCode { get; set; }
+
+
 	
+		public long ID { get; set; }
+		public long operatorId { get; set; }
+		public string system { get; set; }
+		public string area { get; set; }
+		public long key { get; set; }
+		public long subKey { get; set; }
+		public string notes { get; set; }
+		public string tags { get; set; }
 
 		public bool isActive { get; set; }
-		public DateTime? createdOn { get; set; }
+		public DateTime createdOn { get; set; }
 		public string createdBy { get; set; }
 
 		public DateTime? modifiedOn { get; set; }
 		public string modifiedBy { get; set; }
 
 
-		public SystemType systemTypeInfo { get; set; }
+
 
 
 		//	[CompanyID]

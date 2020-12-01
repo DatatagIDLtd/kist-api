@@ -14,7 +14,7 @@ namespace kist_api.Model
         public List<Lookup> oem { get; set; }
 
         public List<Lookup> model { get; set; }
-
+        public List<Lookup> attachmentTypes { get; set; }
         public LookupData ()
         {
             assetTypes = new List<Lookup>();
@@ -22,6 +22,7 @@ namespace kist_api.Model
             colours = new List<Lookup>();
             oem = new List<Lookup>();
             model = new List<Lookup>();
+            attachmentTypes = new List<Lookup>();
         }
 
     }
