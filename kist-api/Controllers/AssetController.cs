@@ -57,7 +57,7 @@ namespace kist_api.Controllers
 
         }
 
-       // [Authorize]
+        [Authorize]
         [Route("Search/{search}")]
        // [HttpGet("{search}")]
         public async Task<List<AssetView>> Search(string search)
@@ -107,6 +107,8 @@ namespace kist_api.Controllers
             return await _kistService.GetAssetsByUser(asset);
 
         }
+
+        [Authorize]
 
         [HttpGet("{id}")]
         public  Task<Asset> Get(long id)

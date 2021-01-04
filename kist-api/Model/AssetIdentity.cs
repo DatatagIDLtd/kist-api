@@ -17,6 +17,7 @@ namespace kist_api.Model
 		public string? UniqueReference { get; set; }
 
 		public string? vin_Chassis { get; set; }
+		public string? qrCodeUrl { get; set; }
 
 		public bool isActive { get; set; }
 		public DateTime? createdOn { get; set; }

@@ -16,7 +16,7 @@ namespace kist_api.Model
 		public string? productCode { get; set; }
 		public string? productShortCode { get; set; }
 	
-
+		public string? qrCodeUrl { get; set; }
 		public bool isActive { get; set; }
 		public DateTime? createdOn { get; set; }
 		public string createdBy { get; set; }

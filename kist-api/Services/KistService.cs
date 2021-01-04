@@ -23,6 +23,8 @@ using System.Data.SqlClient;
 using System.Data;
 using kist_api.Model.dtcore;
 using Microsoft.Extensions.Logging;
+using kist_api.Model.dtcode;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace kist_api.Services
 {
@@ -326,7 +328,10 @@ namespace kist_api.Services
             //    // requested asset for in correct company id , fail ! 
 
             //}
-            return assetIndentity.Value.First();
+          //  AssetIdentity a = new AssetIdentity();
+            var a = assetIndentity.Value.First();
+
+            return a;
         }
         public async Task<AssetSystem> GetAssetSystem(long id)
         {
@@ -344,13 +349,20 @@ namespace kist_api.Services
                 assetsystem = JsonConvert.DeserializeObject<GetAssetSystemResponse>(apiResponse);
 
             }
-            if (assetsystem.Value.First().membershipNumber.Length > 1)
+            var a = assetsystem.Value.First();
+
+            if (a.membershipNumber.Length > 1)
             {
-                assetsystem.Value.First().systemTypeInfo = await GetDTCore_SystemType(assetsystem.Value.First().membershipNumber.Substring(0, 2));
+                a.systemTypeInfo = await GetDTCore_SystemType(a.membershipNumber.Substring(0, 2));
+                var qr = await GetDTCoode_QRCodeURL(a.idNumber, a.membershipNumber.Substring(0, 2));
+                a.qrCodeUrl = qr.qrcodeurl;
+                //
+                //a.qrCodeUrl = qr.qrcodeurl;
+
             }
 
 
-            return assetsystem.Value.First();
+            return a;
         }
 
 
@@ -554,12 +566,39 @@ namespace kist_api.Services
                 string apiResponse = await response.Content.ReadAsStringAsync();
                 aList = JsonConvert.DeserializeObject<GetSystemTypeResponse>(apiResponse);
 
+                
             }
 
             return aList.Value.First();
         }
 
+        public async Task<QrCode> GetDTCoode_QRCodeURL(string id , string systemType )
+        {
+            GetQRCodeResponse aList = new GetQRCodeResponse();
+            GetQRCodeRequest aReq = new GetQRCodeRequest();
 
+            aReq.IDNumber = id;
+            aReq.SystemType = systemType;
+
+            //$filter=TypeCode eq TC
+              StringContent content = new StringContent(JsonConvert.SerializeObject(aReq), Encoding.UTF8, "application/json");
+
+            var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("DTCodes:apiUser") + ":" + _configuration.GetValue<string>("DTCodes:apiPassword"));
+            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+            var url = _configuration.GetValue<string>("DTCodes:APIEndPoint") + _configuration.GetValue<string>("DTCodes:GetQrCodeUrl");
+
+            using (var response = await _client.PostAsync(url, content)) //, content))
+            {
+                string apiResponse = await response.Content.ReadAsStringAsync();
+                aList = JsonConvert.DeserializeObject<GetQRCodeResponse>(apiResponse);
+
+         
+            }
+
+            var a = aList.Value.First();
+
+            return a;
+        }
 
         public async Task<List<AssetStatusHistory>> GetAssetStatusHistory_SQL(long id)
        // public List<AssetStatusHistory> GetAssetStatusHistory(long id)

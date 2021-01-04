@@ -58,6 +58,14 @@ namespace kist_api.Controllers
             var newFileName = kFile.system + "_" + kFile.Area + "_" + kFile.Key + "_" + DateTime.Now.ToString("yyyyMMddHHmmssfff") + "_" + kFile.File.FileName;
 
             _logger.LogInformation(@"New File Name will be " + newFileName);
+
+            var userId = (string)HttpContext.Items["User"];
+            UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
+            userDetailsRequest.id = userId;
+
+            var userDetails = await _kistService.UsersDetails(userDetailsRequest);
+
+
             //foreach (var file in files)
             //{
             if (kFile.File.Length > 0)
@@ -73,13 +81,13 @@ namespace kist_api.Controllers
                     attachment.subKey = Convert.ToInt64(kFile.SubKey);
 
                     attachment.uploadedFileName = kFile.File.FileName;
-                    attachment.storageLocation = Path.Combine(uploads, newFileName);
+                    attachment.storageLocation = newFileName;
                     attachment.attachmentType = kFile.attachmentType;
                     attachment.notes = kFile.Notes;
                     attachment.tags = kFile.Tags;
 
 
-                    attachment.createdBy = "system";
+                    attachment.createdBy = userDetails.Forename + " " + userDetails.Surname;
                     attachment.createdOn = DateTime.Now;
                     _logger.LogInformation(@"Creating matching DB record");
                     await _kistService.PutAttachment(attachment);
@@ -139,6 +147,9 @@ namespace kist_api.Controllers
         public async Task<IActionResult> Get(int id)
         {
             string contentType;
+
+            var dmsRoutePath = _configuration.GetValue<string>("Attachments:Path");
+
             Attachment attachment = new Attachment();
             attachment.ID = id;
 
@@ -146,10 +157,12 @@ namespace kist_api.Controllers
 
             string mime = MimeTypes.GetMimeType(returnAttachment.First().storageLocation);
 
-         //   new FileExtensionContentTypeProvider().TryGetContentType( out contentType);
+            //   new FileExtensionContentTypeProvider().TryGetContentType( out contentType);
             //return contentType ?? "application/octet-stream";
+            var fileloc = dmsRoutePath + returnAttachment.First().storageLocation;
+            //var fileloc = Path.Combine(dmsRoutePath, returnAttachment.First().storageLocation);
 
-            var stream = new FileStream(returnAttachment.First().storageLocation, FileMode.Open);
+            var stream = new FileStream(fileloc, FileMode.Open);
             return new FileStreamResult(stream, mime);
         }
 
