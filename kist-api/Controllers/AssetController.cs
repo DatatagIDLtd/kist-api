@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using kist_api.Model;
 using kist_api.Model.dtcusid;
+using kist_api.Model.dtmobile;
 using kist_api.Models.Account;
 using kist_api.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -122,6 +123,51 @@ namespace kist_api.Controllers
 
 
             return _kistService.GetAsset(id);
+        }
+
+        [HttpGet("ScanEvents/{codeLookup}")]
+        public async Task<List<GeoLocationEvent>> Get(string codeLookup)
+        {
+            var userId = (string)HttpContext.Items["User"];
+
+            //UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
+            //userDetailsRequest.id = userId;
+
+            //var userDetails = await _kistService.UsersDetails(userDetailsRequest);
+
+
+            return await _kistService.GetDTMobile_ScanEvents(codeLookup);
+        }
+
+
+
+        
+        [HttpPost("MapPopupInfo")]
+        public async Task<GetMapPopupResponse> MapPopupInfo(GetScanRequest req)
+        {
+          //  var userId = (string)HttpContext.Items["User"];
+
+            //UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
+            //userDetailsRequest.id = userId;
+
+            //var userDetails = await _kistService.UsersDetails(userDetailsRequest);
+
+
+            return await _kistService.GetMapPopupInfo(req.AssetID);
+        }
+
+        [HttpPost("ScanEvents")]
+        public async Task<List<GeoLocationEvent>> Post(GetScanRequest req)
+        {
+            var userId = (string)HttpContext.Items["User"];
+
+            //UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
+            //userDetailsRequest.id = userId;
+
+            //var userDetails = await _kistService.UsersDetails(userDetailsRequest);
+
+
+            return await _kistService.GetDTMobile_ScanEvents(req);
         }
 
         // PUT: api/Default/5

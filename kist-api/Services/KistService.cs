@@ -25,6 +25,7 @@ using kist_api.Model.dtcore;
 using Microsoft.Extensions.Logging;
 using kist_api.Model.dtcode;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using kist_api.Model.dtmobile;
 
 namespace kist_api.Services
 {
@@ -101,6 +102,7 @@ namespace kist_api.Services
                 }else
                 {
                     _logger.LogWarning(@"Invalid Credentials " + content.ToString());
+                    SaveActivity_SQL(0, "login", loginReq.username, "Failed to logon");
                 }
                     // authentication successful so generate jwt token
               
@@ -170,6 +172,38 @@ namespace kist_api.Services
             }
             // proc should only return one row , but comes back as a list regardless from API
             return dashboardResponse.Value.First().dashboard.First();
+        }
+
+        public async Task<GetMapPopupResponse> GetMapPopupInfo(String id)
+        {
+            var req = new { AssetId = id };
+
+            GetMapPopupResponse res = new GetMapPopupResponse();
+
+
+            StringContent content = new StringContent(JsonConvert.SerializeObject(req), Encoding.UTF8, "application/json");
+
+            var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("api:apiUser") + ":" + _configuration.GetValue<string>("api:apiPassword"));
+            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+
+            var url = _configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:GetMapPopupInfo");
+            using (var response = await _client.PostAsync(url , content))
+            {
+                string apiResponse = await response.Content.ReadAsStringAsync();
+                //var options = new JsonSerializerOptions
+                //{
+                //    PropertyNameCaseInsensitive = true,
+                //};
+                //File.WriteAllText(@"c:\temp\payload.json", apiResponse);
+                //apiResponse = apiResponse.Replace("\\\"", "\"");  //savs frig
+
+                // loginRes = System.Text.Json.JsonSerializer.Deserialize<GetUserDetailsResponse>(apiResponse, options);
+                res = JsonConvert.DeserializeObject<GetMapPopupResponse>(apiResponse);
+
+
+            }
+            // proc should only return one row , but comes back as a list regardless from API
+            return res;
         }
 
         public async Task<LookupData> GetLookUpData(UserDetailsRequest userDetailsRequest)
@@ -551,6 +585,28 @@ namespace kist_api.Services
             return aList.Value;
         }
 
+        public async Task<List<Activity>> GetActivity(GetActivityRequest getActivityRequest)
+        {
+            GetActivityResponse aList = new GetActivityResponse();
+
+               StringContent content = new StringContent(JsonConvert.SerializeObject(getActivityRequest), Encoding.UTF8, "application/json");
+
+            var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("api:apiUser") + ":" + _configuration.GetValue<string>("api:apiPassword"));
+            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+            var url = _configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:GetActivity") + "?$orderby=ModifiedOn desc";//+ " ?$filter=AssetId eq " + id.ToString();
+
+            using (var response = await _client.PostAsync(url, content ))
+            {
+                string apiResponse = await response.Content.ReadAsStringAsync();
+                aList = JsonConvert.DeserializeObject<GetActivityResponse>(apiResponse);
+
+            }
+
+            
+            return aList.Value;
+        }
+
+
         public async Task<SystemType> GetDTCore_SystemType(string id)
         {
             GetSystemTypeResponse aList = new GetSystemTypeResponse();
@@ -599,6 +655,100 @@ namespace kist_api.Services
 
             return a;
         }
+
+        
+             public async Task<List<GeoLocationEvent>> GetDTMobile_ScanEvents(GetScanRequest req)
+        {
+            GetScanResponse aList = new GetScanResponse();
+            //GetQRCodeRequest aReq = new GetQRCodeRequest();
+
+            //     aReq.IDNumber = id;
+            //  aReq.SystemType = systemType;
+
+            //$filter=TypeCode eq TC
+            //  StringContent content = new StringContent(JsonConvert.SerializeObject(aReq), Encoding.UTF8, "application/json");
+
+            var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("DTMobile:apiUser") + ":" + _configuration.GetValue<string>("DTMobile:apiPassword"));
+            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+            var url = _configuration.GetValue<string>("DTMobile:APIEndPoint") + _configuration.GetValue<string>("DTMobile:GetGeoLocationEvents") + "?$filter=";
+
+            if (req.User != "")
+            {
+                url += "startswith(UserName,'" + req.User + "')&";
+
+            }
+            if (req.Application != "")
+            {
+                url += "startswith(Application,'" + req.Application + "')&";
+
+            }
+
+            if (req.AssetID != "")
+            {
+                url += "startswith(LookupCode,'" + req.AssetID + "')&";
+
+            }
+
+            if (req.SystemType != "")
+            {
+                url += "startswith(systemType,'" + req.SystemType + "')&";
+
+            }
+
+
+            //if (lookupCode != "ALL")
+            //{
+            //    url = url + "?$filter=LookupCode eq " + lookupCode + "&$orderby=createdon desc";
+            //}
+            //else
+            //{
+            url += "&$orderby=createdon desc";
+            //}
+
+            using (var response = await _client.GetAsync(url)) //, content))
+            {
+                string apiResponse = await response.Content.ReadAsStringAsync();
+                aList = JsonConvert.DeserializeObject<GetScanResponse>(apiResponse);
+
+
+            }
+
+            return aList.Value;
+        }
+
+        public async Task<List<GeoLocationEvent>> GetDTMobile_ScanEvents(string lookupCode)
+        {
+            GetScanResponse aList = new GetScanResponse();
+            //GetQRCodeRequest aReq = new GetQRCodeRequest();
+
+       //     aReq.IDNumber = id;
+          //  aReq.SystemType = systemType;
+
+            //$filter=TypeCode eq TC
+          //  StringContent content = new StringContent(JsonConvert.SerializeObject(aReq), Encoding.UTF8, "application/json");
+
+            var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("DTMobile:apiUser") + ":" + _configuration.GetValue<string>("DTMobile:apiPassword"));
+            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+            var url = _configuration.GetValue<string>("DTMobile:APIEndPoint") + _configuration.GetValue<string>("DTMobile:GetGeoLocationEvents");
+            if (lookupCode != "ALL")
+            {
+                url = url + "?$filter=LookupCode eq " + lookupCode  + "&$orderby=createdon desc";
+            }else
+            {
+                url = url + "?$orderby=createdon desc";
+            }
+          
+            using (var response = await _client.GetAsync(url)) //, content))
+            {
+                string apiResponse = await response.Content.ReadAsStringAsync();
+                aList = JsonConvert.DeserializeObject<GetScanResponse>(apiResponse);
+
+
+            }
+
+            return aList.Value;
+        }
+
 
         public async Task<List<AssetStatusHistory>> GetAssetStatusHistory_SQL(long id)
        // public List<AssetStatusHistory> GetAssetStatusHistory(long id)
@@ -655,6 +805,82 @@ namespace kist_api.Services
 
         }
 
+        public void SaveActivity_SQL(long operatorId , string appArea , string username , string desc )
+        // public List<AssetStatusHistory> GetAssetStatusHistory(long id)
+        {
+            List<AssetStatusHistory> aList = new List<AssetStatusHistory>();
+            string commandText = @"INSERT INTO [dbo].[Activity]
+                       (OperatorId,[ActivityKey]
+                       ,[ApplicationArea]
+                       ,[ModifiedOn]
+                       ,[ModifiedBy]
+                       ,[description]
+                       ,[ItemKey])
+                 VALUES
+                       (@operatorId,''
+                       ,@area
+                       ,getdate()
+                       ,@username
+                       ,@desc
+                       ,0)";
+
+            using (var connection = new SqlConnection(_connStr))
+            {
+                connection.Open();   //vs  connection.Open();
+                using (var tran = connection.BeginTransaction())
+                {
+                    using (var command = new SqlCommand(commandText, connection, tran))
+                    {
+                        try
+                        {
+                            command.Parameters.Add("@operatorId", SqlDbType.BigInt);
+                            command.Parameters["@operatorId"].Value = operatorId;
+
+                            command.Parameters.Add("@area", SqlDbType.NVarChar);
+                            command.Parameters["@area"].Value = appArea;
+
+                            command.Parameters.Add("@username", SqlDbType.NVarChar);
+                            command.Parameters["@username"].Value = username;
+
+                            command.Parameters.Add("@desc", SqlDbType.NVarChar);
+                            command.Parameters["@desc"].Value = desc;
+
+                            command.ExecuteNonQuery();  // vs also alternatives, command.ExecuteReader();  or await command.ExecuteNonQueryAsync();
+
+                            //while (rdr.Read())
+                            //{
+                            //    var itemContent = new AssetStatusHistory();
+                            //    // assetid , assetstatusid , assetstatus , modifiedon , modifiedby
+                            //    //itemContent.id = (long)rdr["id"];
+                            //    itemContent.assetId = (long)rdr["assetid"];
+                            //    itemContent.assetstatusId = (long)rdr["assetstatusId"];
+                            //    itemContent.assetstatus = rdr["assetstatus"].ToString();
+                            //    itemContent.reasonForChange = rdr["reasonForChange"].ToString();
+
+                            //    itemContent.modifiedBy = rdr["modifiedby"].ToString();
+                            //    itemContent.modifiedOn = (DateTime)rdr["modifiedon"];
+
+
+                            //    aList.Add(itemContent);
+                            //}
+                           // await rdr.CloseAsync();
+                        }
+                        catch (Exception Ex)
+                        {
+                            connection.Close();
+                            string msg = Ex.Message.ToString();
+                            tran.Rollback();
+                            throw;
+                        }
+                    }
+                }
+            }
+
+
+
+           
+
+        }
 
         private string generateJwtToken(MembershipUser user)
         {

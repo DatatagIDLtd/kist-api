@@ -87,6 +87,33 @@ namespace kist_api.Controllers
 
         }
 
+        [Authorize]
+
+        [Route("Activity")]
+        [HttpPost]
+        public async Task<List<Activity>> Activity(GetActivityRequest req)
+        {
+            //var userId = (string)HttpContext.Items["User"];
+            //UserDetailsRequest userDetailsRequest2 = new UserDetailsRequest();
+            //userDetailsRequest2.id = userId;
+
+            //var userDetails = await _kistService.UsersDetails(userDetailsRequest2);
+
+
+            //userDetailsRequest.id = userDetails.ID.ToString();
+
+
+            ////UserDetailsRequest userDetailsRequest3 = new UserDetailsRequest();
+            //    userDetailsRequest.id = userDetails.ID.ToString();
+            /*var req = new GetActivityRequest();
+*/
+            req.operatorId = 1;
+          //  req.maxrows = 2;
+            req.fromDate = DateTime.Now;
+            req.toDate = DateTime.Now;
+            return await _kistService.GetActivity(req);
+
+        }
 
     }
 }
