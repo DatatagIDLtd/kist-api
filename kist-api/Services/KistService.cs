@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
-using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
@@ -173,6 +173,56 @@ namespace kist_api.Services
             // proc should only return one row , but comes back as a list regardless from API
             return dashboardResponse.Value.First().dashboard.First();
         }
+     
+        public async Task<long> CreateAllocation(long Pid , long id , long siteid , String status)
+        {
+            var req = new { AssetId = id  , siteid=siteid , ParentId = Pid , status = status ,operatorId = 1 , userId = 20060};
+
+            GetMapPopupResponse res = new GetMapPopupResponse();
+
+
+            StringContent content = new StringContent(Regex.Unescape(JsonConvert.SerializeObject(req)), Encoding.UTF8, "application/json");
+
+            var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("api:apiUser") + ":" + _configuration.GetValue<string>("api:apiPassword"));
+            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+
+            var url = _configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:CreateAllocation");
+            using (var response = await _client.PostAsync(url, content))
+            {
+                string apiResponse = await response.Content.ReadAsStringAsync();
+   
+                res = JsonConvert.DeserializeObject<GetMapPopupResponse>(apiResponse);
+
+
+            }
+            // proc should only return one row , but comes back as a list regardless from API
+            return 1;
+        }
+        public async Task<long> RemoveAllocation(long id)
+        {
+            var req = new { AllocationId = id ,  AssetId = 1,  operatorId = 1, userId = 20060 ,status="History"};
+
+            GetMapPopupResponse res = new GetMapPopupResponse();
+
+
+            StringContent content = new StringContent(JsonConvert.SerializeObject(req), Encoding.UTF8, "application/json");
+
+            var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("api:apiUser") + ":" + _configuration.GetValue<string>("api:apiPassword"));
+            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+
+            var url = _configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:RemoveAllocation");
+            using (var response = await _client.PostAsync(url, content))
+            {
+                string apiResponse = await response.Content.ReadAsStringAsync();
+
+                res = JsonConvert.DeserializeObject<GetMapPopupResponse>(apiResponse);
+
+
+            }
+            // proc should only return one row , but comes back as a list regardless from API
+            return 1;
+        }
+
 
         public async Task<GetMapPopupResponse> GetMapPopupInfo(String id)
         {
@@ -312,6 +362,125 @@ namespace kist_api.Services
             return userDetailsResponse.Value;
         }
 
+        public async Task<List<AssetView>> GetInventoryByUser(GetAssetRequest asset)
+        {
+            GetAssetResponse userDetailsResponse = new GetAssetResponse();
+
+            if (asset.location == null) { asset.location = ""; };
+            if (asset.uniqueID == null) { asset.uniqueID = ""; };
+            if (asset.fleetNo == null) { asset.fleetNo = ""; };
+            if (asset.assetTypeID == null) { asset.assetTypeID = 0; };
+            if (asset.make == null) { asset.make = ""; };
+            if (asset.model == null) { asset.model = ""; };
+            if (asset.name == null) { asset.name = ""; };
+            if (asset.status == null) { asset.status = ""; };
+            if (asset.assetStatusId > 0)
+            {
+                asset.status = asset.assetStatusId.ToString();
+                asset.assetStatusId = null;
+            }
+
+
+
+            StringContent content = new StringContent(JsonConvert.SerializeObject(asset), Encoding.UTF8, "application/json");
+
+            var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("api:apiUser") + ":" + _configuration.GetValue<string>("api:apiPassword"));
+            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+
+            using (var response = await _client.PostAsync(_configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:GetInventoryByUser"), content)) //, content))
+            {
+                string apiResponse = await response.Content.ReadAsStringAsync();
+                userDetailsResponse = JsonConvert.DeserializeObject<GetAssetResponse>(apiResponse);
+
+            }
+            // proc should only return one row , but comes back as a list regardless from API
+            return userDetailsResponse.Value;
+        }
+
+
+        public async Task<List<SiteView>> GetSitesByUser(GetSiteRequest site)
+        {
+            GetSiteResponse userDetailsResponse = new GetSiteResponse();
+
+            if (site.location == null) { site.location = ""; };
+            if (site.siteCode == null) { site.siteCode = ""; };
+       
+            if (site.siteTypeID == null) { site.siteTypeID = 0; };
+
+            if (site.name == null) { site.name = ""; };
+            if (site.status == null) { site.status = ""; };
+            if (site.siteStatusId > 0)
+            {
+                site.status = site.siteStatusId.ToString();
+                site.siteStatusId = null;
+            }
+
+
+
+            StringContent content = new StringContent(JsonConvert.SerializeObject(site), Encoding.UTF8, "application/json");
+
+            var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("api:apiUser") + ":" + _configuration.GetValue<string>("api:apiPassword"));
+            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+
+            using (var response = await _client.PostAsync(_configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:GetSitesByUser"), content)) //, content))
+            {
+                string apiResponse = await response.Content.ReadAsStringAsync();
+                userDetailsResponse = JsonConvert.DeserializeObject<GetSiteResponse>(apiResponse);
+
+            }
+            // proc should only return one row , but comes back as a list regardless from API
+            return userDetailsResponse.Value;
+        }
+        public async Task<Site> PutSite(Site site)
+        {
+            Site userDetailsResponse = new Site();
+
+        
+            //  asset.modifiedBy = (string)HttpContext.Items["User"];
+
+            StringContent content = new StringContent(Regex.Unescape(JsonConvert.SerializeObject(site)), Encoding.UTF8, "application/json");
+
+            var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("api:apiUser") + ":" + _configuration.GetValue<string>("api:apiPassword"));
+            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+
+            using (var response = await _client.PutAsync(_configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:PutSite") + "(" + site.id.ToString() + ")", content)) //, content))
+            {
+                string apiResponse = await response.Content.ReadAsStringAsync();
+                userDetailsResponse = JsonConvert.DeserializeObject<Site>(apiResponse);
+
+            }
+            // proc should only return one row , but comes back as a list regardless from API
+            return userDetailsResponse;
+        }
+
+        public async Task<Site> GetSite(long id)
+        {
+            Site userDetailsResponse = new Site();
+
+            //   StringContent content = new StringContent(JsonConvert.SerializeObject(getAssetRequest), Encoding.UTF8, "application/json");
+
+            var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("api:apiUser") + ":" + _configuration.GetValue<string>("api:apiPassword"));
+            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+
+            using (var response = await _client.GetAsync(_configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:GetSite") + "(" + id.ToString() + ")")) //, content))
+            {
+                string apiResponse = await response.Content.ReadAsStringAsync();
+                userDetailsResponse = JsonConvert.DeserializeObject<Site>(apiResponse);
+
+            }
+            // proc should only return one row , but comes back as a list regardless from API
+            //perform post prod validation
+
+            //if (userDetailsResponse.companyID != companyId)
+            //{
+            //    // requested asset for in correct company id , fail ! 
+
+            //}
+            return userDetailsResponse;
+        }
+
+
+
         public async Task<Asset> GetAsset(long id )
         {
             Asset userDetailsResponse = new Asset();
@@ -406,7 +575,7 @@ namespace kist_api.Services
 
           //  asset.modifiedBy = (string)HttpContext.Items["User"];
 
-            StringContent content = new StringContent(JsonConvert.SerializeObject(asset), Encoding.UTF8, "application/json");
+            StringContent content = new StringContent(Regex.Unescape(JsonConvert.SerializeObject(asset)), Encoding.UTF8, "application/json");
 
             var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("api:apiUser") + ":" + _configuration.GetValue<string>("api:apiPassword"));
             _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));

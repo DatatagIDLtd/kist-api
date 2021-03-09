@@ -5,23 +5,18 @@ using System.Threading.Tasks;
 
 namespace kist_api.Model
 {
-    public class GetAssetRequest
+    public class GetSiteRequest
 
     {
         public long? userId { get; set; }
-        public string? fleetNo { get; set; }
-        public string? uniqueID { get; set; }
-        public long? assetTypeID { get; set; }
+
+        public string? siteCode { get; set; }
+        public long? siteTypeID { get; set; }
         public string? location { get; set; }
-        public string? make { get; set; }
-        public string? model { get; set; }
+
         public string? name { get; set; }
         public string? status { get; set; }
-        public long? assetStatusId { get; set; }
-        public long? parentId { get; set; }
-        public long? siteId { get; set; }
-        public string? imgUrl { get; set; }
-
+        public long? siteStatusId { get; set; }
         //var postdata = new
         //{
         //    assetTypeID = "",

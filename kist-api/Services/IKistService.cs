@@ -20,6 +20,13 @@ namespace kist_api.Services
         Task<AssetSystem> PutAssetSystem(AssetSystem ai);
         Task<List<AssetView>> GetAssetsByUser(UserDetailsRequest userDetailsRequest);
         Task<List<AssetView>> GetAssetsByUser(GetAssetRequest asset);
+        Task<List<AssetView>> GetInventoryByUser(GetAssetRequest asset);
+
+        Task<long> CreateAllocation(long Pid, long id,  long siteid ,String status);
+        Task<long> RemoveAllocation( long id);
+        Task<List<SiteView>> GetSitesByUser(GetSiteRequest asset);
+        Task<Site> GetSite(long id);
+        Task<Site> PutSite(Site site);
         Task<Asset> PutAsset(Asset asset);
         Task<Attachment> PutAttachment(Attachment attachment);
         Task<Note> PutNote(Note note);
