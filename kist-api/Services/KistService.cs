@@ -24,8 +24,8 @@ using System.Data;
 using kist_api.Model.dtcore;
 using Microsoft.Extensions.Logging;
 using kist_api.Model.dtcode;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using kist_api.Model.dtmobile;
+using Newtonsoft.Json.Linq;
 
 namespace kist_api.Services
 {
@@ -143,6 +143,7 @@ namespace kist_api.Services
 
         public async Task<Dashboard> Dashboard(UserDetailsRequest userDetailsRequest)
         {
+
             GetDashboardResponse dashboardResponse = new GetDashboardResponse();
 
             StringContent content = new StringContent(JsonConvert.SerializeObject(userDetailsRequest), Encoding.UTF8, "application/json");
@@ -479,7 +480,34 @@ namespace kist_api.Services
             return userDetailsResponse;
         }
 
+        public async Task<CreateAssetResult> CreateAsset(CreateQuickAssetRequest req)
+        {
+            CreateAssetResult dashboardResponse = new CreateAssetResult();
 
+          
+            StringContent content = new StringContent(JsonConvert.SerializeObject(req), Encoding.UTF8, "application/json");
+
+            var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("api:apiUser") + ":" + _configuration.GetValue<string>("api:apiPassword"));
+            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+
+
+            using (var response = await _client.PostAsync(_configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:CreateAsset"), content))
+            {
+                string apiResponse = await response.Content.ReadAsStringAsync();
+
+            //    dashboardResponse = JsonConvert.DeserializeObject<CreateAssetResult>(apiResponse);
+
+                dashboardResponse = JsonConvert.DeserializeObject<CreateAssetResult>(JObject.Parse(apiResponse).GetValue("value").First().ToString());
+
+                
+
+              //  dashboardResponse = JsonConvert.DeserializeObject<dashboardResponse>(JObject.Parse(dashboardResponse).GetValue("value").First()); // .ToString());
+
+
+            }
+            // proc should only return one row , but comes back as a list regardless from API
+            return dashboardResponse;
+        }
 
         public async Task<Asset> GetAsset(long id )
         {
@@ -556,9 +584,16 @@ namespace kist_api.Services
 
             if (a.membershipNumber.Length > 1)
             {
-                a.systemTypeInfo = await GetDTCore_SystemType(a.membershipNumber.Substring(0, 2));
-                var qr = await GetDTCoode_QRCodeURL(a.idNumber, a.membershipNumber.Substring(0, 2));
-                a.qrCodeUrl = qr.qrcodeurl;
+                if (a.productCode == "KIST")
+                {
+                    a.systemTypeInfo.Name = "KIST";
+                    a.qrCodeUrl = "http:kist.com?assetId=" + id.ToString();
+                } else
+                {
+                    a.systemTypeInfo = await GetDTCore_SystemType(a.membershipNumber.Substring(0, 2));
+                    var qr = await GetDTCoode_QRCodeURL(a.idNumber, a.membershipNumber.Substring(0, 2));
+                    a.qrCodeUrl = qr.qrcodeurl;
+                }
                 //
                 //a.qrCodeUrl = qr.qrcodeurl;
 

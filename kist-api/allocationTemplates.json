@@ -1,0 +1,370 @@
+[
+  {
+    "id": 1,
+    "name": "Collecting Asset from Yard",
+    "description": "Gang Leader goes to yard to collect a new asset, to be allocated to his gang",
+    "steps": [
+      {
+        "step": 1,
+        "type": "Scan",
+        "name": null,
+        "label": "Scan Asset",
+        "placeholder": "Scan or Enter Asset ID",
+        "assetTypes": "Equipment",
+        "maxItems": 0,
+        "multiple": false
+      },
+      {
+        "step": 2,
+        "type": "AssetDetails",
+        "name": null,
+        "label": "Confirm Asset Details",
+        "AssetsFromStep": 1
+      },
+      {
+        "step": 3,
+        "type": "Scan",
+        "name": null,
+        "label": "Scan Gang Code",
+        "placeholder": "Enter Id Number To Search...",
+        "assetTypes": "Vehicle",
+        "maxItems": 0,
+        "multiple": false
+      },
+      {
+        "step": 4,
+        "type": "Inventory",
+        "name": null,
+        "label": "Current Inventory",
+        "AssetsFromStep": 3
+      },
+      {
+        "step": 4,
+        "type": "Action",
+        "name": null,
+        "label": "Ready to Allocate",
+        "button": "Allocate",
+        "fromStep": 1,
+        "toStep": 3
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "name": "Assign Van to Gang",
+    "description": "Assign a Van that already has assets to new gang , could be already assigned to a previous gang",
+    "steps": [
+      {
+        "step": 1,
+        "type": "Scan",
+        "name": null,
+        "label": "Van QR Code Scanned",
+        "placeholder": "Enter Id Number To Search...",
+        "assetTypes": "Vehicle",
+        "maxItems": 0,
+        "multiple": false
+      },
+      {
+        "step": 2,
+        "type": "Inventory",
+        "name": null,
+        "label": "Current Inventory",
+        "AssetsFromStep": 1
+      },
+      {
+        "step": 3,
+        "name": null,
+        "type": "Scan",
+        "label": "Scan Gang Code",
+        "placeholder": "Enter Gang Id To Search...",
+        "assetTypes": "Gang",
+        "maxItems": 0,
+        "multiple": false
+      },
+      {
+        "step": 4,
+        "type": "Action",
+        "name": null,
+        "label": "Ready to Allocate",
+        "button": "Allocate",
+        "fromStep": 1,
+        "toStep": 3
+      }
+    ]
+  },
+  {
+    "id": 1,
+    "name": "Replacement Asset",
+    "description": "Asset needs to be replaced in Gang , Reason Needed",
+    "steps": [
+      {
+        "step": 1,
+        "type": "Scan",
+        "name": null,
+        "label": "Broken Asset",
+        "placeholder": "Scan or Enter Asset ID",
+        "assetTypes": "Equipment",
+        "maxItems": 0,
+        "multiple": false
+      },
+      {
+        "step": 2,
+        "type": "AssetDetails",
+        "name": null,
+        "label": "Confirm Asset Details",
+        "AssetsFromStep": 1
+      },
+      {
+        "step": 3,
+        "type": "Scan",
+        "name": null,
+        "label": "Scan Yard or Container Code",
+        "placeholder": "Enter Id Number To Search...",
+        "assetTypes": "Container,Yard",
+        "maxItems": 0,
+        "multiple": false
+      },
+      {
+        "step": 4,
+        "type": "Action",
+        "name": null,
+        "label": "Allocate Back to Yard / Container",
+        "button": "Allocate",
+        "fromStep": 1,
+        "toStep": 3
+      },
+      {
+        "step": 5,
+        "type": "Scan",
+        "name": null,
+        "label": "Replacment Asset",
+        "placeholder": "Scan or Enter Asset ID",
+        "assetTypes": "Equipment",
+        "maxItems": 0,
+        "multiple": false
+      },
+      {
+        "step": 6,
+        "type": "AssetDetails",
+        "name": null,
+        "label": "Confirm Asset Details",
+        "AssetsFromStep": 5
+      },
+      {
+        "step": 7,
+        "type": "Scan",
+        "name": null,
+        "label": "Scan Gang or Van Code",
+        "placeholder": "Enter Id Number To Search...",
+        "assetTypes": "Gang,Vehicle",
+        "maxItems": 0,
+        "multiple": false
+      },
+      {
+        "step": 8,
+        "type": "Action",
+        "name": null,
+        "label": "Allocate to Gang or Van",
+        "button": "Allocate",
+        "fromStep": 5,
+        "toStep": 7
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "name": "Transfer assset from Gang to Gang",
+    "description": "Asset is transferred from one gang to another Gang",
+    "steps": [
+      {
+        "step": 1,
+        "type": "Scan",
+        "name": null,
+        "label": "Asset to be Taken",
+        "placeholder": "Scan or Enter Asset ID",
+        "assetTypes": "Equipment",
+        "maxItems": 0,
+        "multiple": false
+      },
+      {
+        "step": 2,
+        "type": "AssetDetails",
+        "name": null,
+        "label": "Confirm Asset Details",
+        "AssetsFromStep": 1
+      },
+      {
+        "step": 3,
+        "type": "Scan",
+        "name": null,
+        "label": "Scan Gang / Van Code",
+        "placeholder": "Enter Id Number To Search...",
+        "assetTypes": "Gang, Vehicle",
+        "maxItems": 0,
+        "multiple": false
+      },
+      {
+        "step": 4,
+        "type": "Action",
+        "name": null,
+        "label": "Allocate to My Gang",
+        "button": "Allocate",
+        "fromStep": 1,
+        "toStep": 3
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "name": "Moving Assets within Yard",
+    "description": "Moving bulk items from site to site or locations to locations",
+    "steps": [
+      {
+        "step": 1,
+        "type": "Scan",
+        "name": null,
+        "label": "Scan Location/Container QR Code",
+        "placeholder": "Scan or Enter Asset ID",
+        "assetTypes": "Vehicle,Gang,Location,Container",
+        "maxItems": 0,
+        "multiple": false,
+        "filterStep": 2
+      },
+      {
+        "step": 2,
+        "type": "Scan",
+        "name": null,
+        "label": "Select multiple Assets to Move",
+        "placeholder": "Enter Id Number To Search...",
+        "assetTypes": "Gang, Vehicle",
+        "maxItems": 0,
+        "multiple": true
+      },
+      {
+        "step": 3,
+        "type": "AssetDetails",
+        "name": null,
+        "label": "Assets to be Allocated",
+        "AssetsFromStep": 2
+      },
+      {
+        "step": 4,
+        "type": "Scan",
+        "name": null,
+        "label": "Scan New Location QR Code",
+        "placeholder": "Scan or Enter Asset ID",
+        "assetTypes": "Vehicle,Gang,Location,Container",
+        "maxItems": 0,
+        "multiple": false
+      },
+      {
+        "step": 5,
+        "type": "Action",
+        "name": null,
+        "label": "Allocate Items to New Location",
+        "button": "Allocate",
+        "fromStep": 2,
+        "toStep": 4
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "name": "Bulk Transfer of Assets",
+    "description": "Transfer Multiple Assets from Container to Container",
+    "steps": [
+      {
+        "step": 1,
+        "type": "Scan",
+        "name": null,
+        "label": "Scan Location/Container QR Code",
+        "placeholder": "Scan or Enter Asset ID",
+        "assetTypes": "Vehicle,Gang,Location,Container",
+        "maxItems": 0,
+        "multiple": false,
+        "filterStep": 2
+      },
+      {
+        "step": 2,
+        "type": "Scan",
+        "name": null,
+        "label": "Select multiple Assets to Move",
+        "placeholder": "Enter Id Number To Search...",
+        "assetTypes": "Gang, Vehicle",
+        "maxItems": 0,
+        "multiple": true
+      },
+      {
+        "step": 3,
+        "type": "AssetDetails",
+        "name": null,
+        "label": "Assets to be Allocated",
+        "AssetsFromStep": 2
+      },
+      {
+        "step": 4,
+        "type": "Scan",
+        "name": null,
+        "label": "Scan New Location QR Code",
+        "placeholder": "Scan or Enter Asset ID",
+        "assetTypes": "Vehicle,Gang,Location,Container",
+        "maxItems": 0,
+        "multiple": false
+      },
+      {
+        "step": 5,
+        "type": "Action",
+        "name": null,
+        "label": "Allocate Items to New Location",
+        "button": "Allocate",
+        "fromStep": 2,
+        "toStep": 4
+      }
+    ]
+  },
+  {
+    "id": 7,
+    "name": "New Gang And New Assets/Van",
+    "description": "Brand new Gang is created and new assets allocated to gang",
+    "steps": [
+      {
+        "step": 1,
+        "type": "CreateAsset",
+        "name": null,
+        "label": "Gang Name",
+        "placeholder": "Enter New Gang Name / Reference.",
+        "assetTypes": "Gang",
+        "maxItems": 0,
+        "multiple": false
+      },
+      {
+        "step": 2,
+        "type": "Scan",
+        "name": null,
+        "label": "Van QR Code Scanned",
+        "placeholder": "Enter Id Number To Search...",
+        "assetTypes": "Vehicle",
+        "maxItems": 0,
+        "multiple": false
+      },
+      {
+        "step": 3,
+        "type": "Inventory",
+        "name": null,
+        "label": "Current Inventory",
+        "AssetsFromStep": 2
+      },
+      {
+        "step": 4,
+        "type": "Action",
+        "actionType": "CreateAndAllocate",
+        "name": null,
+        "label": "Ready to Create Gang and Allocate Assets",
+        "button": "Create and Allocate",
+        "createFromStep" :  1,
+        "fromStep": 2,
+        "toStep": 1
+      }
+    ]
+  }
+]

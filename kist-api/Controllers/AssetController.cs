@@ -156,6 +156,22 @@ namespace kist_api.Controllers
             return await _kistService.GetMapPopupInfo(req.AssetID);
         }
 
+        [Authorize]
+
+        [HttpPost("Create")]
+        public async Task<CreateAssetResult> Create(CreateQuickAssetRequest req)
+        {
+            var userId = (string)HttpContext.Items["User"];
+
+            //UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
+            //userDetailsRequest.id = userId;
+
+            //var userDetails = await _kistService.UsersDetails(userDetailsRequest);
+
+
+            return await _kistService.CreateAsset(req);
+        }
+
         [HttpPost("ScanEvents")]
         public async Task<List<GeoLocationEvent>> Post(GetScanRequest req)
         {

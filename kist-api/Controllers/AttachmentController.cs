@@ -163,7 +163,10 @@ namespace kist_api.Controllers
             //var fileloc = Path.Combine(dmsRoutePath, returnAttachment.First().storageLocation);
 
             var stream = new FileStream(fileloc, FileMode.Open);
-            return new FileStreamResult(stream, mime);
+            return new FileStreamResult(stream, mime )
+            {
+                FileDownloadName = "template" + id.ToString() + ".xlsx"
+            }; ;
         }
 
 

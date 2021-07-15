@@ -14,6 +14,8 @@ namespace kist_api.Services
         Task<UserDetails> UsersDetails(UserDetailsRequest userDetailsRequest);
         Task<List<AssetView>> GetAssets();
         Task<Asset> GetAsset(long id);
+        Task<CreateAssetResult> CreateAsset(CreateQuickAssetRequest req);
+
         Task<AssetIdentity> GetAssetIdentity(long id);
         Task<AssetIdentity> PutIdentity(AssetIdentity ai);
         Task<AssetSystem> GetAssetSystem(long id);

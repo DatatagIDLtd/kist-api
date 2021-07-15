@@ -8,6 +8,11 @@ namespace kist_api.Model
 {
     public class AssetSystem
     {
+		public AssetSystem ()
+		{
+
+			systemTypeInfo = new SystemType();
+		}
 		public long? id { get; set; }
 		public long? assetId { get; set; }
 		public long? operatorId { get; set; }
