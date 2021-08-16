@@ -18,14 +18,14 @@ namespace kist_api.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class AssetController : ControllerBase
+    public class ScanController : ControllerBase
     {
 
         private readonly ILogger<AccountController> _logger;
         readonly IConfiguration _configuration;
         readonly IKistService _kistService;
 
-        public AssetController(ILogger<AccountController> logger, IConfiguration configuration , IKistService kistService)
+        public ScanController(ILogger<AccountController> logger, IConfiguration configuration , IKistService kistService)
         {
             _logger = logger;
             _configuration = configuration;
@@ -35,56 +35,11 @@ namespace kist_api.Controllers
 
         //[Route("UsersDetails")]
         //[HttpPost]
-        [Authorize]
-      
-        public async Task<List<AssetView>> Get()
-        {
-            // should be via company id or user id 
-            var userId = (string)HttpContext.Items["User"];
+       
 
-            UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
-            userDetailsRequest.id = userId;
-           
-            var userDetails = await _kistService.UsersDetails(userDetailsRequest);
-
-
-
-
-
-            UserDetailsRequest userDetailsRequest2 = new UserDetailsRequest();
-            userDetailsRequest2.id = userDetails.ID.ToString();
-      
-            return await _kistService.GetAssetsByUser(userDetailsRequest2);
-
-        }
-
-        [Authorize]
-        [Route("Search/{search}")]
-       // [HttpGet("{search}")]
-        public async Task<List<AssetView>> Search(string search)
-        {
-            // should be via company id or user id 
-            var userId = (string)HttpContext.Items["User"];
-
-            UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
-            userDetailsRequest.id = userId;
-
-            var userDetails = await _kistService.UsersDetails(userDetailsRequest);
-
-
-
-
-
-            UserDetailsRequest userDetailsRequest2 = new UserDetailsRequest();
-            userDetailsRequest2.id = userDetails.ID.ToString();
-            userDetailsRequest2.searchQuery = search;
-            return await _kistService.GetAssetsByUser(userDetailsRequest2);
-
-        }
-
-        [Route("Search2/")]
+        [Route("Scan/")]
         // [HttpGet("{search}")]
-        public async Task<List<AssetView>> Search2(GetAssetRequest req)
+        public async Task<GeoLocationEvent> Scan(GeoLocationEvent req)
         {
             // should be via company id or user id 
             var userId = (string)HttpContext.Items["User"];
@@ -97,26 +52,19 @@ namespace kist_api.Controllers
 
 
             // if payload contains geo event data log that first
-            if (req.geo != null )
-            {
-                //req.geo.CreatedBy = userDetails.;
-                req.geo.CreatedOn = DateTime.Now;
-                req.geo.WFStatus = "N";
-                req.geo.UserGUID = userId;
-                await _kistService.PostGeoLocationEvent(req.geo);
+          
+                req.CreatedBy = "matttest";
+            
+
+                
+
+          
+          //  req.userId = userDetails.ID; // fudge for now to pass in user id 
+
+
+            return await _kistService.PostGeoLocationEvent(req);
 
             }
-
-            //UserDetailsRequest userDetailsRequest2 = new UserDetailsRequest();
-            //userDetailsRequest2.id = userDetails.ID.ToString();
-            //userDetailsRequest2.searchQuery = search;
-
-            req.userId = userDetails.ID; // fudge for now to pass in user id 
-
-
-            return await _kistService.GetAssetsByUser(req);
-
-        }
 
 
       
@@ -153,8 +101,22 @@ namespace kist_api.Controllers
         }
 
 
+        [Authorize]
+        [HttpPost("MyScans")]
+        public async Task<List<MyScan>> MyScans()
+        {
+            var userId = (string)HttpContext.Items["User"];
 
-        
+            //UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
+            //userDetailsRequest.id = userId;
+
+            //var userDetails = await _kistService.UsersDetails(userDetailsRequest);
+
+
+            return await _kistService.GetMyScans(userId);
+        }
+
+
         [HttpPost("MapPopupInfo")]
         public async Task<GetMapPopupResponse> MapPopupInfo(GetScanRequest req)
         {

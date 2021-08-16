@@ -21,7 +21,7 @@ namespace kist_api.Model
 		public long modelId { get; set; }
 		public long? assetStatusID { get; set; }
 		//public string location { get; set; }
-
+		public long? assignUserId { get; set; }
 		public bool isActive { get; set; }
 		public DateTime? createdOn { get; set; }
 		public string createdBy { get; set; }

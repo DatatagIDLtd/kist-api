@@ -17,6 +17,10 @@ namespace kist_api.Model
         public List<Lookup> attachmentTypes { get; set; }
         public List<Lookup> siteTypes { get; set; }
         public List<Lookup> siteStatus { get; set; }
+        public List<Lookup> operatorUsers { get; set; }
+
+        
+
         public LookupData ()
         {
             assetTypes = new List<Lookup>();
@@ -27,6 +31,7 @@ namespace kist_api.Model
             attachmentTypes = new List<Lookup>();
             siteTypes = new List<Lookup>();
             siteStatus = new List<Lookup>();
+            operatorUsers = new List<Lookup>();
         }
 
     }

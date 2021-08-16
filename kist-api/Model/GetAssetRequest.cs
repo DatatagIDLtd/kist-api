@@ -1,4 +1,5 @@
-﻿using System;
+﻿using kist_api.Model.dtmobile;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -20,7 +21,12 @@ namespace kist_api.Model
         public long? assetStatusId { get; set; }
         public long? parentId { get; set; }
         public long? siteId { get; set; }
+        public long? assignUserId { get; set; }
+        
+
         public string? imgUrl { get; set; }
+
+        public GeoLocationEvent geo { get; set; }
 
         //var postdata = new
         //{

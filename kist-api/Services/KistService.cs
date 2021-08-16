@@ -309,6 +309,28 @@ namespace kist_api.Services
             return userDetailsResponse.Value;
         }
 
+        public async Task<List<MyScan>> GetMyScans(String Id)
+        {
+            MyScansResponse res = new MyScansResponse();
+            var req = new { UserGUID = Id, };
+
+               StringContent content = new StringContent(JsonConvert.SerializeObject(req), Encoding.UTF8, "application/json");
+            // UserGUID : "EE2F80F1-AA52-450C-ACEA-520D6F2EE1BC"
+            var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("DTMobile:apiUser") + ":" + _configuration.GetValue<string>("DTMobile:apiPassword"));
+            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+
+            using (var response = await _client.PostAsync(_configuration.GetValue<string>("DTMobile:APIEndPoint") + _configuration.GetValue<string>("DTMobile:GetMyScans"), content))
+            {
+                string apiResponse = await response.Content.ReadAsStringAsync();
+                res = JsonConvert.DeserializeObject<MyScansResponse>(apiResponse);
+
+            }
+            // proc should only return one row , but comes back as a list regardless from API
+            return res.Value;
+        }
+
+
+
         public async Task<List<AssetView>> GetAssetsByUser(UserDetailsRequest userDetailsRequest)
         {
             GetAssetResponse userDetailsResponse = new GetAssetResponse();
@@ -587,7 +609,7 @@ namespace kist_api.Services
                 if (a.productCode == "KIST")
                 {
                     a.systemTypeInfo.Name = "KIST";
-                    a.qrCodeUrl = "http:kist.com?assetId=" + id.ToString();
+                    a.qrCodeUrl = "https://www.datatag.mobi/qrcsrm.aspx?id="+ a.idNumber+ "&assetId=" + id.ToString();
                 } else
                 {
                     a.systemTypeInfo = await GetDTCore_SystemType(a.membershipNumber.Substring(0, 2));
@@ -860,8 +882,45 @@ namespace kist_api.Services
             return a;
         }
 
+
+        public async Task<GeoLocationEvent> PostGeoLocationEvent(GeoLocationEvent req)
+        {
+            GeoLocationEvent attachmentResponse = new GeoLocationEvent();
+            req.IPAddress = (req.IPAddress == null) ? "0.0.0.0" : req.IPAddress;
+            req.QRCodeURL = (req.QRCodeURL == null) ? "na" : req.QRCodeURL;
+            req.CreatedOn = DateTime.Now;
+            req.WFStatus = (req.WFStatus == null) ? "N" : req.WFStatus;
+            req.CreatedBy = (req.WFStatus == null) ? "UnKnown" : req.WFStatus;
+
+            
+
+
+                StringContent content = new StringContent(JsonConvert.SerializeObject(req), Encoding.UTF8, "application/json");
+
         
-             public async Task<List<GeoLocationEvent>> GetDTMobile_ScanEvents(GetScanRequest req)
+            //req.Latitude = (req.Latitude == null) ? 0 : req.Latitude;
+
+
+            //'x-rssbus-authtoken' : '5x1S6d8z7X4w6b4S0v0y'
+
+            var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("DTMobile:apiUser") + ":" + _configuration.GetValue<string>("DTMobile:apiPassword"));
+            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+           // _client.DefaultRequestHeaders.Add("x-rssbus-authtoken", "5x1S6d8z7X4w6b4S0v0y");
+
+            //using (var response = await _client.PutAsync(_configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:PutAttachment") + "(" + asset.ID.ToString() + ")", content)) //, content))
+            var url = _configuration.GetValue<string>("DTMobile:APIEndPoint") + _configuration.GetValue<string>("DTMobile:GetGeoLocationEvents") ;
+            using (var response = await _client.PostAsync(url, content)) //, content))
+            {
+                string apiResponse = await response.Content.ReadAsStringAsync();
+                attachmentResponse = JsonConvert.DeserializeObject<GeoLocationEvent>(apiResponse);
+
+            }
+            // proc should only return one row , but comes back as a list regardless from API
+            return attachmentResponse;
+        }
+
+
+        public async Task<List<GeoLocationEvent>> GetDTMobile_ScanEvents(GetScanRequest req)
         {
             GetScanResponse aList = new GetScanResponse();
             //GetQRCodeRequest aReq = new GetQRCodeRequest();

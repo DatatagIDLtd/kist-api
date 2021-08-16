@@ -38,9 +38,9 @@ namespace kist_api.Services
 
         Task<List<GeoLocationEvent>> GetDTMobile_ScanEvents(string lookupCode);
         Task<List<GeoLocationEvent>> GetDTMobile_ScanEvents(GetScanRequest req);
+        Task<GeoLocationEvent> PostGeoLocationEvent(GeoLocationEvent req);
 
-
-
+        Task<List<MyScan>> GetMyScans(String Id);
         Task<Dashboard> Dashboard(UserDetailsRequest userDetailsRequest);
         Task<LookupData> GetLookUpData(UserDetailsRequest userDetailsRequest);
         Task<List<AssetStatusHistory>> GetAssetStatusHistory(long id);
