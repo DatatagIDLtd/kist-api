@@ -89,6 +89,30 @@ namespace kist_api.Controllers
 
         [Authorize]
 
+        [Route("GetMobileDashboard")]
+        [HttpGet]
+        public async Task<Dashboard> GetMobileDashboard()
+        {
+            var userId = (string)HttpContext.Items["User"];
+            UserDetailsRequest userDetailsRequest2 = new UserDetailsRequest();
+            userDetailsRequest2.id = userId;
+
+            var userDetails = await _kistService.UsersDetails(userDetailsRequest2);
+
+            var userDetailsRequest = new UserDetailsRequest();
+            userDetailsRequest.id = userDetails.ID.ToString();
+
+
+            ////UserDetailsRequest userDetailsRequest3 = new UserDetailsRequest();
+            //    userDetailsRequest.id = userDetails.ID.ToString();
+
+            return await _kistService.GetMobileDashboard(userDetailsRequest);
+
+        }
+
+
+        [Authorize]
+
         [Route("Activity")]
         [HttpPost]
         public async Task<List<Activity>> Activity(GetActivityRequest req)

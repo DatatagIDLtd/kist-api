@@ -48,12 +48,14 @@ namespace kist_api.Controllers
         //     public async Task<IActionResult> Index([FromForm]IFormFile file)
         {
             var userId = (string)HttpContext.Items["User"];
+
+            var userName = (string)HttpContext.Items["UserName"];
             UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
             userDetailsRequest.id = userId;
 
             var userDetails = await _kistService.UsersDetails(userDetailsRequest);
 
-            note.createdBy = userDetails.Forename + " " + userDetails.Surname;
+            note.createdBy = userName;
                     note.createdOn = DateTime.Now;
                     return await _kistService.PutNote(note);
     

@@ -24,12 +24,15 @@ namespace kist_api.Controllers
         private readonly ILogger<AccountController> _logger;
         readonly IConfiguration _configuration;
         readonly IKistService _kistService;
+        readonly IScanService _scanService;
 
-        public ScanController(ILogger<AccountController> logger, IConfiguration configuration , IKistService kistService)
+        public ScanController(ILogger<AccountController> logger, IConfiguration configuration , IKistService kistService, IScanService scanService)
         {
             _logger = logger;
             _configuration = configuration;
             _kistService = kistService;
+            _scanService = scanService;
+
         }
 
 
@@ -160,6 +163,29 @@ namespace kist_api.Controllers
 
             return await _kistService.GetDTMobile_ScanEvents(req);
         }
+
+        [HttpPost("ByLocation")]
+        public async Task<List<GeoLocationEvent>> ByLocation(GetScanByLocationRequest req)
+        {
+            var userId = (string)HttpContext.Items["User"];
+
+            _logger.LogInformation(@"ByLocation " );
+
+            _logger.LogInformation(@"payload " + req.ToString());
+
+            //UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
+            //userDetailsRequest.id = userId;
+
+            //var userDetails = await _kistService.UsersDetails(userDetailsRequest);
+
+            var res = await _scanService.GetScansByLocation(req);
+
+            _logger.LogInformation(@"rows " + res.Count.ToString());
+
+            return res;
+        }
+
+
 
         // PUT: api/Default/5
         [HttpPut("{id}")]

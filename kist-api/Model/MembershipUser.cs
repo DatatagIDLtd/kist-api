@@ -19,6 +19,7 @@ namespace kist_api.Model
         public DateTime _LastLoginDate { get; set; }
 
         public string token { get; set; }
+        public string role { get; set; }
     }
 }
 

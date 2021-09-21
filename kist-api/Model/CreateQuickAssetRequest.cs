@@ -8,8 +8,9 @@ namespace kist_api.Model
 {
 
 
+
 	public class CreateQuickAssetRequest
-    {
+	{
 
 		public string operatorRef { get; set; }
 		public string name { get; set; }
@@ -50,6 +51,7 @@ namespace kist_api.Model
 			dtIdnumber = "";
 			dtMembershipNumber = "";
 		}
+
 
 		//@OperatorRef = N'CL1',
 		//@Name = N'New Gang',

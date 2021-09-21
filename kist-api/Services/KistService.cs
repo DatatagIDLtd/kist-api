@@ -26,6 +26,7 @@ using Microsoft.Extensions.Logging;
 using kist_api.Model.dtcode;
 using kist_api.Model.dtmobile;
 using Newtonsoft.Json.Linq;
+using Microsoft.Extensions.Configuration.UserSecrets;
 
 namespace kist_api.Services
 {
@@ -82,14 +83,15 @@ namespace kist_api.Services
                     // UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
                     //userDetailsRequest.id = loginRes.userDetails._ProviderUserKey.ToString();
 
-                    //  UserDetails userDetails = await UsersDetails(userDetailsRequest);
+                    //  UserDetails userDetails = await UsersDetails(userDetailsRequest)
                     _logger.LogInformation(@"We have Login Details , so lets call Kist API and get user Details");
 
                     if (loginRes.userDetails._IsApproved)
                     {
                         _logger.LogInformation(@"User Approved - Generate token");
 
-                        loginRes.userDetails.token = generateJwtToken(loginRes.userDetails);
+                        loginRes.userDetails.token = generateJwtToken(loginRes.userDetails , loginReq);
+                        loginRes.userDetails.role = "NGMUSR";
                     } else
                     {
                         _logger.LogWarning(@"User Not Approved");
@@ -102,12 +104,13 @@ namespace kist_api.Services
                 }else
                 {
                     _logger.LogWarning(@"Invalid Credentials " + content.ToString());
-                    SaveActivity_SQL(0, "login", loginReq.username, "Failed to logon");
+                   // SaveActivity_SQL(0, "login", loginReq.username, "Failed to logon");
                 }
                     // authentication successful so generate jwt token
               
 
             }
+            
             
             return loginRes;
         }
@@ -174,10 +177,75 @@ namespace kist_api.Services
             // proc should only return one row , but comes back as a list regardless from API
             return dashboardResponse.Value.First().dashboard.First();
         }
-     
-        public async Task<long> CreateAllocation(long Pid , long id , long siteid , String status)
+
+        public async Task<Dashboard> GetMobileDashboard(UserDetailsRequest userDetailsRequest)
         {
-            var req = new { AssetId = id  , siteid=siteid , ParentId = Pid , status = status ,operatorId = 1 , userId = 20060};
+
+            GetDashboardResponse dashboardResponse = new GetDashboardResponse();
+
+            StringContent content = new StringContent(JsonConvert.SerializeObject(userDetailsRequest), Encoding.UTF8, "application/json");
+
+            var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("api:apiUser") + ":" + _configuration.GetValue<string>("api:apiPassword"));
+            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+
+
+            using (var response = await _client.PostAsync(_configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:GetMobileDashboard"), content))
+            {
+                string apiResponse = await response.Content.ReadAsStringAsync();
+                //var options = new JsonSerializerOptions
+                //{
+                //    PropertyNameCaseInsensitive = true,
+                //};
+                //File.WriteAllText(@"c:\temp\payload.json", apiResponse);
+                //apiResponse = apiResponse.Replace("\\\"", "\"");  //savs frig
+                apiResponse = apiResponse.Replace("\"dashboard\": \"", "\"dashboard\": ");  //savs frig
+                apiResponse = apiResponse.Replace("}]}]\"", "}]}]");  //savs frig
+                apiResponse = apiResponse.Replace("\\\"", "\"");  //savs frig
+
+              
+                // loginRes = System.Text.Json.JsonSerializer.Deserialize<GetUserDetailsResponse>(apiResponse, options);
+                dashboardResponse = JsonConvert.DeserializeObject<GetDashboardResponse>(apiResponse);
+
+
+            }
+            // proc should only return one row , but comes back as a list regardless from API
+            return dashboardResponse.Value.First().dashboard.First();
+        }
+
+
+        public async Task<List<AssetImages>> GetAssetImages(long id, long userId )
+        {
+            var req = new { AssetId = id,  userId = userId , tags = ""};
+
+             List<AssetImages> res ;
+
+            StringContent content = new StringContent(JsonConvert.SerializeObject(req), Encoding.UTF8, "application/json");
+
+            var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("api:apiUser") + ":" + _configuration.GetValue<string>("api:apiPassword"));
+            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+
+
+            using (var response = await _client.PostAsync(_configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:GetAssetImages"), content))
+            {
+                string apiResponse = await response.Content.ReadAsStringAsync();
+
+                res = JsonConvert.DeserializeObject<List<AssetImages>>(JObject.Parse(apiResponse).GetValue("value").ToString());
+
+
+         
+
+            }
+           
+            return res;
+        }
+
+
+
+
+
+        public async Task<long> CreateAllocation(long Pid , long id , long siteid , String status, long userId)
+        {
+            var req = new { AssetId = id  , siteid=siteid , ParentId = Pid , status = status ,operatorId = 1 , userId = userId };
 
             GetMapPopupResponse res = new GetMapPopupResponse();
 
@@ -531,6 +599,46 @@ namespace kist_api.Services
             return dashboardResponse;
         }
 
+        public async Task<SetAllocationAuditResponse> SetAllocationAudit(SetAllocationAuditRequest req)
+        {
+            SetAllocationAuditResponse res = new SetAllocationAuditResponse();
+
+
+            StringContent content = new StringContent(JsonConvert.SerializeObject(req), Encoding.UTF8, "application/json");
+
+            var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("api:apiUser") + ":" + _configuration.GetValue<string>("api:apiPassword"));
+            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+
+
+            using (var response = await _client.PostAsync(_configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:SetAllocationAudit"), content))
+            {
+                string apiResponse = await response.Content.ReadAsStringAsync();
+                res = JsonConvert.DeserializeObject<SetAllocationAuditResponse>(JObject.Parse(apiResponse).GetValue("value").First().ToString());
+            }
+            // proc should only return one row , but comes back as a list regardless from API
+            return res;
+        }
+
+        public async Task<CreateAuditResponse> CreateAudit(CreateAuditRequest req)
+        {
+            CreateAuditResponse res = new CreateAuditResponse();
+
+
+            StringContent content = new StringContent(JsonConvert.SerializeObject(req), Encoding.UTF8, "application/json");
+
+            var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("api:apiUser") + ":" + _configuration.GetValue<string>("api:apiPassword"));
+            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+
+
+            using (var response = await _client.PostAsync(_configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:CreateAllocationAudit"), content))
+            {
+                string apiResponse = await response.Content.ReadAsStringAsync();
+                res = JsonConvert.DeserializeObject<CreateAuditResponse>(JObject.Parse(apiResponse).GetValue("value").First().ToString());
+            }
+            // proc should only return one row , but comes back as a list regardless from API
+            return res;
+        }
+
         public async Task<Asset> GetAsset(long id )
         {
             Asset userDetailsResponse = new Asset();
@@ -612,9 +720,25 @@ namespace kist_api.Services
                     a.qrCodeUrl = "https://www.datatag.mobi/qrcsrm.aspx?id="+ a.idNumber+ "&assetId=" + id.ToString();
                 } else
                 {
-                    a.systemTypeInfo = await GetDTCore_SystemType(a.membershipNumber.Substring(0, 2));
-                    var qr = await GetDTCoode_QRCodeURL(a.idNumber, a.membershipNumber.Substring(0, 2));
-                    a.qrCodeUrl = qr.qrcodeurl;
+                    try { 
+                        a.systemTypeInfo = await GetDTCore_SystemType(a.membershipNumber.Substring(0, 2));
+                        var qr = await GetDTCoode_QRCodeURL(a.idNumber, a.membershipNumber.Substring(0, 2));
+                        a.qrCodeUrl = qr.qrcodeurl;
+
+                        if (a.qrCodeUrl.ToLower()=="unknown")
+                        {
+                            a.qrCodeUrl = "https://www.datatag.mobi/qrcsrm.aspx?id=" + a.idNumber + "&assetId=" + id.ToString();
+                        }
+
+                    }
+                    catch
+                    {
+                       
+                            a.qrCodeUrl = "https://www.datatag.mobi/qrcsrm.aspx?id=" + a.idNumber + "&assetId=" + id.ToString();
+
+
+                       
+                    }
                 }
                 //
                 //a.qrCodeUrl = qr.qrcodeurl;
@@ -830,6 +954,56 @@ namespace kist_api.Services
 
             
             return aList.Value;
+        }
+
+        public async Task<List<RecentAllocation>> GetRecentAllocations(long userId )
+        {
+            var req = new { UserId = userId, };
+
+            var res = new List<RecentAllocation>();
+
+            StringContent content = new StringContent(JsonConvert.SerializeObject(req), Encoding.UTF8, "application/json");
+
+            var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("api:apiUser") + ":" + _configuration.GetValue<string>("api:apiPassword"));
+            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+            var url = _configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:GetRecentAllocations") ;//+ " ?$filter=AssetId eq " + id.ToString();
+
+            using (var response = await _client.PostAsync(url, content))
+            {
+                string apiResponse = await response.Content.ReadAsStringAsync();
+            //    aList = JsonConvert.DeserializeObject<GetActivityResponse>(apiResponse);
+               res = JsonConvert.DeserializeObject<List<RecentAllocation>>(JObject.Parse(apiResponse).GetValue("value").ToString());
+
+
+            }
+
+
+            return res;
+        }
+
+        public async Task<List<Audit>> GetRecentAudits(long userId)
+        {
+            var req = new { UserId = userId, };
+
+            var res = new List<Audit>();
+
+            StringContent content = new StringContent(JsonConvert.SerializeObject(req), Encoding.UTF8, "application/json");
+
+            var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("api:apiUser") + ":" + _configuration.GetValue<string>("api:apiPassword"));
+            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+            var url = _configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:GetRecentAudits");//+ " ?$filter=AssetId eq " + id.ToString();
+
+            using (var response = await _client.PostAsync(url, content))
+            {
+                string apiResponse = await response.Content.ReadAsStringAsync();
+                //    aList = JsonConvert.DeserializeObject<GetActivityResponse>(apiResponse);
+                res = JsonConvert.DeserializeObject<List<Audit>>(JObject.Parse(apiResponse).GetValue("value").ToString());
+
+
+            }
+
+
+            return res;
         }
 
 
@@ -1145,14 +1319,15 @@ namespace kist_api.Services
 
         }
 
-        private string generateJwtToken(MembershipUser user)
+        private string generateJwtToken(MembershipUser user, LoginRequest loginReq)
         {
+            //MembershipUser
             // generate token that is valid for 7 days
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("TokenAuthentication:Secret"));
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new[] { new Claim("id", user._ProviderUserKey) }),
+                Subject = new ClaimsIdentity(new[] { new Claim("id", user._ProviderUserKey), new Claim("userName", loginReq.username) }),
                 Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };

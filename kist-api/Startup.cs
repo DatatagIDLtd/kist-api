@@ -30,6 +30,8 @@ namespace kist_api
        
             services.AddSingleton(Configuration);
             services.AddHttpClient<IKistService, KistService>();
+            services.AddHttpClient<IScanService, ScanService>();
+            services.AddHttpClient<IConsumableService, ConsumableService>();
 
 
             services.AddCors(options =>

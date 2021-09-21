@@ -225,6 +225,17 @@ namespace kist_api.Controllers
             return _kistService.GetAssetIdentity(id);
         }
 
+        [HttpGet("GetImages/{id}")]
+        public Task<List<AssetImages>> GetImages(long id)
+        {
+            var userId = (string)HttpContext.Items["User"];
+
+
+
+            return _kistService.GetAssetImages(id, 20060);
+        }
+
+
         [HttpPost]
         [Route("Identity/Put")]
         public async Task<AssetIdentity> PutIdentity(AssetIdentity note)

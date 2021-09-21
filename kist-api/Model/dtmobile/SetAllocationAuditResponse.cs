@@ -5,12 +5,12 @@ using System.Threading.Tasks;
 
 namespace kist_api.Model.dtmobile
 {
-    public class CreateAssetResult
+    public class SetAllocationAuditResponse
     {
         public long? result { get; set; }
         public long? assetId { get; set; }
-        public long? systemId { get; set; }
-        public long? indentityId { get; set; }
+        public long? allocationAuditId { get; set; }
+        public long? auditId { get; set; }
 
         public string? error { get; set; }
     }

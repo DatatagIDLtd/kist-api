@@ -51,6 +51,7 @@ namespace kist_api.Helper
 
                 var jwtToken = (JwtSecurityToken)validatedToken;
                 var userId = jwtToken.Claims.First(x => x.Type == "id").Value;
+                var userName = jwtToken.Claims.First(x => x.Type == "userName").Value;
 
                 // attach user to context on successful jwt validation
                 //context.Items["User"] = kistService.GetById(userId);
@@ -60,6 +61,7 @@ namespace kist_api.Helper
                 //using (var userDetails = kistService.UsersDetails(userDetailsRequest))
                 //{
                     context.Items["User"] = userId;
+                     context.Items["UserName"] = userName;
 
                 //}
 

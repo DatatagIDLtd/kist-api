@@ -35,7 +35,69 @@ namespace kist_api.Controllers
             _kistService = kistService;
         }
 
+        [Authorize]
+        [HttpGet("RecentAllocations")]
+        public async Task<List<RecentAllocation>> RecentAllocations()
+        {
+            var userId = (string)HttpContext.Items["User"];
 
+            UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
+            userDetailsRequest.id = userId;
+
+            var userDetails = await _kistService.UsersDetails(userDetailsRequest);
+
+
+            return await _kistService.GetRecentAllocations(userDetails.ID);
+        }
+
+        [Authorize]
+        [HttpGet("RecentAudits")]
+        public async Task<List<Audit>> RecentAudits()
+        {
+            var userId = (string)HttpContext.Items["User"];
+
+            UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
+            userDetailsRequest.id = userId;
+
+            var userDetails = await _kistService.UsersDetails(userDetailsRequest);
+
+
+            return await _kistService.GetRecentAudits(userDetails.ID);
+        }
+
+
+        [Authorize]
+        [HttpPost("SetAllocationAudit")]
+        public async Task<SetAllocationAuditResponse> SetAllocationAudit(SetAllocationAuditRequest req)
+        {
+            var userId = (string)HttpContext.Items["User"];
+
+            UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
+            userDetailsRequest.id = userId;
+
+            var userDetails = await _kistService.UsersDetails(userDetailsRequest);
+            req.userid = 20060;
+            req.assetId = 1;
+
+            return await _kistService.SetAllocationAudit(req);
+        }
+
+        [Authorize]
+        [HttpPost("CreateAudit")]               
+        public async Task<CreateAuditResponse> CreateAudit(CreateAuditRequest req)
+        {
+            _logger.LogInformation(@"Creat Audit");
+            var userId = (string)HttpContext.Items["User"];
+
+            UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
+            userDetailsRequest.id = userId;
+
+            var userDetails = await _kistService.UsersDetails(userDetailsRequest);
+            req.userId = userDetails.ID;
+            _logger.LogInformation(@"user Id:" + req.userId.ToString());
+            return await _kistService.CreateAudit(req);
+
+        }
         //[Route("UsersDetails")]
         //[HttpPost]
         [Authorize]

@@ -15,7 +15,7 @@ namespace kist_api.Services
         Task<List<AssetView>> GetAssets();
         Task<Asset> GetAsset(long id);
         Task<CreateAssetResult> CreateAsset(CreateQuickAssetRequest req);
-
+        Task<List<AssetImages>> GetAssetImages(long id, long userId);
         Task<AssetIdentity> GetAssetIdentity(long id);
         Task<AssetIdentity> PutIdentity(AssetIdentity ai);
         Task<AssetSystem> GetAssetSystem(long id);
@@ -23,8 +23,9 @@ namespace kist_api.Services
         Task<List<AssetView>> GetAssetsByUser(UserDetailsRequest userDetailsRequest);
         Task<List<AssetView>> GetAssetsByUser(GetAssetRequest asset);
         Task<List<AssetView>> GetInventoryByUser(GetAssetRequest asset);
-
-        Task<long> CreateAllocation(long Pid, long id,  long siteid ,String status);
+        Task<List<RecentAllocation>> GetRecentAllocations(long userId);
+        Task<List<Audit>> GetRecentAudits(long userId);
+        Task<long> CreateAllocation(long Pid, long id,  long siteid ,String status , long userId);
         Task<long> RemoveAllocation( long id);
         Task<List<SiteView>> GetSitesByUser(GetSiteRequest asset);
         Task<Site> GetSite(long id);
@@ -40,8 +41,13 @@ namespace kist_api.Services
         Task<List<GeoLocationEvent>> GetDTMobile_ScanEvents(GetScanRequest req);
         Task<GeoLocationEvent> PostGeoLocationEvent(GeoLocationEvent req);
 
+
+        Task<SetAllocationAuditResponse> SetAllocationAudit(SetAllocationAuditRequest req);
+        Task<CreateAuditResponse> CreateAudit(CreateAuditRequest req);
+
         Task<List<MyScan>> GetMyScans(String Id);
         Task<Dashboard> Dashboard(UserDetailsRequest userDetailsRequest);
+        Task<Dashboard> GetMobileDashboard(UserDetailsRequest userDetailsRequest);
         Task<LookupData> GetLookUpData(UserDetailsRequest userDetailsRequest);
         Task<List<AssetStatusHistory>> GetAssetStatusHistory(long id);
         Task<GetMapPopupResponse> GetMapPopupInfo(String id);

@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using ImageMagick;
 using kist_api.Model;
 using kist_api.Model.dtcusid;
 using kist_api.Models.Account;
@@ -18,6 +20,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting.Internal;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+
 
 namespace kist_api.Controllers
 {
@@ -45,17 +48,68 @@ namespace kist_api.Controllers
         //{
         //    this.context = context;
         //    this.host = host;
+
         //}
 
         [HttpPost]
-        public async Task<IActionResult> Index([FromForm]KistFile kFile)
+        [Route("mobileUpload2")]
+        public async Task<IActionResult> mobileUpload2(IList<IFormFile> files)
+        {
+            var uploads = _configuration.GetValue<string>("Attachments:Path");
+
+            _logger.LogInformation(@"mobileUpload2 file to path " + uploads);
+
+            foreach (IFormFile source in files)
+            {
+                _logger.LogInformation(@"file");
+
+                string filename = ContentDispositionHeaderValue.Parse(source.ContentDisposition).FileName.Trim('"');
+
+                filename = this.EnsureCorrectFilename(filename);
+
+                using (FileStream output = System.IO.File.Create(uploads + "\\test.png"))
+                    await source.CopyToAsync(output);
+            }
+
+            return this.RedirectToAction("Index");
+        }
+
+        private string EnsureCorrectFilename(string filename)
+        {
+            if (filename.Contains("\\"))
+                filename = filename.Substring(filename.LastIndexOf("\\") + 1);
+
+            return filename;
+        }
+
+    
+
+
+        [HttpPost]
+        [Route("mobileUpload3")]
+        public async Task<IActionResult> mobileUpload([FromForm]IFormFile File)
         //     public async Task<IActionResult> Index([FromForm]IFormFile file)
         {
-            var uploads = _configuration.GetValue<string>("Attachments:Path") ;
+            var uploads = _configuration.GetValue<string>("Attachments:Path");
 
-            _logger.LogInformation(@"uploading file to path " + uploads);
+            _logger.LogInformation(@"mobileUpload file to path " + uploads);
 
-            var newFileName = kFile.system + "_" + kFile.Area + "_" + kFile.Key + "_" + DateTime.Now.ToString("yyyyMMddHHmmssfff") + "_" + kFile.File.FileName;
+      
+     
+
+            var system = "KIST";
+            var area = "Asset";
+            var Key = "40772";
+            var SubKey = "";
+            //var area = "KIST";
+            //var area = "KIST";
+
+            _logger.LogInformation(@"Area:" + area);
+
+            _logger.LogInformation(@"kFile.FileName:" + File.FileName);
+            
+
+            var newFileName = system + "_" + area + "_" + Key + "_" + DateTime.Now.ToString("yyyyMMddHHmmssfff") + "_" + File.FileName;
 
             _logger.LogInformation(@"New File Name will be " + newFileName);
 
@@ -64,6 +118,65 @@ namespace kist_api.Controllers
             userDetailsRequest.id = userId;
 
             var userDetails = await _kistService.UsersDetails(userDetailsRequest);
+
+
+            //foreach (var file in files)
+            //{
+            if (File.Length > 0)
+            {
+                using (var fileStream = new FileStream(Path.Combine(uploads, newFileName), FileMode.Create))
+                {
+                    await File.CopyToAsync(fileStream);
+
+                    Attachment attachment = new Attachment();
+                    attachment.system = system;
+                    attachment.area = area;
+                    attachment.key = Convert.ToInt64(Key);
+                    attachment.subKey = Convert.ToInt64(SubKey);
+
+                    attachment.uploadedFileName = File.FileName;
+                    attachment.storageLocation = newFileName;
+                    attachment.attachmentType = 1;
+                    attachment.notes = "";
+                    attachment.tags = "stockimage";
+
+
+                    attachment.createdBy = userDetails.Forename + " " + userDetails.Surname;
+                    attachment.createdOn = DateTime.Now;
+                    _logger.LogInformation(@"Creating matching DB record");
+                    await _kistService.PutAttachment(attachment);
+
+                    return StatusCode(StatusCodes.Status201Created);
+                }
+            }
+            //}
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+
+        [HttpPost]
+       // [Route("mobileUpload")]
+        public async Task<Attachment> Index([FromForm]KistFile kFile)
+        //     public async Task<IActionResult> Index([FromForm]IFormFile file)
+        {
+            var res = new Attachment();
+            var uploads = _configuration.GetValue<string>("Attachments:Path") ;
+
+            _logger.LogInformation(@"uploading file to path " + uploads);
+
+            _logger.LogInformation(@"Area:" + kFile.Area);
+
+
+            var newFileName = kFile.system + "_" + kFile.Area + "_" + kFile.Key + "_" + DateTime.Now.ToString("yyyyMMddHHmmssfff") + "_" + kFile.File.FileName;
+
+            _logger.LogInformation(@"New File Name will be " + newFileName);
+
+            var userId = (string)HttpContext.Items["User"];
+            var userName = (string)HttpContext.Items["UserName"];
+
+            UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
+            userDetailsRequest.id = userId;
+
+           // var userDetails = await _kistService.UsersDetails(userDetailsRequest);
 
 
             //foreach (var file in files)
@@ -87,17 +200,19 @@ namespace kist_api.Controllers
                     attachment.tags = kFile.Tags;
 
 
-                    attachment.createdBy = userDetails.Forename + " " + userDetails.Surname;
+                    attachment.createdBy = userName;//userDetails.Forename + " " + userDetails.Surname;
                     attachment.createdOn = DateTime.Now;
                     _logger.LogInformation(@"Creating matching DB record");
-                    await _kistService.PutAttachment(attachment);
+                     res = await _kistService.PutAttachment(attachment);
 
-                    return StatusCode(StatusCodes.Status201Created);
+                    return res;
                 }
             }
             //}
-            return StatusCode(StatusCodes.Status500InternalServerError);
+            res.ID = -1;
+            return res;
         }
+
 
         [HttpPost]
         [Route("AddNote")]
@@ -148,6 +263,7 @@ namespace kist_api.Controllers
         {
             string contentType;
 
+            
             var dmsRoutePath = _configuration.GetValue<string>("Attachments:Path");
 
             Attachment attachment = new Attachment();
@@ -160,14 +276,107 @@ namespace kist_api.Controllers
             //   new FileExtensionContentTypeProvider().TryGetContentType( out contentType);
             //return contentType ?? "application/octet-stream";
             var fileloc = dmsRoutePath + returnAttachment.First().storageLocation;
+            var filename = returnAttachment.First().fileName;
             //var fileloc = Path.Combine(dmsRoutePath, returnAttachment.First().storageLocation);
 
             var stream = new FileStream(fileloc, FileMode.Open);
             return new FileStreamResult(stream, mime )
             {
-                FileDownloadName = "template" + id.ToString() + ".xlsx"
+                FileDownloadName = filename
             }; ;
         }
+        [HttpGet]
+        [Route("Thumb/{id}")]
+        public async Task<IActionResult> Thumb(int id)
+        {
+            string contentType;
+
+            var dmsRoutePath = _configuration.GetValue<string>("Attachments:Path");
+
+            Attachment attachment = new Attachment();
+            attachment.ID = id;
+
+            var returnAttachment = await _kistService.GetAttachments(attachment);
+
+            string mime = MimeTypes.GetMimeType(returnAttachment.First().storageLocation);
+
+            //   new FileExtensionContentTypeProvider().TryGetContentType( out contentType);
+            //return contentType ?? "application/octet-stream";
+            var fileloc = dmsRoutePath + returnAttachment.First().storageLocation;
+            var filename = returnAttachment.First().fileName;
+
+
+            using (MagickImage image = new MagickImage(fileloc))
+            {
+                image.Format = image.Format; // Get or Set the format of the image.
+                image.Resize(75, 75); // fit the image into the requested width and height. 
+                image.Quality = 10; // This is the Compression level.
+                image.Write(fileloc + ".thumb");
+            }
+
+
+
+            var stream = new FileStream(fileloc + ".thumb", FileMode.Open);
+            return new FileStreamResult(stream, mime)
+            {
+                FileDownloadName = filename
+            };
+        }
+
+        [HttpGet]
+        [Route("Hand/{id}")]
+        public async Task<IActionResult> Hand(int id)
+        {
+            string contentType;
+
+            var dmsRoutePath = _configuration.GetValue<string>("Attachments:Path");
+
+            Attachment attachment = new Attachment();
+            attachment.ID = id;
+
+            var returnAttachment = await _kistService.GetAttachments(attachment);
+
+            string mime = MimeTypes.GetMimeType(returnAttachment.First().storageLocation);
+
+            //   new FileExtensionContentTypeProvider().TryGetContentType( out contentType);
+            //return contentType ?? "application/octet-stream";
+            var fileloc = dmsRoutePath + returnAttachment.First().storageLocation;
+            var filename = returnAttachment.First().fileName;
+
+
+            using (MagickImage image = new MagickImage(fileloc))
+            {
+                image.Format = image.Format; // Get or Set the format of the image.
+                image.Resize(250, 250); // fit the image into the requested width and height. 
+                image.Quality = 10; // This is the Compression level.
+                image.Write(fileloc + ".hand");
+            }
+
+
+
+            var stream = new FileStream(fileloc + ".hand", FileMode.Open);
+            return new FileStreamResult(stream, mime)
+            {
+                FileDownloadName = filename
+            };
+        }
+
+
+        public Image GetReducedImage(int width, int height, Stream resourceImage)
+        {
+            try
+            {
+                var image = Image.FromStream(resourceImage);
+                var thumb = image.GetThumbnailImage(width, height, () => false, IntPtr.Zero);
+
+                return thumb;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
+
 
 
         //public ActionResult Post([FromForm]IFormFile file)

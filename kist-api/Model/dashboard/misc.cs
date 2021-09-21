@@ -8,5 +8,7 @@ namespace kist_api.Model.dashboard
     public class Misc
     {
         public string loggedInUser { get; set; }
+        public long vehicleAssetId { get; set; }
+
     }
 }

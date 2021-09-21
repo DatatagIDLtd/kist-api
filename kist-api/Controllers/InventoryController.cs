@@ -117,21 +117,21 @@ namespace kist_api.Controllers
 
         
         [HttpPost("Allocate")]
-        public async Task<CreateAllocationResponse> MapPopupInfo(CreateAllocationRequest req)
+        public async Task<CreateAllocationResponse> Allocate(CreateAllocationRequest req)
         {
-            //  var userId = (string)HttpContext.Items["User"];
+              var userId = (string)HttpContext.Items["User"];
 
-            //UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
-            //userDetailsRequest.id = userId;
+            UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
+            userDetailsRequest.id = userId;
 
-            //var userDetails = await _kistService.UsersDetails(userDetailsRequest);
+            var userDetails = await _kistService.UsersDetails(userDetailsRequest);
             // loop through assets to be allocated
 
             var res = new CreateAllocationResponse();
 
             foreach (long id in req.AssetID)
             {
-                await _kistService.CreateAllocation(req.ParentId , id , req.siteId , req.status);
+                await _kistService.CreateAllocation(req.ParentId , id , req.siteId , req.status , userDetails.ID);
             }
 
 

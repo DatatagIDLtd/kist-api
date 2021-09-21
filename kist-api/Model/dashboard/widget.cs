@@ -15,5 +15,7 @@ namespace kist_api.Model.dashboard
 
         public string faIcon { get; set; }
 
+        public int notifications { get; set; }
+        public bool disabled { get; set; }
     }
 }
