@@ -32,7 +32,7 @@ namespace kist_api
             services.AddHttpClient<IKistService, KistService>();
             services.AddHttpClient<IScanService, ScanService>();
             services.AddHttpClient<IConsumableService, ConsumableService>();
-
+            services.AddHttpClient<IAuditService, AuditService>();
 
             services.AddCors(options =>
             {

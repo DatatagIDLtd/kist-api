@@ -27,12 +27,14 @@ namespace kist_api.Controllers
         private readonly ILogger<AccountController> _logger;
         readonly IConfiguration _configuration;
         readonly IKistService _kistService;
+        readonly IAuditService _auditService;
 
-        public AllocationController(ILogger<AccountController> logger, IConfiguration configuration , IKistService kistService)
+        public AllocationController(ILogger<AccountController> logger, IConfiguration configuration , IKistService kistService , IAuditService auditService)
         {
             _logger = logger;
             _configuration = configuration;
             _kistService = kistService;
+            _auditService = auditService;
         }
 
         [Authorize]
@@ -96,6 +98,48 @@ namespace kist_api.Controllers
             req.userId = userDetails.ID;
             _logger.LogInformation(@"user Id:" + req.userId.ToString());
             return await _kistService.CreateAudit(req);
+
+        }
+
+        [Authorize]
+ 
+
+        [HttpGet]
+        [Route("GetAudit/{id}")]
+
+        public async Task<Audit> GetAudit(long id)
+        {
+            _logger.LogInformation(@"Get Audit");
+            var userId = (string)HttpContext.Items["User"];
+
+            UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
+            userDetailsRequest.id = userId;
+            var req = new GetAuditRequest();
+
+            var userDetails = await _kistService.UsersDetails(userDetailsRequest);
+            req.userId = userDetails.ID;
+            req.auditId = id;
+            _logger.LogInformation(@"user Id:" + req.userId.ToString());
+            return await _auditService.GetAudit(req);
+
+        }
+
+
+        [Authorize]
+
+        [HttpGet("GetAuditOptions")]
+        public String GetAuditOptions()
+        {
+
+            // String filePath = HttpContext.Server.MapPath("~/App_Data/allocationTemplates.json");
+
+            var JSON = System.IO.File.ReadAllText("auditOptions.json");
+
+            return JSON;
+
+
+
+
 
         }
         //[Route("UsersDetails")]

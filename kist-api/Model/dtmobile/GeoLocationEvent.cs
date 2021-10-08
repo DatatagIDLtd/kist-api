@@ -31,11 +31,7 @@ namespace kist_api.Model.dtmobile
         public string WTW { get; set; }
         public string UserName { get; set; }
         public string WFStatus { get; set; }
-        public string name { get; set; }
 
-        public string scandate { get; set; }
-
-        public DateTime? ModifiedOn { get; set; }
 
 
     }

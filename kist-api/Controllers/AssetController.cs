@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using ceup_api.Model.dtdead;
 using kist_api.Model;
 using kist_api.Model.dtcusid;
 using kist_api.Model.dtmobile;
@@ -168,6 +169,26 @@ namespace kist_api.Controllers
 
             return await _kistService.GetMapPopupInfo(req.AssetID);
         }
+
+        [Authorize]
+
+        [HttpPost("PostEventData")]
+        public async Task<String> PostEventData(ClientConfig req)
+        {
+            var userName = (string)HttpContext.Items["UserName"];
+
+            req.UserName = userName;
+            req.CreatedBy = userName;
+            //UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
+            //userDetailsRequest.id = userId;
+
+            //var userDetails = await _kistService.UsersDetails(userDetailsRequest);
+
+
+            return await _kistService.PostDTDead(req);
+
+        }
+
 
         [Authorize]
 

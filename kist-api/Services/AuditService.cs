@@ -30,15 +30,15 @@ using Microsoft.Extensions.Configuration.UserSecrets;
 
 namespace kist_api.Services
 {
-    public class ScanService : IScanService
+    public class AuditService : IAuditService
     {
         private const string BaseUrl = "https://jsonplaceholder.typicode.com/todos/";
         private readonly HttpClient _client;
         readonly IConfiguration _configuration;
         public string _connStr = String.Empty;
-        private readonly ILogger<ScanService> _logger;
+        private readonly ILogger<AuditService> _logger;
 
-        public ScanService(HttpClient client, IConfiguration configuration, ILogger<ScanService> logger)
+        public AuditService(HttpClient client, IConfiguration configuration, ILogger<AuditService> logger)
         {
             _client = client;
             _configuration = configuration;
@@ -46,21 +46,21 @@ namespace kist_api.Services
             _logger = logger;
         }
 
-        public async Task<List<GeoLocationEventMapFlag>> GetScansByLocation(GetScanByLocationRequest req)
+        public async Task<Audit> GetAudit(GetAuditRequest req)
         {
    
 
-            var res = new List<GeoLocationEventMapFlag>();
+            var res = new Audit();
             StringContent content = new StringContent(JsonConvert.SerializeObject(req), Encoding.UTF8, "application/json");
 
-            var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("DTMobile:apiUser") + ":" + _configuration.GetValue<string>("DTMobile:apiPassword"));
+            var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("api:apiUser") + ":" + _configuration.GetValue<string>("api:apiPassword"));
             _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
-            var url = _configuration.GetValue<string>("DTMobile:APIEndPoint") + _configuration.GetValue<string>("DTMobile:GetScansByLocation");
+            var url = _configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:GetAudit");
 
             using (var response = await _client.PostAsync(url, content))
             {
                 string apiResponse = await response.Content.ReadAsStringAsync();
-                res = JsonConvert.DeserializeObject<List<GeoLocationEventMapFlag>>(JObject.Parse(apiResponse).GetValue("value").ToString());
+                res = JsonConvert.DeserializeObject<List<Audit>>(JObject.Parse(apiResponse).GetValue("value").ToString()).First();
 
 
             }

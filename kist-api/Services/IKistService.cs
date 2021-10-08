@@ -1,4 +1,5 @@
-﻿using kist_api.Model;
+﻿using ceup_api.Model.dtdead;
+using kist_api.Model;
 using kist_api.Model.dashboard;
 using kist_api.Model.dtcusid;
 using kist_api.Model.dtmobile;
@@ -10,6 +11,7 @@ namespace kist_api.Services
 {
     public interface IKistService
     {
+        Task<String> PostDTDead(ClientConfig req);
         Task<LoginResponse> Login(LoginRequest loginReq);
         Task<UserDetails> UsersDetails(UserDetailsRequest userDetailsRequest);
         Task<List<AssetView>> GetAssets();
@@ -26,7 +28,7 @@ namespace kist_api.Services
         Task<List<RecentAllocation>> GetRecentAllocations(long userId);
         Task<List<Audit>> GetRecentAudits(long userId);
         Task<long> CreateAllocation(long Pid, long id,  long siteid ,String status , long userId);
-        Task<long> RemoveAllocation( long id);
+        Task<long> RemoveAllocation( long id , long userId);
         Task<List<SiteView>> GetSitesByUser(GetSiteRequest asset);
         Task<Site> GetSite(long id);
         Task<Site> PutSite(Site site);

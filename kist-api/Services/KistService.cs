@@ -27,6 +27,8 @@ using kist_api.Model.dtcode;
 using kist_api.Model.dtmobile;
 using Newtonsoft.Json.Linq;
 using Microsoft.Extensions.Configuration.UserSecrets;
+using ceup_api.Model.dtdead;
+using ceup_api.Model;
 
 namespace kist_api.Services
 {
@@ -267,9 +269,9 @@ namespace kist_api.Services
             // proc should only return one row , but comes back as a list regardless from API
             return 1;
         }
-        public async Task<long> RemoveAllocation(long id)
+        public async Task<long> RemoveAllocation(long id , long userid)
         {
-            var req = new { AllocationId = id ,  AssetId = 1,  operatorId = 1, userId = 20060 ,status="History"};
+            var req = new { AllocationId = id ,  AssetId = 1,  operatorId = 1, userId = userid, status="History"};
 
             GetMapPopupResponse res = new GetMapPopupResponse();
 
@@ -573,8 +575,12 @@ namespace kist_api.Services
         public async Task<CreateAssetResult> CreateAsset(CreateQuickAssetRequest req)
         {
             CreateAssetResult dashboardResponse = new CreateAssetResult();
+         //   var jsonSettings = new JsonSerializerSettings();
+         //   jsonSettings.DateFormatString = _configuration.GetValue<string>("api:dateFormat"); //"dd/MM/yyy hh:mm:ss";
+        
+           // string json = JsonConvert.SerializeObject(someObject, jsonSettings);
 
-          
+
             StringContent content = new StringContent(JsonConvert.SerializeObject(req), Encoding.UTF8, "application/json");
 
             var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("api:apiUser") + ":" + _configuration.GetValue<string>("api:apiPassword"));
@@ -1319,6 +1325,109 @@ namespace kist_api.Services
 
         }
 
+        public async Task<String> Test2()
+        {
+
+            try
+            {
+
+                var _ClientConfig = new ClientConfig
+            {
+             //   Endpoint = _Endpoint,
+                ContentType = "application/json",
+             //   APIUserName = _APIUserName,
+              //  APIPassword = _APIPassword,
+              //  APIToken = _APIToken,
+              //  EmailRecipient = _EmailRecipient,
+              //  EmailRegex = _EmailRegex
+            };
+
+            //var _APIEndpoint = _configuration.GetValue<string>("email:APIEndPoint"); // ConfigurationManager.AppSettings["APIEndPoint"];
+
+        //    _ClientConfig.EmailRecipient = emailRecipient;
+            _ClientConfig.HttpMethod = "POST";
+            _ClientConfig.Destination = "DTDEAD";
+            _ClientConfig.DatabaseName = "DTKIST";
+            _ClientConfig.EventSourceID = 25;
+            _ClientConfig.EventTypeID = 401;
+            _ClientConfig.EventAdviceID = 45;
+            //_ClientConfig.FieldData = "DTXXXX";
+            _ClientConfig.KeyName = "keyName";
+            _ClientConfig.KeyValue = "subject";
+            _ClientConfig.MembershipType = "";
+            _ClientConfig.Mute = true;
+            _ClientConfig.OperatorID = "";
+            _ClientConfig.RecordID = "";
+            _ClientConfig.SnoozeUntil = "";
+            _ClientConfig.TableField = "";
+            _ClientConfig.TableName = "";
+            _ClientConfig.UserName = "";
+            _ClientConfig.CreatedBy = "DTKistUser";
+            _ClientConfig.ObjectName = "EventData";
+            _ClientConfig.Report = "body";
+
+            var response = await PostDTDead(_ClientConfig);
+
+            }
+            catch (Exception ex)
+            {
+                var error = ex.Message;
+                string innerException = ex.InnerException == null ? string.Empty : ex.InnerException.ToString();
+                if (!string.IsNullOrWhiteSpace(innerException)) error += ": " + ex.InnerException;
+                // _ExceptionClient.SendEmail(_ClientEmailConfig, "An API Error has occurred: " + error);
+            }
+
+            return "";
+        }
+
+        public async Task<String> PostDTDead(ClientConfig req)
+        {
+
+            req.ContentType = "application/json";
+
+            req.EmailRecipient = _configuration.GetValue<string>("email:EmailRecipient"); ;
+
+            req.HttpMethod = "POST";
+            req.Destination = _configuration.GetValue<string>("dtdead:Destination");
+            req.DatabaseName = _configuration.GetValue<string>("dtdead:DatabaseName");
+            req.EventSourceID = _configuration.GetValue<int>("dtdead:EventSourceID"); //25
+            req.EventTypeID = _configuration.GetValue<int>("dtdead:EventTypeID"); //401;
+            req.EventAdviceID = _configuration.GetValue<int>("dtdead:EventAdviceID"); //45;
+            //_ClientConfig.FieldData = "DTXXXX";
+            req.KeyName = _configuration.GetValue<string>("dtdead:KeyName");  //"keyName";
+            //req.KeyValue = _configuration.GetValue<string>("dtdead:KeyValue");  //"subject";
+            req.MembershipType = "";
+            req.Mute = false;
+            req.OperatorID = "";
+            req.RecordID = "IDNumber";
+            req.SnoozeUntil = "";
+            req.TableField = "";
+            req.TableName = "";
+            //req.UserName = "";
+            req.CreatedBy = _configuration.GetValue<string>("dtdead:CreatedBy");  // "DTKistUser";
+            req.ObjectName = _configuration.GetValue<string>("dtdead:ObjectName");  //"EventData";
+            req.Report = "QR Scan from KIST Mobile using ID:"+req.KeyValue + " was not located";  //"body";
+
+
+            var res = new List<APIReturn>();
+            StringContent content = new StringContent(JsonConvert.SerializeObject(req), Encoding.UTF8, "application/json");
+            var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("dtdead:APIUserName") + ":" + _configuration.GetValue<string>("dtdead:APIPassword"));
+            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+
+            using (var response = await _client.PostAsync(_configuration.GetValue<string>("dtdead:Endpoint").Replace("[TokenContext]", _configuration.GetValue<string>("dtdead:APIToken")), content))
+            {
+                string apiResponse = await response.Content.ReadAsStringAsync();
+                res = JsonConvert.DeserializeObject<List<APIReturn>>(JObject.Parse(apiResponse).GetValue("value").ToString());
+
+                // log into DTDEAD / sends emails
+
+            }
+
+            //return res.First();
+            return "success";
+
+        }
+
         private string generateJwtToken(MembershipUser user, LoginRequest loginReq)
         {
             //MembershipUser
@@ -1328,7 +1437,7 @@ namespace kist_api.Services
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new[] { new Claim("id", user._ProviderUserKey), new Claim("userName", loginReq.username) }),
-                Expires = DateTime.UtcNow.AddDays(7),
+                Expires = DateTime.UtcNow.AddDays(99),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);

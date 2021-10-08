@@ -1,9 +1,9 @@
 [
   {
     "id": 1,
-    "name": "Collecting Asset from Yard",
+    "name": "Collecting Asset",
     "description": "Gang Leader goes to yard to collect a new asset, to be allocated to his gang",
-    "button": "Scan QR Code",
+    "button": "Scan Asset QR Code",
     "steps": [
       {
         "step": 1,
@@ -21,15 +21,15 @@
         "name": null,
         "label": "Confirm Asset Details",
         "AssetsFromStep": 1,
-        "button": "Scan Van QR Code"
+        "button": "Scan Van/Location QR Code"
       },
       {
         "step": 3,
         "type": "Scan",
         "name": null,
-        "label": "Scan Gang Code",
+        "label": "Scan Van/Location Code",
         "placeholder": "Enter Id Number To Search...",
-        "assetTypes": "Vehicle",
+        "assetTypes": "Vehicle,Location,Container",
         "maxItems": 0,
         "multiple": false
       },
@@ -97,7 +97,7 @@
     ]
   },
   {
-    "id": 1,
+    "id": 3,
     "name": "Replacement Asset",
     "description": "Asset needs to be replaced in Gang , Reason Needed",
     "button": "Select",
@@ -180,6 +180,7 @@
     "id": 4,
     "name": "Transfer asset from Gang to Gang",
     "description": "Asset is transferred from one gang to another Gang",
+    "button": "Select",
     "steps": [
       {
         "step": 1,
@@ -278,6 +279,7 @@
     "id": 6,
     "name": "Bulk Transfer of Assets",
     "description": "Transfer Multiple Assets from Container to Container",
+    "button": "Select",
     "steps": [
       {
         "step": 1,
@@ -403,9 +405,55 @@
         "step": 3,
         "type": "Scan",
         "name": null,
+        "label": "Scan Van Code",
+        "placeholder": "Enter Id Number To Search...",
+        "assetTypes": "Vehicle,Location,Container",
+        "maxItems": 0,
+        "multiple": false
+      },
+      {
+        "step": 4,
+        "type": "Action",
+        "name": null,
+        "label": "Ready to Allocate",
+        "button": "Allocate",
+        "fromStep": 1,
+        "toStep": 3
+      }
+    ]
+  },
+  {
+    "id": 9,
+    "name": "Damaged Asset Label Allocate To Van/Store",
+    "description": "Abitlity to enter manullly the DT or Fleet Nbr Code",
+    "button": "Enter Asset Id",
+    "steps": [
+      {
+        "step": 1,
+        "type": "Manual",
+        "name": null,
+        "label": "Enter Asset Id",
+        "placeholder": "Enter Asset ID",
+        "assetTypes": "Equipment",
+        "maxItems": 0,
+        "multiple": false,
+        "button": "Find Asset"
+      },
+      {
+        "step": 2,
+        "type": "AssetDetails",
+        "name": null,
+        "label": "Confirm Asset Details",
+        "AssetsFromStep": 1,
+        "button": "Scan Van/Location QR Code"
+      },
+      {
+        "step": 3,
+        "type": "Scan",
+        "name": null,
         "label": "Scan Gang Code",
         "placeholder": "Enter Id Number To Search...",
-        "assetTypes": "Vehicle",
+        "assetTypes": "Vehicle,Location,Container",
         "maxItems": 0,
         "multiple": false
       },

@@ -1,0 +1,95 @@
+{
+  "slideStart": [
+    {
+      "label": "Report <br> Missing",
+      "action": "status",
+      "value": "8",
+      "color": "medium"
+    },
+    {
+      "label": "Report <br> Stolen",
+      "action": "status",
+      "value": "7",
+      "color": "danger"
+    }
+
+  ],
+  "slideEnd": [
+    {
+      "label": "Report <br> QR Label <br> Damaged",
+      "action": "status",
+      "value": "3",
+      "color": "warning"
+    },
+    {
+      "label": "Upload <br> Photo",
+      "action": "upload",
+      "value": "tertiary",
+      "color": "danger"
+    }
+
+  ],
+  "status": [
+    {
+      "name": "Asset Okay",
+      "value": "0",
+      "select": true,
+      "color": "success"
+    },
+    {
+      "name": "Pending",
+      "value": "1",
+      "select": false,
+      "color": "light"
+    },
+    {
+      "name": "Faulty",
+      "value": "2",
+      "select": true,
+      "color": "danger"
+    },
+
+    {
+      "name": "Damaged",
+      "value": "3",
+      "select": false,
+      "color": "warning"
+    },
+    {
+      "name": "Unusable",
+      "value": "4",
+      "select": true,
+      "color": "danger"
+
+    },
+    {
+      "name": "Unsafe",
+      "value": "5",
+      "select": true,
+      "color": "danger"
+
+    },
+    {
+      "name": "Rrequires Servicing",
+      "value": "6",
+      "select": true,
+      "color": "warning"
+
+    },
+    {
+      "name": "Stolen",
+      "value": "7",
+      "select": false,
+      "color": "danger"
+
+    },
+    {
+      "name": "Missing",
+      "value": "8",
+      "select": false,
+      "color": "medium"
+
+    }
+  ]
+
+}

@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using kist_api.Model;
+using kist_api.Model.allocation;
 using kist_api.Model.dtcusid;
 using kist_api.Model.dtmobile;
 using kist_api.Models.Account;
@@ -154,13 +155,18 @@ namespace kist_api.Controllers
 
 
         [HttpGet("Remove/{id}")]
-        public Task<long> Remove(long id)
+        public async  Task<long> Remove(long id)
         {
             var userId = (string)HttpContext.Items["User"];
+            UserDetailsRequest userDetailsRequest2 = new UserDetailsRequest();
+            userDetailsRequest2.id = userId;
+
+            var userDetails = await _kistService.UsersDetails(userDetailsRequest2);
 
 
+            
 
-            return _kistService.RemoveAllocation(id);
+            return await _kistService.RemoveAllocation(id, userDetails.ID);
         }
 
 
@@ -228,5 +234,7 @@ namespace kist_api.Controllers
 
             return aList;
         }
+
+     
     }
 }

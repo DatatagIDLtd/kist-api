@@ -165,7 +165,7 @@ namespace kist_api.Controllers
         }
 
         [HttpPost("ByLocation")]
-        public async Task<List<GeoLocationEvent>> ByLocation(GetScanByLocationRequest req)
+        public async Task<List<GeoLocationEventMapFlag>> ByLocation(GetScanByLocationRequest req)
         {
             var userId = (string)HttpContext.Items["User"];
 

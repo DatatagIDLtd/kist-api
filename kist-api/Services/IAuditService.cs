@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace kist_api.Services
 {
-    public interface IScanService
+    public interface IAuditService
     {
     
       //  Task<List<GeoLocationEvent>> GetDTMobile_ScanEvents(string lookupCode);
@@ -16,7 +16,7 @@ namespace kist_api.Services
        // Task<GeoLocationEvent> PostGeoLocationEvent(GeoLocationEvent req);
 
 
-        Task<List<GeoLocationEventMapFlag>> GetScansByLocation(GetScanByLocationRequest req);
+        Task<Audit> GetAudit(GetAuditRequest req);
 
 
 

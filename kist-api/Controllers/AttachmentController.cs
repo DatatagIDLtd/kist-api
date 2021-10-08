@@ -347,7 +347,7 @@ namespace kist_api.Controllers
             using (MagickImage image = new MagickImage(fileloc))
             {
                 image.Format = image.Format; // Get or Set the format of the image.
-                image.Resize(250, 250); // fit the image into the requested width and height. 
+                image.Resize(500, 500); // fit the image into the requested width and height. 
                 image.Quality = 10; // This is the Compression level.
                 image.Write(fileloc + ".hand");
             }

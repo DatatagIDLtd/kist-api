@@ -9,6 +9,7 @@ namespace kist_api.Model.dashboard
     {
         public string loggedInUser { get; set; }
         public long vehicleAssetId { get; set; }
-
+        public string operatorRef { get; set; }
+        public long operatorId { get; set; }
     }
 }
