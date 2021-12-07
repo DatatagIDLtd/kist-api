@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -13,6 +15,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using PdfSharp.Drawing;
+using PdfSharp.Pdf;
+using PdfSharp.Pdf.IO;
+using QRCoder;
 
 namespace kist_api.Controllers
 {
@@ -229,6 +235,67 @@ namespace kist_api.Controllers
             var aList = await _kistService.GetAssetStatusHistory(id);
 
             return aList;
+        }
+        //[Authorize]
+        [HttpGet("GetQrSheet/{id}")]
+        public async Task<IActionResult> GetQrSheet(long id)
+        {
+            var iSite= await _kistService.GetSite(id);
+          
+            var uploads = _configuration.GetValue<string>("Attachments:Path");
+
+
+            var label = iSite.name;
+
+            PdfDocument pdfDocument = PdfReader.Open(uploads + @"KISTData\genericQRCodeSheet.pdf", PdfDocumentOpenMode.Modify);
+
+            //var stream = new FileStream(, FileMode.Open);
+            var codePages = CodePagesEncodingProvider.Instance;
+            Encoding.RegisterProvider(codePages);
+
+
+            // Create an empty page
+            PdfPage page = pdfDocument.Pages[0];
+
+            QRCodeGenerator qrGenerator = new QRCodeGenerator();
+            QRCodeData qrCodeData = qrGenerator.CreateQrCode(iSite.qrCode, QRCodeGenerator.ECCLevel.Q);
+            QRCode qrCode = new QRCode(qrCodeData);
+            Bitmap qrCodeImage = qrCode.GetGraphic(_configuration.GetValue<int>("qrCode:pixelsPerModule"));
+
+
+
+            // Get an XGraphics object for drawing
+            XGraphics gfx = XGraphics.FromPdfPage(page);
+
+            // Create a font
+            XFont font = new XFont(_configuration.GetValue<string>("qrCode:fontStyle"), _configuration.GetValue<int>("qrCode:fontSize"), XFontStyle.Bold);
+
+
+            // add qr CODE
+
+            var ximg = XImage.FromGdiPlusImage(qrCodeImage);
+
+            gfx.DrawImage(ximg, _configuration.GetValue<int>("qrCode:x"), _configuration.GetValue<int>("qrCode:y"));
+
+            // Draw the text
+            gfx.DrawString(label, font, XBrushes.Black,
+                           new XRect(0, _configuration.GetValue<int>("qrCode:textX"), page.Width, page.Height),
+                           XStringFormats.TopCenter);
+
+
+
+
+
+        
+
+            MemoryStream stream = new MemoryStream();
+
+            pdfDocument.Save(stream, false);
+            return new FileStreamResult(stream, "application/pdf");
+            //  var stream = new FileStream(@"C:\temp\uploads\KISTData\temp.pdf", FileMode.Open);
+
+
+
         }
     }
 }
