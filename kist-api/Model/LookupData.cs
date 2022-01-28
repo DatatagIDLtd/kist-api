@@ -20,7 +20,12 @@ namespace kist_api.Model
         public List<Lookup> operatorUsers { get; set; }
 
         public List<UserRoleFunction> userRoleFunctions { get; set; }
-        
+
+        public List<IdentificationType> identificationTypes { get; set; }
+
+        public List<LifeType> lifeTypes { get; set; }
+
+        public List<Contract> contracts { get; set; }
 
 
         public LookupData ()
@@ -35,6 +40,9 @@ namespace kist_api.Model
             siteStatus = new List<Lookup>();
             operatorUsers = new List<Lookup>();
             userRoleFunctions = new List<UserRoleFunction>();
+            identificationTypes = new List<IdentificationType>();
+            lifeTypes = new List<LifeType>();
+            contracts = new List<Contract>();
         }
 
     }

@@ -29,7 +29,10 @@ namespace kist_api.Model
 		public long parentAssetId { get; set; }
 		public string dtIdnumber { get; set; }
 		public string dtMembershipNumber { get; set; }
+		public string lifeType { get; set; }
+		public string identificationType { get; set; }
 
+		public string ContractRef { get; set; }
 
 		public CreateQuickAssetRequest()
 		{
@@ -50,6 +53,10 @@ namespace kist_api.Model
 			parentAssetId = 0;
 			dtIdnumber = "";
 			dtMembershipNumber = "";
+			identificationType = "";
+			
+			lifeType = "";
+			ContractRef = "";
 		}
 
 

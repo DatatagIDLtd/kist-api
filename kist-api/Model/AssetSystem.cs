@@ -15,6 +15,7 @@ namespace kist_api.Model
 		}
 		public long? id { get; set; }
 		public long? assetId { get; set; }
+		public long? identificationTypeId { get; set; }
 		public long? operatorId { get; set; }
 		public string? idNumber { get; set; }
 		public string? membershipNumber { get; set; }

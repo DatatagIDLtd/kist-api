@@ -70,7 +70,7 @@
 
     },
     {
-      "name": "Rrequires Servicing",
+      "name": "Requires Servicing",
       "value": "6",
       "select": true,
       "color": "warning"
