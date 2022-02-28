@@ -17,7 +17,7 @@ namespace kist_api.Model
         public long attachmentType { get; set; }
         public string MimeType { get; set; }
         public string FileExtenstion { get; set; }
-        public string Notes { get; set; }
+        public string Note { get; set; }
 
         public string Tags { get; set; }
 

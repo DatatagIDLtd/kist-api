@@ -30,7 +30,16 @@ namespace kist_api.Helper
             if (token != null)
                 attachUserToContext(context, kistService, token);
 
-            await _next(context);
+            try
+            {
+                await _next(context);
+
+            }
+            catch (Exception ex)
+            {
+
+
+            }
         }
 
         private void attachUserToContext(HttpContext context, IKistService kistService, string token)

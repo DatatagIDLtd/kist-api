@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace kist_api.Services
 {
-    public interface IConsumableService
+    public interface IVehicleCheckService
     {
     
       //  Task<List<GeoLocationEvent>> GetDTMobile_ScanEvents(string lookupCode);
@@ -16,10 +16,10 @@ namespace kist_api.Services
        // Task<GeoLocationEvent> PostGeoLocationEvent(GeoLocationEvent req);
 
 
-        Task<List<Consumable>> GetAssetConsumables(long id);
+        Task<List<VehicleCheck>> GetAssetVehicleChecks(long id);
 
-        Task<Consumable> SetAssetConsumable(SetAssetConsumableRequest req);
-        Task<Consumable> CreateConsumableAudit(CreateConsumableAuditRequest req);
+        Task<VehicleCheck> SetAssetVehicleChecks(SetAssetVehicleCheckRequest req);
+        Task<VehicleCheck> CreateVehicleCheckAudit(CreateVehicleCheckAuditRequest req);
 
 
     }

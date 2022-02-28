@@ -30,15 +30,15 @@ using Microsoft.Extensions.Configuration.UserSecrets;
 
 namespace kist_api.Services
 {
-    public class ConsumableService : IConsumableService
+    public class VehicleCheckService : IVehicleCheckService
     {
         private const string BaseUrl = "https://jsonplaceholder.typicode.com/todos/";
         private readonly HttpClient _client;
         readonly IConfiguration _configuration;
         public string _connStr = String.Empty;
-        private readonly ILogger<ConsumableService> _logger;
+        private readonly ILogger<VehicleCheckService> _logger;
 
-        public ConsumableService(HttpClient client, IConfiguration configuration, ILogger<ConsumableService> logger)
+        public VehicleCheckService(HttpClient client, IConfiguration configuration, ILogger<VehicleCheckService> logger)
         {
             _client = client;
             _configuration = configuration;
@@ -47,20 +47,20 @@ namespace kist_api.Services
         }
 
         //
-        public async Task<Consumable> CreateConsumableAudit(CreateConsumableAuditRequest req)
+        public async Task<VehicleCheck> CreateVehicleCheckAudit(CreateVehicleCheckAuditRequest req)
         {
         
-              var res = new Consumable();
+              var res = new VehicleCheck();
             StringContent content = new StringContent(JsonConvert.SerializeObject(req), Encoding.UTF8, "application/json");
 
             var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("api:apiUser") + ":" + _configuration.GetValue<string>("api:apiPassword"));
             _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
-            var url = _configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:CreateConsumableAudit" );
+            var url = _configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:CreateVehicleCheckAudit" );
 
             using (var response = await _client.PostAsync(url, content))
             {
                 string apiResponse = await response.Content.ReadAsStringAsync();
-                res = JsonConvert.DeserializeObject<List<Consumable>>(JObject.Parse(apiResponse).GetValue("value").ToString()).First();
+                res = JsonConvert.DeserializeObject<List<VehicleCheck>>(JObject.Parse(apiResponse).GetValue("value").ToString()).First();
 
 
             }
@@ -70,22 +70,22 @@ namespace kist_api.Services
 
         }
 
-        public async Task<List<Consumable>> GetAssetConsumables(long id)
+        public async Task<List<VehicleCheck>> GetAssetVehicleChecks(long id)
         {
 
             var req = new { assetId = id, userId = 0};
 
-            var res = new List<Consumable>();
+            var res = new List<VehicleCheck>();
             StringContent content = new StringContent(JsonConvert.SerializeObject(req), Encoding.UTF8, "application/json");
 
             var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("api:apiUser") + ":" + _configuration.GetValue<string>("api:apiPassword"));
             _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
-            var url = _configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:GetAssetConsumables");
+            var url = _configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:GetAssetVehicleChecks");
 
             using (var response = await _client.PostAsync(url, content))
             {
                 string apiResponse = await response.Content.ReadAsStringAsync();
-                res = JsonConvert.DeserializeObject<List<Consumable>>(JObject.Parse(apiResponse).GetValue("value").ToString());
+                res = JsonConvert.DeserializeObject<List<VehicleCheck>>(JObject.Parse(apiResponse).GetValue("value").ToString());
 
 
             }
@@ -94,25 +94,25 @@ namespace kist_api.Services
             return res;
         }
 
-        public async Task<Consumable> SetAssetConsumable(SetAssetConsumableRequest req)
+        public async Task<VehicleCheck> SetAssetVehicleChecks(SetAssetVehicleCheckRequest req)
         {
-            if (req.consumableId == null) { req.consumableId = 0; };
-            if (req.assetConsumableId == null) { req.assetConsumableId = 0; };
+            //if (req.VehicleCheckId == null) { req.VehicleCheckId = 0; };
+            //if (req.assetVehicleCheckId == null) { req.assetVehicleCheckId = 0; };
             if (req.assetId == null) { req.assetId = 0; };
         
 
 
-            var res = new Consumable();
+            var res = new VehicleCheck();
             StringContent content = new StringContent(JsonConvert.SerializeObject(req), Encoding.UTF8, "application/json");
 
             var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("api:apiUser") + ":" + _configuration.GetValue<string>("api:apiPassword"));
             _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
-            var url = _configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:SetAssetConsumable");
+            var url = _configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:SetAssetVehicleCheck");
 
             using (var response = await _client.PostAsync(url, content))
             {
                 string apiResponse = await response.Content.ReadAsStringAsync();
-                res = JsonConvert.DeserializeObject<List<Consumable>>(JObject.Parse(apiResponse).GetValue("value").ToString()).First();
+                res = JsonConvert.DeserializeObject<List<VehicleCheck>>(JObject.Parse(apiResponse).GetValue("value").ToString()).First();
 
 
             }

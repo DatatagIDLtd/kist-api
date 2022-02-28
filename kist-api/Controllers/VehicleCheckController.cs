@@ -18,30 +18,30 @@ namespace kist_api.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class ConsumableController : ControllerBase
+    public class VehicleCheckController : ControllerBase
     {
 
         private readonly ILogger<AccountController> _logger;
         readonly IConfiguration _configuration;
         readonly IKistService _kistService;
-        readonly IConsumableService _consumableService;
+        readonly IVehicleCheckService _VehicleCheckService;
 
-        public ConsumableController(ILogger<AccountController> logger, IConfiguration configuration , IKistService kistService, IConsumableService consumableService)
+        public VehicleCheckController(ILogger<AccountController> logger, IConfiguration configuration, IKistService kistService, IVehicleCheckService VehicleCheckService)
         {
             _logger = logger;
             _configuration = configuration;
             _kistService = kistService;
-            _consumableService = consumableService;
+            _VehicleCheckService = VehicleCheckService;
 
         }
 
 
-        
-         [Authorize]
 
-        [Route("GetAssetConsumables/{id}")]
+        [Authorize]
+
+        [Route("GetAssetVehicleChecks/{id}")]
         // [HttpGet("{search}")]
-        public async Task<List<Consumable>> GetAssetConsumables(long id)
+        public async Task<List<VehicleCheck>> GetAssetVehicleChecks(long id)
         {
             // should be via company id or user id 
             var userId = (string)HttpContext.Items["User"];
@@ -50,35 +50,35 @@ namespace kist_api.Controllers
             userDetailsRequest.id = userId;
 
 
-            return await _consumableService.GetAssetConsumables(id);
-
-            }
-
-        //   public async Task<Consumable> SetAssetConsumable(SetAssetConsumableRequest req)
-
-        [Route("SetAssetConsumable")]
-        [HttpPost]
-        public async Task<Consumable> SetAssetConsumable(SetAssetConsumableRequest req)
-        {
-            // should be via company id or user id 
-            var userId = (string)HttpContext.Items["User"];
-
-            UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
-            userDetailsRequest.id = userId;
-
-            var userDetails = await _kistService.UsersDetails(userDetailsRequest);
-
-            req.userid = userDetails.ID;
-
-            userDetailsRequest.id = userDetails.ID.ToString();
-
-            return await _consumableService.SetAssetConsumable(req);
+            return await _VehicleCheckService.GetAssetVehicleChecks(id);
 
         }
 
-        [Route("CreateConsumableAudit")]
+        //   public async Task<VehicleCheck> SetAssetVehicleCheck(SetAssetVehicleCheckRequest req)
+
+        [Route("SetAssetVehicleCheck")]
         [HttpPost]
-        public async Task<Consumable> CreateConsumableAudit(CreateConsumableAuditRequest req)
+        public async Task<VehicleCheck> SetAssetVehicleCheck([FromBody] SetAssetVehicleCheckRequest req)
+        {
+            // should be via company id or user id 
+            var userId = (string)HttpContext.Items["User"];
+
+            UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
+            userDetailsRequest.id = userId;
+
+            var userDetails = await _kistService.UsersDetails(userDetailsRequest);
+
+            req.userId = userDetails.ID;
+
+            userDetailsRequest.id = userDetails.ID.ToString();
+
+            return await _VehicleCheckService.SetAssetVehicleChecks(req);
+
+        }
+
+        [Route("CreateVehicleCheckAudit")]
+        [HttpPost]
+        public async Task<VehicleCheck> CreateVehicleCheckAudit(CreateVehicleCheckAuditRequest req)
         {
             // should be via company id or user id 
             var userId = (string)HttpContext.Items["User"];
@@ -92,7 +92,7 @@ namespace kist_api.Controllers
 
             userDetailsRequest.id = userDetails.ID.ToString();
 
-            return await _consumableService.CreateConsumableAudit(req);
+            return await _VehicleCheckService.CreateVehicleCheckAudit(req);
 
         }
 

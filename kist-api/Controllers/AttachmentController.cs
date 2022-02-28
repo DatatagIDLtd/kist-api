@@ -196,7 +196,7 @@ namespace kist_api.Controllers
                     attachment.uploadedFileName = kFile.File.FileName;
                     attachment.storageLocation = newFileName;
                     attachment.attachmentType = kFile.attachmentType;
-                    attachment.notes = kFile.Notes;
+                    attachment.notes = kFile.Note;
                     attachment.tags = kFile.Tags;
 
 
@@ -216,18 +216,22 @@ namespace kist_api.Controllers
 
         [HttpPost]
         [Route("AddNote")]
-        public async Task<Attachment> AddNote(Attachment attachment)
+        public async Task<Attachment> AddNote([FromBody]AttachmentUpdateNoteModel request)
         //     public async Task<IActionResult> Index([FromForm]IFormFile file)
         {
             var userId = (string)HttpContext.Items["User"];
             UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
             userDetailsRequest.id = userId;
-
+            Attachment attachment = new Attachment { 
+            
+            };
             var userDetails = await _kistService.UsersDetails(userDetailsRequest);
 
 
             attachment.createdBy = userDetails.Forename + " " + userDetails.Surname;
-                    attachment.createdOn = DateTime.Now;
+            attachment.createdOn = DateTime.Now;
+            attachment.notes = request.Note;
+            attachment.ID = request.Id;
                     return await _kistService.PutAttachment(attachment);
 
     

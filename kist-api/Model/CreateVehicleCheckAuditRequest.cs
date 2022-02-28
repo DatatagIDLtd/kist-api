@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace kist_api.Model
 {
-    public class CreateConsumableAuditRequest
+    public class CreateVehicleCheckAuditRequest
 	{
-		//		{ "assetConsumableId": "assetConsumableId_1", "assetId": "assetId_2", "consumableId": "consumableId_3", "note": "note_4", "statusId": "statusId_5", "userid": "userid_6"}
+		//		{ "assetVehicleCheckId": "assetVehicleCheckId_1", "assetId": "assetId_2", "VehicleCheckId": "VehicleCheckId_3", "note": "note_4", "statusId": "statusId_5", "userid": "userid_6"}
 
 
 	

@@ -88,7 +88,6 @@ namespace kist_api.Controllers
         }
 
         [Authorize]
-
         [Route("GetMobileDashboard")]
         [HttpGet]
         public async Task<Dashboard> GetMobileDashboard()

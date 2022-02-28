@@ -31,9 +31,10 @@ namespace kist_api
             services.AddSingleton(Configuration);
             services.AddHttpClient<IKistService, KistService>();
             services.AddHttpClient<IScanService, ScanService>();
-            services.AddHttpClient<IConsumableService, ConsumableService>();
+            services.AddHttpClient<IVehicleCheckService, VehicleCheckService>();
             services.AddHttpClient<IAuditService, AuditService>();
             services.AddHttpClient<IContractService, ContractService>();
+            services.AddControllers().AddNewtonsoftJson();
 
             services.AddCors(options =>
             {
