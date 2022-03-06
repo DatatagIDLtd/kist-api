@@ -15,7 +15,7 @@ namespace kist_api.Model
 		public string? name { get; set; }
 		public long? assetTypeID { get; set; }
 		//public string? assetType { get; set; }
-		//public string? searchQuery { get; set
+		//public string? searchQuery { get; set }
 		public long? contractId { get; set; }
 		public long? lifeTypeId { get; set; }
 

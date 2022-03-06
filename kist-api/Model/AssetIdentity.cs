@@ -15,8 +15,10 @@ namespace kist_api.Model
 		public string? VRN { get; set; }
 		public string? engineNumber { get; set; }
 		public string? UniqueReference { get; set; }
+        public string? hireCompanyID { get; set; }
+		public string? hireReferenceNumber { get; set; }
 
-		public string? vin_Chassis { get; set; }
+        public string? vin_Chassis { get; set; }
 		//public string? qrCodeUrl { get; set; }
 
 		public bool isActive { get; set; }
