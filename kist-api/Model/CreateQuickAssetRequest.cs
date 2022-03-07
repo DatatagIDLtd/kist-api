@@ -11,7 +11,7 @@ namespace kist_api.Model
 
 	public class CreateQuickAssetRequest
 	{
-
+		public string modifiedBy { get; set; }
 		public string operatorRef { get; set; }
 		public string name { get; set; }
 		public string oemRef { get; set; }
@@ -26,16 +26,19 @@ namespace kist_api.Model
 		public string engineNumber { get; set; }
 		public string vin_Chassis { get; set; }
 		public string uniqueReference { get; set; }
+		public string dthireCompanyID { get; set; }
+		public string dthireReferenceNumber { get; set; }
 		public long parentAssetId { get; set; }
 		public string dtIdnumber { get; set; }
 		public string dtMembershipNumber { get; set; }
 		public string lifeType { get; set; }
 		public string identificationType { get; set; }
-
+		
 		public string ContractRef { get; set; }
 
 		public CreateQuickAssetRequest()
 		{
+			modifiedBy = "system";
 			operatorRef = "";
 			name = "";
 			oemRef = "";
@@ -50,6 +53,7 @@ namespace kist_api.Model
 			engineNumber = "";
 			vin_Chassis = "";
 			uniqueReference = "";
+			dthireCompanyID = "";
 			parentAssetId = 0;
 			dtIdnumber = "";
 			dtMembershipNumber = "";
@@ -58,7 +62,6 @@ namespace kist_api.Model
 			lifeType = "";
 			ContractRef = "";
 		}
-
 
 		//@OperatorRef = N'CL1',
 		//@Name = N'New Gang',
@@ -77,8 +80,5 @@ namespace kist_api.Model
 		//@ParentAssetId = NULL,
 		//@DTIdNumber = NULL,
 		//@DTMembershipNumber = NULL
-
-
-
 	}
 }
