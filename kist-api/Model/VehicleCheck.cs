@@ -36,7 +36,7 @@ namespace kist_api.Model
         public string vehicleCheckType { get; set; }
         public string lastCheckedBy { get; set; }
         public DateTime? lastCheckedOn { get; set; }
-        public long? mileage { get; set; }
+        public string mileage { get; set; }
         //c.SortOrder ,cg.sortOrder ,cg.Description
 
         public long? statusId { get; set; }

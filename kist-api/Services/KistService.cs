@@ -79,7 +79,7 @@ namespace kist_api.Services
                 _logger.LogInformation(@"Convert Response");
 
 
-                if (loginRes.userDetails != null )
+                if (loginRes.userDetails != null && loginRes.response == null)
                 {
                     // fetch userdetails to find company
                     // UserDetailsRequest userDetailsRequest = new UserDetailsRequest();

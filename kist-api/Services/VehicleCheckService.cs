@@ -73,7 +73,7 @@ namespace kist_api.Services
         public async Task<List<VehicleCheck>> GetAssetVehicleChecks(long id)
         {
 
-            var req = new { assetId = id, userId = 0};
+            var req = new { assetId = id, operatorId = 1};
 
             var res = new List<VehicleCheck>();
             StringContent content = new StringContent(JsonConvert.SerializeObject(req), Encoding.UTF8, "application/json");
