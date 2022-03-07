@@ -27,7 +27,6 @@ namespace kist_api.Controllers
     [Route("[controller]")]
     public class AssetController : ControllerBase
     {
-
         private readonly ILogger<AccountController> _logger;
         readonly IConfiguration _configuration;
         readonly IKistService _kistService;
@@ -39,11 +38,9 @@ namespace kist_api.Controllers
             _kistService = kistService;
         }
 
-
         //[Route("UsersDetails")]
         //[HttpPost]
         [Authorize]
-      
         public async Task<List<AssetView>> Get()
         {
             // should be via company id or user id 
@@ -54,15 +51,9 @@ namespace kist_api.Controllers
            
             var userDetails = await _kistService.UsersDetails(userDetailsRequest);
 
-
-
-
-
             UserDetailsRequest userDetailsRequest2 = new UserDetailsRequest();
             userDetailsRequest2.id = userDetails.ID.ToString();
-      
             return await _kistService.GetAssetsByUser(userDetailsRequest2);
-
         }
 
         [Authorize]
@@ -77,16 +68,10 @@ namespace kist_api.Controllers
             userDetailsRequest.id = userId;
 
             var userDetails = await _kistService.UsersDetails(userDetailsRequest);
-
-
-
-
-
             UserDetailsRequest userDetailsRequest2 = new UserDetailsRequest();
             userDetailsRequest2.id = userDetails.ID.ToString();
             userDetailsRequest2.searchQuery = search;
             return await _kistService.GetAssetsByUser(userDetailsRequest2);
-
         }
 
         [Route("Search2/")]
@@ -95,13 +80,9 @@ namespace kist_api.Controllers
         {
             // should be via company id or user id 
             var userId = (string)HttpContext.Items["User"];
-
             UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
             userDetailsRequest.id = userId;
-
             var userDetails = await _kistService.UsersDetails(userDetailsRequest);
-
-
 
             // if payload contains geo event data log that first
             if (req.geo != null )
@@ -111,37 +92,23 @@ namespace kist_api.Controllers
                 req.geo.WFStatus = "N";
                 req.geo.UserGUID = userId;
                 await _kistService.PostGeoLocationEvent(req.geo);
-
             }
 
             //UserDetailsRequest userDetailsRequest2 = new UserDetailsRequest();
             //userDetailsRequest2.id = userDetails.ID.ToString();
             //userDetailsRequest2.searchQuery = search;
-
             req.userId = userDetails.ID; // fudge for now to pass in user id 
-
-
             return await _kistService.GetAssetsByUser(req);
-
         }
 
-
-      
-
-
         [Authorize]
-
         [HttpGet("{id}")]
         public  Task<Asset> Get(long id)
         {
             var userId = (string)HttpContext.Items["User"];
-
             //UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
             //userDetailsRequest.id = userId;
-
             //var userDetails = await _kistService.UsersDetails(userDetailsRequest);
-
-
             return _kistService.GetAsset(id);
         }
 
@@ -149,66 +116,45 @@ namespace kist_api.Controllers
         public async Task<List<GeoLocationEvent>> Get(string codeLookup)
         {
             var userId = (string)HttpContext.Items["User"];
-
             //UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
             //userDetailsRequest.id = userId;
-
             //var userDetails = await _kistService.UsersDetails(userDetailsRequest);
-
 
             return await _kistService.GetDTMobile_ScanEvents(codeLookup);
         }
-
-
-
-        
+      
         [HttpPost("MapPopupInfo")]
         public async Task<GetMapPopupResponse> MapPopupInfo(GetScanRequest req)
         {
-          //  var userId = (string)HttpContext.Items["User"];
-
+            //var userId = (string)HttpContext.Items["User"];
             //UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
             //userDetailsRequest.id = userId;
-
             //var userDetails = await _kistService.UsersDetails(userDetailsRequest);
-
-
             return await _kistService.GetMapPopupInfo(req.AssetID);
         }
 
         [Authorize]
-
         [HttpPost("PostEventData")]
         public async Task<String> PostEventData(ClientConfig req)
         {
             var userName = (string)HttpContext.Items["UserName"];
-
             req.UserName = userName;
             req.CreatedBy = userName;
             //UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
             //userDetailsRequest.id = userId;
-
             //var userDetails = await _kistService.UsersDetails(userDetailsRequest);
-
-
             return await _kistService.PostDTDead(req);
-
         }
 
-
         [Authorize]
-
         [HttpPost("Create")]
         public async Task<CreateAssetResult> Create(CreateQuickAssetRequest req)
         {
             var userId = (string)HttpContext.Items["User"];
-
-            //UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
-            //userDetailsRequest.id = userId;
-
-            //var userDetails = await _kistService.UsersDetails(userDetailsRequest);
-
-
+            UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
+            userDetailsRequest.id = userId;
+            var userDetails = await _kistService.UsersDetails(userDetailsRequest);
+            req.modifiedBy = userDetails.Forename + " " + userDetails.Surname;
             return await _kistService.CreateAsset(req);
         }
 
@@ -233,9 +179,7 @@ namespace kist_api.Controllers
             var userId = (string)HttpContext.Items["User"];
             UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
             userDetailsRequest.id = userId;
-
             var userDetails = await _kistService.UsersDetails(userDetailsRequest);
-
 
             asset.modifiedBy = userDetails.Forename + " " + userDetails.Surname;
             asset.modifiedOn = DateTime.Now;
@@ -262,7 +206,6 @@ namespace kist_api.Controllers
             return _kistService.GetAssetImages(id, 20060);
         }
 
-
         [HttpPost]
         [Route("Identity/Put")]
         public async Task<AssetIdentity> PutIdentity(AssetIdentity note)
@@ -280,15 +223,10 @@ namespace kist_api.Controllers
 
         }
 
-
-
         [HttpGet("System/{id}")]
         public Task<AssetSystem> System(long id)
         {
             var userId = (string)HttpContext.Items["User"];
-
-
-
             return _kistService.GetAssetSystem(id);
         }
         [HttpPost]
@@ -317,6 +255,7 @@ namespace kist_api.Controllers
 
             return aList;
         }
+
         [Authorize]
         [HttpGet("GetQrSheet/{id}")]
         public async Task<IActionResult> GetQrSheet(long id)
@@ -388,8 +327,5 @@ namespace kist_api.Controllers
 
 
         }
-
-
-
     }
 }

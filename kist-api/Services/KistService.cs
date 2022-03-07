@@ -29,6 +29,7 @@ using Newtonsoft.Json.Linq;
 using Microsoft.Extensions.Configuration.UserSecrets;
 using ceup_api.Model.dtdead;
 using ceup_api.Model;
+using Microsoft.AspNetCore.Http;
 
 namespace kist_api.Services
 {
@@ -117,7 +118,6 @@ namespace kist_api.Services
             return loginRes;
         }
 
-
         public async Task<UserDetails> UsersDetails(UserDetailsRequest userDetailsRequest)
         {
             GetUserDetailsResponse userDetailsResponse = new GetUserDetailsResponse();
@@ -144,7 +144,6 @@ namespace kist_api.Services
             // proc should only return one row , but comes back as a list regardless from API
             return userDetailsResponse.Value.First();
         }
-
 
         public async Task<Dashboard> Dashboard(UserDetailsRequest userDetailsRequest)
         {
@@ -214,7 +213,6 @@ namespace kist_api.Services
             return dashboardResponse.Value.First().dashboard.First();
         }
 
-
         public async Task<List<AssetImages>> GetAssetImages(long id, long userId )
         {
             var req = new { AssetId = id,  userId = userId , tags = ""};
@@ -241,12 +239,6 @@ namespace kist_api.Services
             return res;
         }
 
-       
-
-
-
-
-
         public async Task<long> CreateAllocation(long Pid , long id , long siteid , String status, long userId)
         {
             var req = new { AssetId = id  , siteid=siteid , ParentId = Pid , status = status ,operatorId = 1 , userId = userId };
@@ -271,6 +263,7 @@ namespace kist_api.Services
             // proc should only return one row , but comes back as a list regardless from API
             return 1;
         }
+
         public async Task<long> RemoveAllocation(long id , long userid)
         {
             var req = new { AllocationId = id ,  AssetId = 1,  operatorId = 1, userId = userid, status="History"};
@@ -295,7 +288,6 @@ namespace kist_api.Services
             // proc should only return one row , but comes back as a list regardless from API
             return 1;
         }
-
 
         public async Task<GetMapPopupResponse> GetMapPopupInfo(String id)
         {
@@ -401,8 +393,6 @@ namespace kist_api.Services
             return res.Value;
         }
 
-
-
         public async Task<List<AssetView>> GetAssetsByUser(UserDetailsRequest userDetailsRequest)
         {
             GetAssetResponse userDetailsResponse = new GetAssetResponse();
@@ -492,7 +482,6 @@ namespace kist_api.Services
             return userDetailsResponse.Value;
         }
 
-
         public async Task<List<SiteView>> GetSitesByUser(GetSiteRequest site)
         {
             GetSiteResponse userDetailsResponse = new GetSiteResponse();
@@ -526,11 +515,10 @@ namespace kist_api.Services
             // proc should only return one row , but comes back as a list regardless from API
             return userDetailsResponse.Value;
         }
+
         public async Task<Site> PutSite(Site site)
         {
             Site userDetailsResponse = new Site();
-
-        
             //  asset.modifiedBy = (string)HttpContext.Items["User"];
 
             StringContent content = new StringContent(Regex.Unescape(JsonConvert.SerializeObject(site)), Encoding.UTF8, "application/json");
@@ -577,11 +565,10 @@ namespace kist_api.Services
         public async Task<CreateAssetResult> CreateAsset(CreateQuickAssetRequest req)
         {
             CreateAssetResult dashboardResponse = new CreateAssetResult();
-         //   var jsonSettings = new JsonSerializerSettings();
-         //   jsonSettings.DateFormatString = _configuration.GetValue<string>("api:dateFormat"); //"dd/MM/yyy hh:mm:ss";
-        
-           // string json = JsonConvert.SerializeObject(someObject, jsonSettings);
+            //   var jsonSettings = new JsonSerializerSettings();
+            //   jsonSettings.DateFormatString = _configuration.GetValue<string>("api:dateFormat"); //"dd/MM/yyy hh:mm:ss";
 
+            // string json = JsonConvert.SerializeObject(someObject, jsonSettings);
 
             StringContent content = new StringContent(JsonConvert.SerializeObject(req), Encoding.UTF8, "application/json");
 
@@ -650,7 +637,6 @@ namespace kist_api.Services
         public async Task<Asset> GetAsset(long id )
         {
             Asset userDetailsResponse = new Asset();
-
             //   StringContent content = new StringContent(JsonConvert.SerializeObject(getAssetRequest), Encoding.UTF8, "application/json");
 
             var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("api:apiUser") + ":" + _configuration.GetValue<string>("api:apiPassword") );
@@ -702,6 +688,7 @@ namespace kist_api.Services
 
             return a;
         }
+
         public async Task<AssetSystem> GetAssetSystem(long id)
         {
             GetAssetSystemResponse assetsystem = new GetAssetSystemResponse();
@@ -757,12 +744,10 @@ namespace kist_api.Services
             return a;
         }
 
-
         public async Task<Asset> PutAsset(Asset asset)
         {
             Asset userDetailsResponse = new Asset();
-
-          //  asset.modifiedBy = (string)HttpContext.Items["User"];
+            //asset.modifiedBy = (string)HttpContext.Items["User"];
 
             StringContent content = new StringContent(Regex.Unescape(JsonConvert.SerializeObject(asset)), Encoding.UTF8, "application/json");
 
@@ -778,8 +763,6 @@ namespace kist_api.Services
             // proc should only return one row , but comes back as a list regardless from API
             return userDetailsResponse;
         }
-
-       
 
         public async Task<List<Attachment>> GetAttachments(Attachment attachments)
         {
@@ -1014,7 +997,6 @@ namespace kist_api.Services
             return res;
         }
 
-
         public async Task<SystemType> GetDTCore_SystemType(string id)
         {
             GetSystemTypeResponse aList = new GetSystemTypeResponse();
@@ -1064,7 +1046,6 @@ namespace kist_api.Services
             return a;
         }
 
-
         public async Task<GeoLocationEvent> PostGeoLocationEvent(GeoLocationEvent req)
         {
             GeoLocationEvent attachmentResponse = new GeoLocationEvent();
@@ -1074,14 +1055,8 @@ namespace kist_api.Services
             req.WFStatus = (req.WFStatus == null) ? "N" : req.WFStatus;
             req.CreatedBy = (req.WFStatus == null) ? "UnKnown" : req.WFStatus;
 
-            
-
-
-                StringContent content = new StringContent(JsonConvert.SerializeObject(req), Encoding.UTF8, "application/json");
-
-        
+            StringContent content = new StringContent(JsonConvert.SerializeObject(req), Encoding.UTF8, "application/json");
             //req.Latitude = (req.Latitude == null) ? 0 : req.Latitude;
-
 
             //'x-rssbus-authtoken' : '5x1S6d8z7X4w6b4S0v0y'
 
@@ -1100,7 +1075,6 @@ namespace kist_api.Services
             // proc should only return one row , but comes back as a list regardless from API
             return attachmentResponse;
         }
-
 
         public async Task<List<GeoLocationEvent>> GetDTMobile_ScanEvents(GetScanRequest req)
         {
@@ -1194,7 +1168,6 @@ namespace kist_api.Services
             return aList.Value;
         }
 
-
         public async Task<List<AssetStatusHistory>> GetAssetStatusHistory_SQL(long id)
        // public List<AssetStatusHistory> GetAssetStatusHistory(long id)
         {
@@ -1250,7 +1223,7 @@ namespace kist_api.Services
 
         }
 
-        public void SaveActivity_SQL(long operatorId , string appArea , string username , string desc )
+        public void SaveActivity_SQL(long operatorId , string appArea , string username , string desc)
         // public List<AssetStatusHistory> GetAssetStatusHistory(long id)
         {
             List<AssetStatusHistory> aList = new List<AssetStatusHistory>();
@@ -1329,47 +1302,44 @@ namespace kist_api.Services
 
         public async Task<String> Test2()
         {
-
             try
             {
-
                 var _ClientConfig = new ClientConfig
-            {
-             //   Endpoint = _Endpoint,
-                ContentType = "application/json",
-             //   APIUserName = _APIUserName,
-              //  APIPassword = _APIPassword,
-              //  APIToken = _APIToken,
-              //  EmailRecipient = _EmailRecipient,
-              //  EmailRegex = _EmailRegex
-            };
+                {
+                 //   Endpoint = _Endpoint,
+                    ContentType = "application/json",
+                 //   APIUserName = _APIUserName,
+                  //  APIPassword = _APIPassword,
+                  //  APIToken = _APIToken,
+                  //  EmailRecipient = _EmailRecipient,
+                  //  EmailRegex = _EmailRegex
+                };
 
-            //var _APIEndpoint = _configuration.GetValue<string>("email:APIEndPoint"); // ConfigurationManager.AppSettings["APIEndPoint"];
+                //var _APIEndpoint = _configuration.GetValue<string>("email:APIEndPoint"); // ConfigurationManager.AppSettings["APIEndPoint"];
 
-        //    _ClientConfig.EmailRecipient = emailRecipient;
-            _ClientConfig.HttpMethod = "POST";
-            _ClientConfig.Destination = "DTDEAD";
-            _ClientConfig.DatabaseName = "DTKIST";
-            _ClientConfig.EventSourceID = 25;
-            _ClientConfig.EventTypeID = 401;
-            _ClientConfig.EventAdviceID = 45;
-            //_ClientConfig.FieldData = "DTXXXX";
-            _ClientConfig.KeyName = "keyName";
-            _ClientConfig.KeyValue = "subject";
-            _ClientConfig.MembershipType = "";
-            _ClientConfig.Mute = true;
-            _ClientConfig.OperatorID = "";
-            _ClientConfig.RecordID = "";
-            _ClientConfig.SnoozeUntil = "";
-            _ClientConfig.TableField = "";
-            _ClientConfig.TableName = "";
-            _ClientConfig.UserName = "";
-            _ClientConfig.CreatedBy = "DTKistUser";
-            _ClientConfig.ObjectName = "EventData";
-            _ClientConfig.Report = "body";
+            //    _ClientConfig.EmailRecipient = emailRecipient;
+                _ClientConfig.HttpMethod = "POST";
+                _ClientConfig.Destination = "DTDEAD";
+                _ClientConfig.DatabaseName = "DTKIST";
+                _ClientConfig.EventSourceID = 25;
+                _ClientConfig.EventTypeID = 401;
+                _ClientConfig.EventAdviceID = 45;
+                //_ClientConfig.FieldData = "DTXXXX";
+                _ClientConfig.KeyName = "keyName";
+                _ClientConfig.KeyValue = "subject";
+                _ClientConfig.MembershipType = "";
+                _ClientConfig.Mute = true;
+                _ClientConfig.OperatorID = "";
+                _ClientConfig.RecordID = "";
+                _ClientConfig.SnoozeUntil = "";
+                _ClientConfig.TableField = "";
+                _ClientConfig.TableName = "";
+                _ClientConfig.UserName = "";
+                _ClientConfig.CreatedBy = "DTKistUser";
+                _ClientConfig.ObjectName = "EventData";
+                _ClientConfig.Report = "body";
 
-            var response = await PostDTDead(_ClientConfig);
-
+                var response = await PostDTDead(_ClientConfig);
             }
             catch (Exception ex)
             {
