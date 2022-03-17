@@ -67,9 +67,7 @@ namespace kist_api.Controllers
             userDetailsRequest.id = userId;
 
             var userDetails = await _kistService.UsersDetails(userDetailsRequest);
-
-            req.userId = userDetails.ID;
-
+            
             userDetailsRequest.id = userDetails.ID.ToString();
 
             return await _VehicleCheckService.SetAssetVehicleChecks(req);

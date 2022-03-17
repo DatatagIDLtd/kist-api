@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using kist_api.Helper.ApiResponse;
 using kist_api.Model;
 using kist_api.Model.dtcusid;
 using kist_api.Model.dtmobile;
@@ -26,7 +27,7 @@ namespace kist_api.Controllers
         readonly IKistService _kistService;
         readonly IScanService _scanService;
 
-        public ScanController(ILogger<AccountController> logger, IConfiguration configuration , IKistService kistService, IScanService scanService)
+        public ScanController(ILogger<AccountController> logger, IConfiguration configuration, IKistService kistService, IScanService scanService)
         {
             _logger = logger;
             _configuration = configuration;
@@ -38,7 +39,7 @@ namespace kist_api.Controllers
 
         //[Route("UsersDetails")]
         //[HttpPost]
-       
+
 
         [Route("Scan/")]
         // [HttpGet("{search}")]
@@ -55,28 +56,28 @@ namespace kist_api.Controllers
 
 
             // if payload contains geo event data log that first
-          
-                req.CreatedBy = "matttest";
-            
 
-                
+            req.CreatedBy = "matttest";
 
-          
-          //  req.userId = userDetails.ID; // fudge for now to pass in user id 
+
+
+
+
+            //  req.userId = userDetails.ID; // fudge for now to pass in user id 
 
 
             return await _kistService.PostGeoLocationEvent(req);
 
-            }
+        }
 
 
-      
+
 
 
         [Authorize]
 
         [HttpGet("{id}")]
-        public  Task<Asset> Get(long id)
+        public Task<Asset> Get(long id)
         {
             var userId = (string)HttpContext.Items["User"];
 
@@ -123,7 +124,7 @@ namespace kist_api.Controllers
         [HttpPost("MapPopupInfo")]
         public async Task<GetMapPopupResponse> MapPopupInfo(GetScanRequest req)
         {
-          //  var userId = (string)HttpContext.Items["User"];
+            //  var userId = (string)HttpContext.Items["User"];
 
             //UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
             //userDetailsRequest.id = userId;
@@ -169,7 +170,7 @@ namespace kist_api.Controllers
         {
             var userId = (string)HttpContext.Items["User"];
 
-            _logger.LogInformation(@"ByLocation " );
+            _logger.LogInformation(@"ByLocation ");
 
             _logger.LogInformation(@"payload " + req.ToString());
 
@@ -202,13 +203,13 @@ namespace kist_api.Controllers
             asset.modifiedOn = DateTime.Now;
             return await _kistService.PutAsset(asset);
         }
-        
+
         [HttpGet("Identity/{id}")]
         public Task<AssetIdentity> Identity(long id)
         {
             var userId = (string)HttpContext.Items["User"];
 
-        
+
 
             return _kistService.GetAssetIdentity(id);
         }
@@ -267,5 +268,38 @@ namespace kist_api.Controllers
 
             return aList;
         }
+
+
+        [HttpPost("GetScannedAssetDetails")]
+        public async Task<ApiResponseModel> GetScannedAssetDetails([FromBody] ScanAssetDetailsRequestModel request)
+        {
+            var userId = (string)HttpContext.Items["User"];
+
+            var scannedAssetsData = await _scanService.GetScannedAssetDetails(request);
+
+            return scannedAssetsData;
+        }
+
+        [HttpPost("CreateGeoLocationEvents")]
+        public async Task<ApiResponseModel> CreateGeoLocationEvents([FromBody] ScanEventRequestModel request)
+        {
+            var userId = (string)HttpContext.Items["User"];
+
+            var geoLocationEventData = await _scanService.CreateGeoLocationEvents(request);
+
+            return geoLocationEventData;
+        }
+
+        [HttpPost("GetAssetDocumentList")]
+        public async Task<ApiResponseModel> GetAssetDocumentList([FromBody] ScanAssetDetailsRequestModel request)
+        {
+            var userId = (string)HttpContext.Items["User"];
+
+            var scannedAssetsData = await _scanService.GetAssetDocumentList(request);
+
+            return scannedAssetsData;
+        }
+
+
     }
 }
