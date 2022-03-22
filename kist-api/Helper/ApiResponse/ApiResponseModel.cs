@@ -11,6 +11,6 @@ namespace kist_api.Helper.ApiResponse
 
         public string ErrorMessage { get; set; }
 
-        public object Data { get; set; }
+        public object Value { get; set; }
     }
 }

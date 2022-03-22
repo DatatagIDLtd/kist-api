@@ -87,14 +87,14 @@ namespace kist_api.Services
 
         }
 
-        public async Task<ApiResponseModel> GetAllocationAudit()
+        public async Task<ApiResponseModel> GetAllocationAudit(AllocationAuditRequestModel request)
         {
-
+            StringContent content = new StringContent(Regex.Unescape(JsonConvert.SerializeObject(request)), Encoding.UTF8, "application/json");
             var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("api:apiUser") + ":" + _configuration.GetValue<string>("api:apiPassword"));
             _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
 
             var apiResponse = new ApiResponseModel();
-            using (var response = await _client.GetAsync(_configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:GetAllocationAudit")))
+            using (var response = await _client.PostAsync(_configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:GetAllocationAudit"),content))
             {
 
                 var resultAsString = response.Content.ReadAsStringAsync().Result;
@@ -114,7 +114,7 @@ namespace kist_api.Services
             var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("api:apiUser") + ":" + _configuration.GetValue<string>("api:apiPassword"));
             _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
             var apiResponse = new ApiResponseModel();
-            using (var response = await _client.GetAsync(_configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:GetAudits")))
+            using (var response = await _client.PostAsync(_configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:GetAudits"),content))
             {
                 var resultAsString = response.Content.ReadAsStringAsync().Result;
                 var result = JsonConvert.DeserializeObject<Audit>(JObject.Parse(resultAsString).GetValue("value").ToString());

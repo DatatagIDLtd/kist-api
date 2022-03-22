@@ -18,7 +18,7 @@ namespace kist_api.Services
 
         Task<Audit> GetAudit(GetAuditRequest req);
         Task<ApiResponseModel> GetAuditById(long id);
-        Task<ApiResponseModel> GetAllocationAudit();
+        Task<ApiResponseModel> GetAllocationAudit(AllocationAuditRequestModel request);
         Task<ApiResponseModel> PutAllocationAudit(UpdateAuditStatusModel request, long auditId);
         Task<ApiResponseModel> GetRecentAudits();
 

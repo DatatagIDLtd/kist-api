@@ -34,6 +34,8 @@ namespace kist_api
             services.AddHttpClient<IVehicleCheckService, VehicleCheckService>();
             services.AddHttpClient<IAuditService, AuditService>();
             services.AddHttpClient<IContractService, ContractService>();
+            services.AddHttpClient<IAuditService, AuditService>();
+
             services.AddControllers().AddNewtonsoftJson();
 
             services.AddCors(options =>

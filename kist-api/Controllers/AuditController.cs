@@ -28,7 +28,7 @@ namespace kist_api.Controllers
         }
 
         [HttpGet("GetAuditById/{id}")]
-        public async Task<ApiResponseModel> GetAuditsById(long id)
+        public async Task<ApiResponseModel> GetAuditById(long id)
         {
             var userId = (string)HttpContext.Items["User"];
 
@@ -38,12 +38,12 @@ namespace kist_api.Controllers
         }
 
 
-        [HttpGet("GetAllocationAudit")]
-        public async Task<ApiResponseModel> GetAllocationAudit()
+        [HttpPost("GetAllocationAudit")]
+        public async Task<ApiResponseModel> GetAllocationAudit([FromBody] AllocationAuditRequestModel request)
         {
             var userId = (string)HttpContext.Items["User"];
 
-            var allocationAuditData = await _auditService.GetAllocationAudit();
+            var allocationAuditData = await _auditService.GetAllocationAudit(request);
 
             return allocationAuditData;
         }

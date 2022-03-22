@@ -19,14 +19,14 @@ namespace kist_api.Helper.ApiResponse
                 if (statusCode == System.Net.HttpStatusCode.OK)
                 {
 
-                    apiResponse.Data = apiResult;
+                    apiResponse.Value = apiResult;
                     apiResponse.ErrorMessage = null;
                     apiResponse.IsSucceded = true;
 
                 }
                 else
                 {
-                    apiResponse.Data = null;
+                    apiResponse.Value = null;
                     apiResponse.ErrorMessage =statusCode.ToString();
                     apiResponse.IsSucceded = false;
                 }
