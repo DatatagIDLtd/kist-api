@@ -3,6 +3,7 @@ using kist_api.Model;
 using kist_api.Model.dashboard;
 using kist_api.Model.dtcusid;
 using kist_api.Model.dtmobile;
+using kist_api.Model.reports;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -55,7 +56,7 @@ namespace kist_api.Services
         Task<GetMapPopupResponse> GetMapPopupInfo(String id);
         void SaveActivity_SQL(long operatorId, string appArea, string username, string desc);
 
-
+        Task<List<CustomReport>> GetCustomReports(string userName);
 
     }
 }

@@ -30,6 +30,7 @@ using Microsoft.Extensions.Configuration.UserSecrets;
 using ceup_api.Model.dtdead;
 using ceup_api.Model;
 using Microsoft.AspNetCore.Http;
+using kist_api.Model.reports;
 
 namespace kist_api.Services
 {
@@ -1376,6 +1377,24 @@ namespace kist_api.Services
             //return res.First();
             return "success";
 
+        }
+
+        public async Task<List<CustomReport>> GetCustomReports(string userName)
+        {
+            CustomReportResponse reportsResponse = new CustomReportResponse();
+
+            StringContent content = new StringContent(JsonConvert.SerializeObject(new { Username = userName }), Encoding.UTF8, "application/json");
+
+            var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("api:apiUser") + ":" + _configuration.GetValue<string>("api:apiPassword"));
+            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+
+            using (var response = await _client.PostAsync(_configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:GetCustomReports"), content))
+            {
+                string apiResponse = await response.Content.ReadAsStringAsync();
+                reportsResponse = JsonConvert.DeserializeObject<CustomReportResponse>(apiResponse);
+            }
+
+            return reportsResponse.value;
         }
 
         private string generateJwtToken(MembershipUser user, LoginRequest loginReq)
