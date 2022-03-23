@@ -10,15 +10,7 @@ namespace kist_api.Services
 {
     public interface IContractService
     {
-    
-
-
-
         Task<List<Contract>> GetContract(ContractRequest req);
-        Task<Contract> UpdateContract(Contract con , String username);
-
-
-
-
+        //Task<Contract> UpdateContract(Contract con , String username);
     }
 }

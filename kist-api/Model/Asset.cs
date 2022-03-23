@@ -17,6 +17,7 @@ namespace kist_api.Model
 		//public string? assetType { get; set; }
 		//public string? searchQuery { get; set }
 		public long? contractId { get; set; }
+		public long? ownerId { get; set; }
 		public long? lifeTypeId { get; set; }
 
 		public string description { get; set; }
@@ -31,32 +32,5 @@ namespace kist_api.Model
 
 		public DateTime? modifiedOn { get; set; }
 		public string modifiedBy { get; set; }
-	
-
-
-
-		//	[CompanyID]
-		//	[bigint]
-		//	NOT NULL,
-		//[UniqueID] [nvarchar] (100) NULL,
-		//[Name] [nvarchar] (100) NULL,
-		//[AssetTypeID]
-		//	[bigint]
-		//	NOT NULL,
-		//[Description] [nvarchar] (200) NOT NULL,
-
-		// [SerialNumber] [nvarchar] (100) NOT NULL,
-
-		//  [IsActive] [bit]
-		//	NOT NULL,
-
-		//  [CreatedOn] [datetime]
-		//	NOT NULL,
-
-		//  [CreatedBy] [nvarchar] (50) NOT NULL,
-
-		//   [ModifiedOn] [datetime] NULL,
-		//[ModifiedBy] [nvarchar] (50) NULL,
-
 	}
 }

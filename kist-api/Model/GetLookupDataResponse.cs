@@ -10,11 +10,5 @@ namespace kist_api.Model
     public class GetLookupDataResponse
     {
         public List<Value> Value { get; set; }
-        //public class Value
-        //{
-           
-        //}
     }
-   
-
 }

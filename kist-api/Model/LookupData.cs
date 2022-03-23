@@ -10,23 +10,17 @@ namespace kist_api.Model
         public List<Lookup> assetTypes { get; set; }
         public List<Lookup> assetStatus { get; set; }
         public List<Lookup> colours { get; set; }
-
         public List<Lookup> oem { get; set; }
-
         public List<Lookup> model { get; set; }
         public List<Lookup> attachmentTypes { get; set; }
         public List<Lookup> siteTypes { get; set; }
         public List<Lookup> siteStatus { get; set; }
         public List<Lookup> operatorUsers { get; set; }
-
         public List<UserRoleFunction> userRoleFunctions { get; set; }
-
         public List<IdentificationType> identificationTypes { get; set; }
-
         public List<LifeType> lifeTypes { get; set; }
-
         public List<Contract> contracts { get; set; }
-
+        public List<Owner> owners { get; set; }
 
         public LookupData ()
         {
@@ -43,7 +37,7 @@ namespace kist_api.Model
             identificationTypes = new List<IdentificationType>();
             lifeTypes = new List<LifeType>();
             contracts = new List<Contract>();
+            owners = new List<Owner>();
         }
-
     }
 }

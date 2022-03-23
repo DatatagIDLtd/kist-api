@@ -4,11 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace kist_api.Model
-
 {
-
-
-
 	public class CreateQuickAssetRequest
 	{
 		public string modifiedBy { get; set; }
@@ -20,7 +16,8 @@ namespace kist_api.Model
 		public string type { get; set; }
 		public string status { get; set; }
 		public string description { get; set; }
-		public DateTime purchaseDate { get; set; }
+		//public DateTime purchaseDate { get; set; }
+		public string? owner { get; set; }
 		public string serialNumber { get; set; }
 		public string vrn { get; set; }
 		public string engineNumber { get; set; }
@@ -33,8 +30,8 @@ namespace kist_api.Model
 		public string dtMembershipNumber { get; set; }
 		public string lifeType { get; set; }
 		public string identificationType { get; set; }
-		
 		public string ContractRef { get; set; }
+		public string OwnerRef { get; set; }
 
 		public CreateQuickAssetRequest()
 		{
@@ -47,7 +44,8 @@ namespace kist_api.Model
 			type = "";
 			status = "";
 			description = "";
-			purchaseDate = System.DateTime.Now;
+			//purchaseDate = System.DateTime.Now;
+			owner = "";
 			serialNumber = "";
 			vrn = "";
 			engineNumber = "";
@@ -58,9 +56,9 @@ namespace kist_api.Model
 			dtIdnumber = "";
 			dtMembershipNumber = "";
 			identificationType = "";
-			
 			lifeType = "";
 			ContractRef = "";
+			OwnerRef = "";
 		}
 
 		//@OperatorRef = N'CL1',
