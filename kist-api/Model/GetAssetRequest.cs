@@ -24,6 +24,7 @@ namespace kist_api.Model
         public long? assignUserId { get; set; }
         public long? contractId { get; set; }
         public string? searchText { get; set; }
+        public string? assetType { get; set; }
 
         public string? imgUrl { get; set; }
 

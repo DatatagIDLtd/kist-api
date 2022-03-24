@@ -19,11 +19,8 @@ namespace kist_api.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-
-
     public class AllocationController : ControllerBase
     {
-
         private readonly ILogger<AccountController> _logger;
         readonly IConfiguration _configuration;
         readonly IKistService _kistService;
@@ -42,13 +39,9 @@ namespace kist_api.Controllers
         public async Task<List<RecentAllocation>> RecentAllocations()
         {
             var userId = (string)HttpContext.Items["User"];
-
             UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
             userDetailsRequest.id = userId;
-
             var userDetails = await _kistService.UsersDetails(userDetailsRequest);
-
-
             return await _kistService.GetRecentAllocations(userDetails.ID);
         }
 
@@ -66,7 +59,6 @@ namespace kist_api.Controllers
 
             return await _kistService.GetRecentAudits(userDetails.ID);
         }
-
 
         [Authorize]
         [HttpPost("SetAllocationAudit")]
@@ -98,15 +90,11 @@ namespace kist_api.Controllers
             req.userId = userDetails.ID;
             _logger.LogInformation(@"user Id:" + req.userId.ToString());
             return await _kistService.CreateAudit(req);
-
         }
 
         [Authorize]
- 
-
         [HttpGet]
         [Route("GetAudit/{id}")]
-
         public async Task<Audit> GetAudit(long id)
         {
             _logger.LogInformation(@"Get Audit");
@@ -121,39 +109,25 @@ namespace kist_api.Controllers
             req.auditId = id;
             _logger.LogInformation(@"user Id:" + req.userId.ToString());
             return await _auditService.GetAudit(req);
-
         }
 
-
         [Authorize]
-
         [HttpGet("GetAuditOptions")]
         public String GetAuditOptions()
         {
-
             // String filePath = HttpContext.Server.MapPath("~/App_Data/allocationTemplates.json");
-
             var JSON = System.IO.File.ReadAllText("auditOptions.json");
-
             return JSON;
-
-
-
-
-
         }
+
         //[Route("UsersDetails")]
         //[HttpPost]
         [Authorize]
-
         [HttpGet("GetTemplates")]
         public  String GetTemplates()
         {
-
            // String filePath = HttpContext.Server.MapPath("~/App_Data/allocationTemplates.json");
-
             var JSON = System.IO.File.ReadAllText("allocationTemplates.json");
-
             return JSON;
 
             //return JsonConvert.DeserializeObject<List<AllocationTemplate>>(JSON);
@@ -199,7 +173,5 @@ namespace kist_api.Controllers
           //  return tList;
 
         }
-
-      
     }
 }

@@ -32,7 +32,6 @@ namespace kist_api.Model.dtcusid
         public string CreatedBy { get; set; }
         public DateTime? ModifiedOn { get; set; }
         public string ModifiedBy { get; set; }
-
-        public string role { get; set; }
+        public long RoleID { get; set; }
     }
 }
