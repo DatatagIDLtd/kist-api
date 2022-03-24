@@ -10,7 +10,6 @@ namespace kist_api.Model
 		public long? id { get; set; }
 		public long? assetId { get; set; }
 		public long? OperatorId { get; set; }
-
 		public string? serialNumber { get; set; }
 		public string? VRN { get; set; }
 		public string? engineNumber { get; set; }

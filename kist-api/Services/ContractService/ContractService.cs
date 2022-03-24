@@ -39,7 +39,6 @@ namespace kist_api.Services
         public string _connStr = String.Empty;
         private readonly ILogger<ContractService> _logger;
 
-
         public ContractService(HttpClient client, IConfiguration configuration, ILogger<ContractService> logger)
         {
             _client = client;
@@ -48,68 +47,51 @@ namespace kist_api.Services
             _logger = logger;
         }
 
-
         public async Task<List<Contract>> GetContract(ContractRequest req)
         {
-
             List<Contract> res;
-
             StringContent content = new StringContent(JsonConvert.SerializeObject(req), Encoding.UTF8, "application/json");
-
             var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("api:apiUser") + ":" + _configuration.GetValue<string>("api:apiPassword"));
             _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
-
-
             using (var response = await _client.PostAsync(_configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:GetContract"), content))
             {
                 string apiResponse = await response.Content.ReadAsStringAsync();
-
                 res = JsonConvert.DeserializeObject<List<Contract>>(JObject.Parse(apiResponse).GetValue("value").ToString());
-
-
-
-
             }
-
             return res;
         }
 
-        public async Task<Contract> UpdateContract(Contract contract , String userName)
-        {
-            Contract contractResponse = new Contract();
+        //public async Task<Contract> UpdateContract(Contract contract , String userName)
+        //{
+        //    Contract contractResponse = new Contract();
+        //    //@id bigint = null,
+        //    //@OperatorId  bigint = 0,
+        //    //@Reference nvarchar(20) = null,
+        //    //@Name nvarchar(100) = null,
+        //    //@CompanyId bigint = 0,
+        //    //@StartDate date = null,
+        //    //@EndDate date = null,
+        //    //@Duration int = null,
+        //    //@UserName nvarchar(50)
 
-            //@id bigint = null,
-            //@OperatorId  bigint = 0,
-            //@Reference nvarchar(20) = null,
-            //@Name nvarchar(100) = null,
-            //@CompanyId bigint = 0,
-            //@StartDate date = null,
-            //@EndDate date = null,
-            //@Duration int = null,
-            //@UserName nvarchar(50)
+        //    if (contract.ContractDuration == null) contract.ContractDuration = 0;
+        //    var req = new { id = contract.ID, OperatorId = contract.OperatorId , Reference = contract.ContractReference , Name = contract.ContractName , CompanyId = contract.ContractCompanyId , StartDate = contract.ContractStartDate , EndDate = contract.ContractEndDate , Duration = contract.ContractDuration , UserName  = userName };
 
-            if (contract.Duration == null) contract.Duration = 0;
-            var req = new { id = contract.ID, OperatorId = contract.OperatorId , Reference = contract.Reference , Name = contract.Name , CompanyId = contract.CompanyId , StartDate = contract.StartDate , EndDate = contract.EndDate , Duration = contract.Duration , UserName  = userName };
+        //    //  asset.modifiedBy = (string)HttpContext.Items["User"];
 
+        //    StringContent content = new StringContent(Regex.Unescape(JsonConvert.SerializeObject(req)), Encoding.UTF8, "application/json");
 
-            //  asset.modifiedBy = (string)HttpContext.Items["User"];
+        //    var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("api:apiUser") + ":" + _configuration.GetValue<string>("api:apiPassword"));
+        //    _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
 
-            StringContent content = new StringContent(Regex.Unescape(JsonConvert.SerializeObject(req)), Encoding.UTF8, "application/json");
+        //    using (var response = await _client.PostAsync(_configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:UpdateContract") , content)) //, content))
+        //    {
+        //        string apiResponse = await response.Content.ReadAsStringAsync();
+        //        contractResponse = JsonConvert.DeserializeObject<Contract>(JObject.Parse(apiResponse).GetValue("value").First().ToString());
 
-            var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("api:apiUser") + ":" + _configuration.GetValue<string>("api:apiPassword"));
-            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
-
-            using (var response = await _client.PostAsync(_configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:UpdateContract") , content)) //, content))
-            {
-                string apiResponse = await response.Content.ReadAsStringAsync();
-                contractResponse = JsonConvert.DeserializeObject<Contract>(JObject.Parse(apiResponse).GetValue("value").First().ToString());
-
-            }
-            // proc should only return one row , but comes back as a list regardless from API
-            return contractResponse;
-        }
-
+        //    }
+        //    // proc should only return one row , but comes back as a list regardless from API
+        //    return contractResponse;
+        //}
     }
-
-
 }

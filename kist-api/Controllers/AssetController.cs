@@ -209,7 +209,7 @@ namespace kist_api.Controllers
         [HttpPost]
         [Route("Identity/Put")]
         public async Task<AssetIdentity> PutIdentity(AssetIdentity note)
-        //     public async Task<IActionResult> Index([FromForm]IFormFile file)
+        //public async Task<IActionResult> Index([FromForm]IFormFile file)
         {
             var userId = (string)HttpContext.Items["User"];
             UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
@@ -232,7 +232,7 @@ namespace kist_api.Controllers
         [HttpPost]
         [Route("System/Put")]
         public async Task<AssetSystem> PutSystem(AssetSystem note)
-        //     public async Task<IActionResult> Index([FromForm]IFormFile file)
+        //public async Task<IActionResult> Index([FromForm]IFormFile file)
         {
             var userId = (string)HttpContext.Items["User"];
             UserDetailsRequest userDetailsRequest = new UserDetailsRequest();

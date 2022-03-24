@@ -20,5 +20,4 @@ namespace kist_api.Model
 		public DateTime? ModifiedOn { get; set; }
 		public string? ModifiedBy { get; set; }
 	}
-
 }
