@@ -420,10 +420,13 @@ namespace kist_api.Services
             if (asset.uniqueID == null) { asset.uniqueID = ""; };
             if (asset.fleetNo == null) { asset.fleetNo = ""; };
             if (asset.assetTypeID == null) { asset.assetTypeID = 0; };
+            if (asset.contractId == null) { asset.contractId = 0; };
             if (asset.make == null) { asset.make = ""; };
             if (asset.model == null) { asset.model = ""; };
             if (asset.name == null) { asset.name = ""; };
             if (asset.status == null) { asset.status = ""; };
+            if (asset.searchText == null) { asset.searchText = ""; };
+
             if ( asset.assetStatusId > 0 )
             {
                 asset.status = asset.assetStatusId.ToString();

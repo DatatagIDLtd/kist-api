@@ -23,6 +23,7 @@ namespace kist_api.Model
 		public DateTime? effectiveFrom { get; set; }
 		public DateTime? effectiveTo { get; set; }
 		public string? imgUrl { get; set; }
+		public string allocation { get; set; }
 
 	}
 }

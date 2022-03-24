@@ -88,8 +88,8 @@ namespace kist_api.Services
             //@Duration int = null,
             //@UserName nvarchar(50)
 
-            if (contract.ContractDuration == null) contract.ContractDuration = 0;
-            var req = new { id = contract.ID, OperatorId = contract.OperatorId , Reference = contract.ContractReference , Name = contract.ContractName , CompanyId = contract.ContractCompanyId , StartDate = contract.ContractStartDate , EndDate = contract.ContractEndDate , Duration = contract.ContractDuration , UserName  = userName };
+            if (contract.Duration == null) contract.Duration = 0;
+            var req = new { id = contract.ID, OperatorId = contract.OperatorId , Reference = contract.Reference , Name = contract.Name , CompanyId = contract.CompanyId , StartDate = contract.StartDate , EndDate = contract.EndDate , Duration = contract.Duration , UserName  = userName };
 
 
             //  asset.modifiedBy = (string)HttpContext.Items["User"];
