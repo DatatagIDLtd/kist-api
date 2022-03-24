@@ -42,7 +42,7 @@ namespace kist_api.Services
         public string _connStr = String.Empty;
         private readonly ILogger<KistService> _logger;
 
-        public KistService(HttpClient client, IConfiguration configuration , ILogger<KistService> logger)
+        public KistService(HttpClient client, IConfiguration configuration, ILogger<KistService> logger)
         {
             _client = client;
             _configuration = configuration;
@@ -54,7 +54,6 @@ namespace kist_api.Services
         {
             _logger.LogInformation(@"KistService\Login");
 
-          
             LoginResponse loginRes = new LoginResponse();
             _logger.LogInformation(@"Created loginRes");
 
@@ -80,9 +79,18 @@ namespace kist_api.Services
                 loginRes = JsonConvert.DeserializeObject<LoginResponse>(apiResponse);
                 _logger.LogInformation(@"Convert Response");
 
-
                 if (loginRes.userDetails != null && loginRes.response == null)
                 {
+                    UserDetailsRequest userDetailsRequest = new UserDetailsRequest() { id = loginRes.userDetails._ProviderUserKey.ToString() };
+                    UserDetails usersDetails = UsersDetails(userDetailsRequest).Result;
+                    var roleID = _configuration.GetValue<long>("access:role");
+
+                    if (usersDetails.RoleID != roleID)
+                    {
+                        _logger.LogWarning(@"Role not Super User");
+                        loginRes.response = "Insufficient permissions to access the KIST portal";
+                    }
+
                     // fetch userdetails to find company
                     // UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
                     //userDetailsRequest.id = loginRes.userDetails._ProviderUserKey.ToString();
@@ -93,56 +101,37 @@ namespace kist_api.Services
                     if (loginRes.userDetails._IsApproved)
                     {
                         _logger.LogInformation(@"User Approved - Generate token");
-
-                        loginRes.userDetails.token = generateJwtToken(loginRes.userDetails , loginReq);
+                        loginRes.userDetails.token = generateJwtToken(loginRes.userDetails, loginReq);
                         loginRes.userDetails.role = "NGMUSR";
                     } else
                     {
                         _logger.LogWarning(@"User Not Approved");
-
                         loginRes.response = "User not approved";
                     }
                     //  loginRes.userDetails.token = generateJwtToken(loginRes.userDetails);
-                       
-
-                }else
+                } else
                 {
                     _logger.LogWarning(@"Invalid Credentials " + content.ToString());
-                   // SaveActivity_SQL(0, "login", loginReq.username, "Failed to logon");
+                    // SaveActivity_SQL(0, "login", loginReq.username, "Failed to logon");
                 }
-                    // authentication successful so generate jwt token
-              
-
+                // authentication successful so generate jwt token
             }
-            
-            
+
             return loginRes;
         }
 
         public async Task<UserDetails> UsersDetails(UserDetailsRequest userDetailsRequest)
         {
             GetUserDetailsResponse userDetailsResponse = new GetUserDetailsResponse();
-
             StringContent content = new StringContent(JsonConvert.SerializeObject(userDetailsRequest), Encoding.UTF8, "application/json");
-
             var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("api:apiUser") + ":" + _configuration.GetValue<string>("api:apiPassword"));
             _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
-
-
             using (var response = await _client.PostAsync(_configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:GetUserDetails"), content))
             {
                 string apiResponse = await response.Content.ReadAsStringAsync();
-                //var options = new JsonSerializerOptions
-                //{
-                //    PropertyNameCaseInsensitive = true,
-                //};
-
-                // loginRes = System.Text.Json.JsonSerializer.Deserialize<GetUserDetailsResponse>(apiResponse, options);
                 userDetailsResponse = JsonConvert.DeserializeObject<GetUserDetailsResponse>(apiResponse);
-
-
             }
-            // proc should only return one row , but comes back as a list regardless from API
+
             return userDetailsResponse.Value.First();
         }
 

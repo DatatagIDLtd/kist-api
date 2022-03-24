@@ -31,29 +31,12 @@ namespace kist_api.Controllers
             _kistService = kistService;
         }
 
-
         [Route("Login")]
         [HttpPost]
         public Task<LoginResponse> Login(LoginRequest loginReq)
-
         {
-
             _logger.LogInformation(@"Controller\Account\Login(Post)");
             return _kistService.Login(loginReq);
-
-            //LoginResponse loginRes = new LoginResponse();
-
-            //using (var httpClient = new HttpClient())
-            //{
-            //    StringContent content = new StringContent(JsonConvert.SerializeObject(loginReq), Encoding.UTF8, "application/json");
-
-            //    using (var response = await httpClient.PostAsync(_configuration.GetValue<string>("AuthEndPoint"), content))
-            //    {
-            //        string apiResponse = await response.Content.ReadAsStringAsync();
-            //        loginRes = JsonConvert.DeserializeObject<LoginResponse>(apiResponse);
-            //    }
-            //}
-            //return loginRes;
         }
 
         [Route("UsersDetails")]
