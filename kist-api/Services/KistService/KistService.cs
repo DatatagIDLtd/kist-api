@@ -83,13 +83,13 @@ namespace kist_api.Services
                 {
                     UserDetailsRequest userDetailsRequest = new UserDetailsRequest() { id = loginRes.userDetails._ProviderUserKey.ToString() };
                     UserDetails usersDetails = UsersDetails(userDetailsRequest).Result;
-                    var roleID = _configuration.GetValue<long>("access:role");
+                    //var roleID = _configuration.GetValue<long>("access:role");
 
-                    if (usersDetails.RoleID != roleID)
-                    {
-                        _logger.LogWarning(@"Role not Super User");
-                        loginRes.response = "Insufficient permissions to access the KIST portal";
-                    }
+                    //if (usersDetails.RoleID != roleID)
+                    //{
+                    //    _logger.LogWarning(@"Role not Super User");
+                    //    loginRes.response = "Insufficient permissions to access the KIST portal";
+                    //}
 
                     // fetch userdetails to find company
                     // UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
@@ -102,7 +102,8 @@ namespace kist_api.Services
                     {
                         _logger.LogInformation(@"User Approved - Generate token");
                         loginRes.userDetails.token = generateJwtToken(loginRes.userDetails, loginReq);
-                        loginRes.userDetails.role = "NGMUSR";
+                        //loginRes.userDetails.role = "NGMUSR";
+                        loginRes.userDetails.role = usersDetails.RoleID == 13 ? "Ganger" : usersDetails.RoleID == 14 ? "Supervisor" : "Super User";
                     } else
                     {
                         _logger.LogWarning(@"User Not Approved");
