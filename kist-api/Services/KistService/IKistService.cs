@@ -55,8 +55,6 @@ namespace kist_api.Services
         Task<List<AssetStatusHistory>> GetAssetStatusHistory(long id);
         Task<GetMapPopupResponse> GetMapPopupInfo(String id);
         void SaveActivity_SQL(long operatorId, string appArea, string username, string desc);
-
         Task<List<CustomReport>> GetCustomReports(string userName);
-
     }
 }

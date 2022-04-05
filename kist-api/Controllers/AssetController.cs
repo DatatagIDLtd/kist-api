@@ -30,12 +30,14 @@ namespace kist_api.Controllers
         private readonly ILogger<AccountController> _logger;
         readonly IConfiguration _configuration;
         readonly IKistService _kistService;
+        readonly IVehicleCheckService _vehicleCheckService;
 
-        public AssetController(ILogger<AccountController> logger, IConfiguration configuration , IKistService kistService)
+        public AssetController(ILogger<AccountController> logger, IConfiguration configuration , IKistService kistService, IVehicleCheckService vehicleCheckService)
         {
             _logger = logger;
             _configuration = configuration;
             _kistService = kistService;
+            _vehicleCheckService = vehicleCheckService;
         }
 
         //[Route("UsersDetails")]
@@ -119,7 +121,6 @@ namespace kist_api.Controllers
             //UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
             //userDetailsRequest.id = userId;
             //var userDetails = await _kistService.UsersDetails(userDetailsRequest);
-
             return await _kistService.GetDTMobile_ScanEvents(codeLookup);
         }
       
@@ -162,13 +163,9 @@ namespace kist_api.Controllers
         public async Task<List<GeoLocationEvent>> Post(GetScanRequest req)
         {
             var userId = (string)HttpContext.Items["User"];
-
             //UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
             //userDetailsRequest.id = userId;
-
             //var userDetails = await _kistService.UsersDetails(userDetailsRequest);
-
-
             return await _kistService.GetDTMobile_ScanEvents(req);
         }
 
@@ -190,9 +187,6 @@ namespace kist_api.Controllers
         public Task<AssetIdentity> Identity(long id)
         {
             var userId = (string)HttpContext.Items["User"];
-
-        
-
             return _kistService.GetAssetIdentity(id);
         }
 
@@ -200,16 +194,12 @@ namespace kist_api.Controllers
         public Task<List<AssetImages>> GetImages(long id)
         {
             var userId = (string)HttpContext.Items["User"];
-
-
-
             return _kistService.GetAssetImages(id, 20060);
         }
 
         [HttpPost]
         [Route("Identity/Put")]
         public async Task<AssetIdentity> PutIdentity(AssetIdentity note)
-        //public async Task<IActionResult> Index([FromForm]IFormFile file)
         {
             var userId = (string)HttpContext.Items["User"];
             UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
@@ -229,10 +219,10 @@ namespace kist_api.Controllers
             var userId = (string)HttpContext.Items["User"];
             return _kistService.GetAssetSystem(id);
         }
+
         [HttpPost]
         [Route("System/Put")]
         public async Task<AssetSystem> PutSystem(AssetSystem note)
-        //public async Task<IActionResult> Index([FromForm]IFormFile file)
         {
             var userId = (string)HttpContext.Items["User"];
             UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
@@ -243,7 +233,6 @@ namespace kist_api.Controllers
             note.modifiedBy = userDetails.Forename + " " + userDetails.Surname;
             note.modifiedOn = DateTime.Now;
             return await _kistService.PutAssetSystem(note);
-
         }
 
         [HttpGet("StatusHistory/{id}")]
@@ -326,6 +315,13 @@ namespace kist_api.Controllers
 
 
 
+        }
+
+        //[Authorize]
+        [HttpPost("GetAssetVehicleChecks/{id}")]
+        public async Task<List<VehicleCheck>> GetAssetVehicleChecks(long id)
+        {
+            return await _vehicleCheckService.GetAssetVehicleChecks(id);
         }
     }
 }

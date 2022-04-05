@@ -81,22 +81,22 @@ namespace kist_api.Services
 
                 if (loginRes.userDetails != null && loginRes.response == null)
                 {
+                    _logger.LogInformation(@"We have Login Details , so lets call Kist API and get user Details");
+
                     UserDetailsRequest userDetailsRequest = new UserDetailsRequest() { id = loginRes.userDetails._ProviderUserKey.ToString() };
                     UserDetails usersDetails = UsersDetails(userDetailsRequest).Result;
-                    //var roleID = _configuration.GetValue<long>("access:role");
+                    var roleID = _configuration.GetValue<long>("access:role");
 
-                    //if (usersDetails.RoleID != roleID)
-                    //{
-                    //    _logger.LogWarning(@"Role not Super User");
-                    //    loginRes.response = "Insufficient permissions to access the KIST portal";
-                    //}
+                    if (usersDetails.RoleID != roleID)
+                    {
+                        _logger.LogWarning(@"Role not Super User");
+                        loginRes.response = "Insufficient permissions to access the KIST portal";
+                    }
 
                     // fetch userdetails to find company
-                    // UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
+                    //UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
                     //userDetailsRequest.id = loginRes.userDetails._ProviderUserKey.ToString();
-
-                    //  UserDetails userDetails = await UsersDetails(userDetailsRequest)
-                    _logger.LogInformation(@"We have Login Details , so lets call Kist API and get user Details");
+                    //UserDetails userDetails = await UsersDetails(userDetailsRequest)
 
                     if (loginRes.userDetails._IsApproved)
                     {
@@ -857,16 +857,13 @@ namespace kist_api.Services
             {
                 string apiResponse = await response.Content.ReadAsStringAsync();
                 aList = JsonConvert.DeserializeObject<GetNoteResponse>(apiResponse);
-
             }
+
             var f = new List<Note>();
 
             foreach (Note note1 in aList.Value)
             {
-        
                 var n2 = note1.notes?.Replace(@"\n", @"</br>");
-
-
                 note1.notes = n2;
                 f.Add(note1);
             }
@@ -879,8 +876,7 @@ namespace kist_api.Services
         public async Task<List<AssetStatusHistory>> GetAssetStatusHistory(long id)
         {
             GetStatusHistoryResponse aList = new GetStatusHistoryResponse();
-
-            //   StringContent content = new StringContent(JsonConvert.SerializeObject(getAssetRequest), Encoding.UTF8, "application/json");
+            //StringContent content = new StringContent(JsonConvert.SerializeObject(getAssetRequest), Encoding.UTF8, "application/json");
 
             var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("api:apiUser") + ":" + _configuration.GetValue<string>("api:apiPassword"));
             _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
@@ -890,7 +886,6 @@ namespace kist_api.Services
             {
                 string apiResponse = await response.Content.ReadAsStringAsync();
                 aList = JsonConvert.DeserializeObject<GetStatusHistoryResponse> (apiResponse);
-
             }
 
             return aList.Value;
@@ -910,9 +905,7 @@ namespace kist_api.Services
             {
                 string apiResponse = await response.Content.ReadAsStringAsync();
                 aList = JsonConvert.DeserializeObject<GetActivityResponse>(apiResponse);
-
             }
-
             
             return aList.Value;
         }
@@ -920,7 +913,6 @@ namespace kist_api.Services
         public async Task<List<RecentAllocation>> GetRecentAllocations(long userId )
         {
             var req = new { UserId = userId, };
-
             var res = new List<RecentAllocation>();
 
             StringContent content = new StringContent(JsonConvert.SerializeObject(req), Encoding.UTF8, "application/json");
@@ -934,10 +926,7 @@ namespace kist_api.Services
                 string apiResponse = await response.Content.ReadAsStringAsync();
             //    aList = JsonConvert.DeserializeObject<GetActivityResponse>(apiResponse);
                res = JsonConvert.DeserializeObject<List<RecentAllocation>>(JObject.Parse(apiResponse).GetValue("value").ToString());
-
-
             }
-
 
             return res;
         }
@@ -945,7 +934,6 @@ namespace kist_api.Services
         public async Task<List<Audit>> GetRecentAudits(long userId)
         {
             var req = new { UserId = userId, };
-
             var res = new List<Audit>();
 
             StringContent content = new StringContent(JsonConvert.SerializeObject(req), Encoding.UTF8, "application/json");
@@ -959,10 +947,7 @@ namespace kist_api.Services
                 string apiResponse = await response.Content.ReadAsStringAsync();
                 //    aList = JsonConvert.DeserializeObject<GetActivityResponse>(apiResponse);
                 res = JsonConvert.DeserializeObject<List<Audit>>(JObject.Parse(apiResponse).GetValue("value").ToString());
-
-
             }
-
 
             return res;
         }
@@ -981,8 +966,6 @@ namespace kist_api.Services
             {
                 string apiResponse = await response.Content.ReadAsStringAsync();
                 aList = JsonConvert.DeserializeObject<GetSystemTypeResponse>(apiResponse);
-
-                
             }
 
             return aList.Value.First();
@@ -997,7 +980,7 @@ namespace kist_api.Services
             aReq.SystemType = systemType;
 
             //$filter=TypeCode eq TC
-              StringContent content = new StringContent(JsonConvert.SerializeObject(aReq), Encoding.UTF8, "application/json");
+            StringContent content = new StringContent(JsonConvert.SerializeObject(aReq), Encoding.UTF8, "application/json");
 
             var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("DTCodes:apiUser") + ":" + _configuration.GetValue<string>("DTCodes:apiPassword"));
             _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
@@ -1007,8 +990,6 @@ namespace kist_api.Services
             {
                 string apiResponse = await response.Content.ReadAsStringAsync();
                 aList = JsonConvert.DeserializeObject<GetQRCodeResponse>(apiResponse);
-
-         
             }
 
             var a = aList.Value.First();
@@ -1064,26 +1045,22 @@ namespace kist_api.Services
             if (req.User != "")
             {
                 url += "startswith(UserName,'" + req.User + "')&";
-
             }
+
             if (req.Application != "")
             {
                 url += "startswith(Application,'" + req.Application + "')&";
-
             }
 
             if (req.AssetID != "")
             {
                 url += "startswith(LookupCode,'" + req.AssetID + "')&";
-
             }
 
             if (req.SystemType != "")
             {
                 url += "startswith(systemType,'" + req.SystemType + "')&";
-
             }
-
 
             //if (lookupCode != "ALL")
             //{
@@ -1187,10 +1164,7 @@ namespace kist_api.Services
                 }
             }
 
-            
-
             return aList;
-
         }
 
         public void SaveActivity_SQL(long operatorId , string appArea , string username , string desc)
@@ -1263,11 +1237,6 @@ namespace kist_api.Services
                     }
                 }
             }
-
-
-
-           
-
         }
 
         public async Task<String> Test2()
