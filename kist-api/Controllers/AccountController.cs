@@ -8,6 +8,7 @@ using kist_api.Model;
 using kist_api.Model.dashboard;
 using kist_api.Model.dtcusid;
 using kist_api.Services;
+using kist_api.Services.RealtimeService;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -24,17 +25,23 @@ namespace kist_api.Controllers
         readonly IConfiguration _configuration;
         readonly IKistService _kistService;
 
-        public AccountController(ILogger<AccountController> logger, IConfiguration configuration , IKistService kistService)
+        private readonly IRealtimeService _realtimeService;
+
+        public AccountController(ILogger<AccountController> logger, IConfiguration configuration , IKistService kistService, IRealtimeService realtimeService)
         {
             _logger = logger;
             _configuration = configuration;
             _kistService = kistService;
+            _realtimeService = realtimeService;
         }
 
         [Route("Login")]
         [HttpPost]
         public Task<LoginResponse> Login(LoginRequest loginReq)
         {
+
+            _realtimeService.NotifyAssetsUpdated();
+
             _logger.LogInformation(@"Controller\Account\Login(Post)");
             return _kistService.Login(loginReq);
         }
@@ -119,6 +126,16 @@ namespace kist_api.Controllers
             req.toDate = DateTime.Now;
             return await _kistService.GetActivity(req);
 
+        }
+
+
+        [Authorize]
+        [HttpGet("GetClancyAssets")]
+        public List<Asset> GetClancyAssets()
+        {
+            // String filePath = HttpContext.Server.MapPath("~/App_Data/allocationTemplates.json");
+            var JSON = System.IO.File.ReadAllText("clancyAssets.json");
+            return JsonConvert.DeserializeObject<List<Asset>>(JSON);
         }
 
     }

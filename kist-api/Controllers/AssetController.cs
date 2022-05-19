@@ -323,5 +323,8 @@ namespace kist_api.Controllers
         {
             return await _vehicleCheckService.GetAssetVehicleChecks(id);
         }
+
+
+
     }
 }

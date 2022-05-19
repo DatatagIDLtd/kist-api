@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using kist_api.Helper;
+using kist_api.Realtime;
 using kist_api.Services;
+using kist_api.Services.RealtimeService;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -35,6 +37,8 @@ namespace kist_api
             services.AddHttpClient<IAuditService, AuditService>();
             services.AddHttpClient<IContractService, ContractService>();
             services.AddHttpClient<IAuditService, AuditService>();
+           
+            services.AddScoped<IRealtimeService, RealtimeService>();
 
             services.AddControllers().AddNewtonsoftJson();
 
@@ -42,12 +46,25 @@ namespace kist_api
             {
                 options.AddPolicy("AllowAll", p =>
                 {
-                    p.AllowAnyOrigin()
+                    p.SetIsOriginAllowed((host) => true)
+                     .AllowCredentials()
                     .AllowAnyHeader()
                     .AllowAnyMethod();
                 });
+
+                //options.AddPolicy("SignalR",
+                //    builder => builder
+                //    .AllowAnyMethod()
+                //    .AllowAnyHeader()
+                //    .AllowCredentials()
+                //    .WithOrigins("http://localhost:4200"));
+                    //.SetIsOriginAllowed(hostName => true)) ;
+
             }); // Make sure you call this previous to AddMvc
             services.AddControllers();
+
+            services.AddSignalR();
+
             //   services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             //services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -74,13 +91,15 @@ namespace kist_api
 
             // custom jwt auth middleware
             app.UseMiddleware<JwtMiddleware>();
+          
             app.UseCors("AllowAll");
+            
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<AssetHub>("/assetsHub");
             });
         
-         
         }
     }
 }
