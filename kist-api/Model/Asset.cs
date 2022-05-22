@@ -13,7 +13,8 @@ namespace kist_api.Model
 
 		//public string? uniqueID { get; set; }
 		public string? name { get; set; }
-		public long? assetTypeID { get; set; }
+        public string assetName { get; set; }
+        public long? assetTypeID { get; set; }
 		//public string? assetType { get; set; }
 		//public string? searchQuery { get; set }
 		public long? contractId { get; set; }

@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace kist_api.Controllers
 {
@@ -131,11 +132,14 @@ namespace kist_api.Controllers
 
         [Authorize]
         [HttpGet("GetClancyAssets")]
-        public List<Asset> GetClancyAssets()
+        public List<AssetView> GetClancyAssets()
         {
             // String filePath = HttpContext.Server.MapPath("~/App_Data/allocationTemplates.json");
-            var JSON = System.IO.File.ReadAllText("clancyAssets.json");
-            return JsonConvert.DeserializeObject<List<Asset>>(JSON);
+            var assetsString = System.IO.File.ReadAllText("clancyAssets.json");
+
+            var result = JsonConvert.DeserializeObject<List<AssetView>>(assetsString,new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
+
+            return result;
         }
 
     }

@@ -24,6 +24,20 @@ namespace kist_api.Model
 		public DateTime? effectiveTo { get; set; }
 		public string? imgUrl { get; set; }
 		public string allocation { get; set; }
+        public bool showTabs { get; set; }
+        public string policeInterest { get; set; }
+        public string image { get; set; }
+        public string memId { get; set; }
+        public string partNo { get; set; }
+        public string serialNumber { get; set; }
+        public string status { get; set; }
+        public string vin { get; set; }
+        public string vrn { get; set; }
+        public string enginNo { get; set; }
+        public string lastScandData { get; set; }
+        public string allocatedTo { get; set; }
+        public string allocatedToType { get; set; }
 
-	}
+    }
 }
+
