@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace kist_api.Model
@@ -24,7 +25,6 @@ namespace kist_api.Model
 		public DateTime? effectiveTo { get; set; }
 		public string? imgUrl { get; set; }
 		public string allocation { get; set; }
-        public bool showTabs { get; set; }
         public string policeInterest { get; set; }
         public string image { get; set; }
         public string memId { get; set; }
@@ -38,6 +38,10 @@ namespace kist_api.Model
         public string allocatedTo { get; set; }
         public string allocatedToType { get; set; }
 
-    }
+
+		[JsonIgnore]
+		public string showTabs { get; set; }
+
+	}
 }
 

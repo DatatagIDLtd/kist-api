@@ -104,13 +104,15 @@ namespace kist_api.Services
                         loginRes.userDetails.token = generateJwtToken(loginRes.userDetails, loginReq);
                         //loginRes.userDetails.role = "NGMUSR";
                         loginRes.userDetails.role = usersDetails.RoleID == 13 ? "Ganger" : usersDetails.RoleID == 14 ? "Supervisor" : "Super User";
-                    } else
+                    }
+                    else
                     {
                         _logger.LogWarning(@"User Not Approved");
                         loginRes.response = "User not approved";
                     }
                     //  loginRes.userDetails.token = generateJwtToken(loginRes.userDetails);
-                } else
+                }
+                else
                 {
                     _logger.LogWarning(@"Invalid Credentials " + content.ToString());
                     // SaveActivity_SQL(0, "login", loginReq.username, "Failed to logon");
@@ -194,7 +196,7 @@ namespace kist_api.Services
                 apiResponse = apiResponse.Replace("}]}]\"", "}]}]");  //savs frig
                 apiResponse = apiResponse.Replace("\\\"", "\"");  //savs frig
 
-              
+
                 // loginRes = System.Text.Json.JsonSerializer.Deserialize<GetUserDetailsResponse>(apiResponse, options);
                 dashboardResponse = JsonConvert.DeserializeObject<GetDashboardResponse>(apiResponse);
 
@@ -204,11 +206,11 @@ namespace kist_api.Services
             return dashboardResponse.Value.First().dashboard.First();
         }
 
-        public async Task<List<AssetImages>> GetAssetImages(long id, long userId )
+        public async Task<List<AssetImages>> GetAssetImages(long id, long userId)
         {
-            var req = new { AssetId = id,  userId = userId , tags = ""};
+            var req = new { AssetId = id, userId = userId, tags = "" };
 
-             List<AssetImages> res ;
+            List<AssetImages> res;
 
             StringContent content = new StringContent(JsonConvert.SerializeObject(req), Encoding.UTF8, "application/json");
 
@@ -223,16 +225,16 @@ namespace kist_api.Services
                 res = JsonConvert.DeserializeObject<List<AssetImages>>(JObject.Parse(apiResponse).GetValue("value").ToString());
 
 
-         
+
 
             }
-           
+
             return res;
         }
 
-        public async Task<long> CreateAllocation(long Pid , long id , long siteid , String status, long userId)
+        public async Task<long> CreateAllocation(long Pid, long id, long siteid, String status, long userId)
         {
-            var req = new { AssetId = id  , siteid=siteid , ParentId = Pid , status = status ,operatorId = 1 , userId = userId };
+            var req = new { AssetId = id, siteid = siteid, ParentId = Pid, status = status, operatorId = 1, userId = userId };
 
             GetMapPopupResponse res = new GetMapPopupResponse();
 
@@ -246,7 +248,7 @@ namespace kist_api.Services
             using (var response = await _client.PostAsync(url, content))
             {
                 string apiResponse = await response.Content.ReadAsStringAsync();
-   
+
                 res = JsonConvert.DeserializeObject<GetMapPopupResponse>(apiResponse);
 
 
@@ -255,9 +257,9 @@ namespace kist_api.Services
             return 1;
         }
 
-        public async Task<long> RemoveAllocation(long id , long userid)
+        public async Task<long> RemoveAllocation(long id, long userid)
         {
-            var req = new { AllocationId = id ,  AssetId = 1,  operatorId = 1, userId = userid, status="History"};
+            var req = new { AllocationId = id, AssetId = 1, operatorId = 1, userId = userid, status = "History" };
 
             GetMapPopupResponse res = new GetMapPopupResponse();
 
@@ -293,7 +295,7 @@ namespace kist_api.Services
             _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
 
             var url = _configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:GetMapPopupInfo");
-            using (var response = await _client.PostAsync(url , content))
+            using (var response = await _client.PostAsync(url, content))
             {
                 string apiResponse = await response.Content.ReadAsStringAsync();
                 //var options = new JsonSerializerOptions
@@ -355,7 +357,7 @@ namespace kist_api.Services
             MyScansResponse res = new MyScansResponse();
             var req = new { UserGUID = Id, };
 
-               StringContent content = new StringContent(JsonConvert.SerializeObject(req), Encoding.UTF8, "application/json");
+            StringContent content = new StringContent(JsonConvert.SerializeObject(req), Encoding.UTF8, "application/json");
             // UserGUID : "EE2F80F1-AA52-450C-ACEA-520D6F2EE1BC"
             var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("DTMobile:apiUser") + ":" + _configuration.GetValue<string>("DTMobile:apiPassword"));
             _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
@@ -404,7 +406,7 @@ namespace kist_api.Services
             if (asset.status == null) { asset.status = ""; };
             if (asset.searchText == null) { asset.searchText = ""; };
 
-            if ( asset.assetStatusId > 0 )
+            if (asset.assetStatusId > 0)
             {
                 asset.status = asset.assetStatusId.ToString();
                 asset.assetStatusId = null;
@@ -466,7 +468,7 @@ namespace kist_api.Services
 
             if (site.location == null) { site.location = ""; };
             if (site.siteCode == null) { site.siteCode = ""; };
-       
+
             if (site.siteTypeID == null) { site.siteTypeID = 0; };
 
             if (site.name == null) { site.name = ""; };
@@ -604,12 +606,12 @@ namespace kist_api.Services
             return res;
         }
 
-        public async Task<Asset> GetAsset(long id )
+        public async Task<Asset> GetAsset(long id)
         {
             Asset userDetailsResponse = new Asset();
             //   StringContent content = new StringContent(JsonConvert.SerializeObject(getAssetRequest), Encoding.UTF8, "application/json");
 
-            var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("api:apiUser") + ":" + _configuration.GetValue<string>("api:apiPassword") );
+            var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("api:apiUser") + ":" + _configuration.GetValue<string>("api:apiPassword"));
             _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
 
             using (var response = await _client.GetAsync(_configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:GetAsset") + "(" + id.ToString() + ")")) //, content))
@@ -637,7 +639,7 @@ namespace kist_api.Services
 
             var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("api:apiUser") + ":" + _configuration.GetValue<string>("api:apiPassword"));
             _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
-            var url = _configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:GetAssetIdentity") + "?$filter=AssetId eq " + id.ToString() ;
+            var url = _configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:GetAssetIdentity") + "?$filter=AssetId eq " + id.ToString();
 
             using (var response = await _client.GetAsync(url)) //, content))
             {
@@ -653,7 +655,7 @@ namespace kist_api.Services
             //    // requested asset for in correct company id , fail ! 
 
             //}
-          //  AssetIdentity a = new AssetIdentity();
+            //  AssetIdentity a = new AssetIdentity();
             var a = assetIndentity.Value.First();
 
             return a;
@@ -682,15 +684,17 @@ namespace kist_api.Services
                 if (a.productCode == "KIST")
                 {
                     a.systemTypeInfo.Name = "KIST";
-                    a.qrCodeUrl = "https://www.datatag.mobi/qrcsrm.aspx?id="+ a.idNumber+ "&assetId=" + id.ToString();
-                } else
+                    a.qrCodeUrl = "https://www.datatag.mobi/qrcsrm.aspx?id=" + a.idNumber + "&assetId=" + id.ToString();
+                }
+                else
                 {
-                    try { 
+                    try
+                    {
                         a.systemTypeInfo = await GetDTCore_SystemType(a.membershipNumber.Substring(0, 2));
                         var qr = await GetDTCoode_QRCodeURL(a.idNumber, a.membershipNumber.Substring(0, 2));
                         a.qrCodeUrl = qr.qrcodeurl;
 
-                        if (a.qrCodeUrl.ToLower()=="unknown")
+                        if (a.qrCodeUrl.ToLower() == "unknown")
                         {
                             a.qrCodeUrl = "https://www.datatag.mobi/qrcsrm.aspx?id=" + a.idNumber + "&assetId=" + id.ToString();
                         }
@@ -698,11 +702,11 @@ namespace kist_api.Services
                     }
                     catch
                     {
-                       
-                            a.qrCodeUrl = "https://www.datatag.mobi/qrcsrm.aspx?id=" + a.idNumber + "&assetId=" + id.ToString();
+
+                        a.qrCodeUrl = "https://www.datatag.mobi/qrcsrm.aspx?id=" + a.idNumber + "&assetId=" + id.ToString();
 
 
-                       
+
                     }
                 }
                 //
@@ -765,7 +769,7 @@ namespace kist_api.Services
             _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
 
             //using (var response = await _client.PutAsync(_configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:PutAttachment") + "(" + asset.ID.ToString() + ")", content)) //, content))
-            using (var response = await _client.PostAsync(_configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:PutAttachment") , content)) //, content))
+            using (var response = await _client.PostAsync(_configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:PutAttachment"), content)) //, content))
             {
                 string apiResponse = await response.Content.ReadAsStringAsync();
                 attachmentResponse = JsonConvert.DeserializeObject<Attachment>(apiResponse);
@@ -885,7 +889,7 @@ namespace kist_api.Services
             using (var response = await _client.GetAsync(url)) //, content))
             {
                 string apiResponse = await response.Content.ReadAsStringAsync();
-                aList = JsonConvert.DeserializeObject<GetStatusHistoryResponse> (apiResponse);
+                aList = JsonConvert.DeserializeObject<GetStatusHistoryResponse>(apiResponse);
             }
 
             return aList.Value;
@@ -895,22 +899,22 @@ namespace kist_api.Services
         {
             GetActivityResponse aList = new GetActivityResponse();
 
-               StringContent content = new StringContent(JsonConvert.SerializeObject(getActivityRequest), Encoding.UTF8, "application/json");
+            StringContent content = new StringContent(JsonConvert.SerializeObject(getActivityRequest), Encoding.UTF8, "application/json");
 
             var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("api:apiUser") + ":" + _configuration.GetValue<string>("api:apiPassword"));
             _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
             var url = _configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:GetActivity") + "?$orderby=ModifiedOn desc";//+ " ?$filter=AssetId eq " + id.ToString();
 
-            using (var response = await _client.PostAsync(url, content ))
+            using (var response = await _client.PostAsync(url, content))
             {
                 string apiResponse = await response.Content.ReadAsStringAsync();
                 aList = JsonConvert.DeserializeObject<GetActivityResponse>(apiResponse);
             }
-            
+
             return aList.Value;
         }
 
-        public async Task<List<RecentAllocation>> GetRecentAllocations(long userId )
+        public async Task<List<RecentAllocation>> GetRecentAllocations(long userId)
         {
             var req = new { UserId = userId, };
             var res = new List<RecentAllocation>();
@@ -919,13 +923,13 @@ namespace kist_api.Services
 
             var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("api:apiUser") + ":" + _configuration.GetValue<string>("api:apiPassword"));
             _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
-            var url = _configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:GetRecentAllocations") ;//+ " ?$filter=AssetId eq " + id.ToString();
+            var url = _configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:GetRecentAllocations");//+ " ?$filter=AssetId eq " + id.ToString();
 
             using (var response = await _client.PostAsync(url, content))
             {
                 string apiResponse = await response.Content.ReadAsStringAsync();
-            //    aList = JsonConvert.DeserializeObject<GetActivityResponse>(apiResponse);
-               res = JsonConvert.DeserializeObject<List<RecentAllocation>>(JObject.Parse(apiResponse).GetValue("value").ToString());
+                //    aList = JsonConvert.DeserializeObject<GetActivityResponse>(apiResponse);
+                res = JsonConvert.DeserializeObject<List<RecentAllocation>>(JObject.Parse(apiResponse).GetValue("value").ToString());
             }
 
             return res;
@@ -971,7 +975,7 @@ namespace kist_api.Services
             return aList.Value.First();
         }
 
-        public async Task<QrCode> GetDTCoode_QRCodeURL(string id , string systemType )
+        public async Task<QrCode> GetDTCoode_QRCodeURL(string id, string systemType)
         {
             GetQRCodeResponse aList = new GetQRCodeResponse();
             GetQRCodeRequest aReq = new GetQRCodeRequest();
@@ -1013,10 +1017,10 @@ namespace kist_api.Services
 
             var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("DTMobile:apiUser") + ":" + _configuration.GetValue<string>("DTMobile:apiPassword"));
             _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
-           // _client.DefaultRequestHeaders.Add("x-rssbus-authtoken", "5x1S6d8z7X4w6b4S0v0y");
+            // _client.DefaultRequestHeaders.Add("x-rssbus-authtoken", "5x1S6d8z7X4w6b4S0v0y");
 
             //using (var response = await _client.PutAsync(_configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:PutAttachment") + "(" + asset.ID.ToString() + ")", content)) //, content))
-            var url = _configuration.GetValue<string>("DTMobile:APIEndPoint") + _configuration.GetValue<string>("DTMobile:GetGeoLocationEvents") ;
+            var url = _configuration.GetValue<string>("DTMobile:APIEndPoint") + _configuration.GetValue<string>("DTMobile:GetGeoLocationEvents");
             using (var response = await _client.PostAsync(url, content)) //, content))
             {
                 string apiResponse = await response.Content.ReadAsStringAsync();
@@ -1087,23 +1091,24 @@ namespace kist_api.Services
             GetScanResponse aList = new GetScanResponse();
             //GetQRCodeRequest aReq = new GetQRCodeRequest();
 
-       //     aReq.IDNumber = id;
-          //  aReq.SystemType = systemType;
+            //     aReq.IDNumber = id;
+            //  aReq.SystemType = systemType;
 
             //$filter=TypeCode eq TC
-          //  StringContent content = new StringContent(JsonConvert.SerializeObject(aReq), Encoding.UTF8, "application/json");
+            //  StringContent content = new StringContent(JsonConvert.SerializeObject(aReq), Encoding.UTF8, "application/json");
 
             var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("DTMobile:apiUser") + ":" + _configuration.GetValue<string>("DTMobile:apiPassword"));
             _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
             var url = _configuration.GetValue<string>("DTMobile:APIEndPoint") + _configuration.GetValue<string>("DTMobile:GetGeoLocationEvents");
             if (lookupCode != "ALL")
             {
-                url = url + "?$filter=LookupCode eq " + lookupCode  + "&$orderby=createdon desc";
-            }else
+                url = url + "?$filter=LookupCode eq " + lookupCode + "&$orderby=createdon desc";
+            }
+            else
             {
                 url = url + "?$orderby=createdon desc";
             }
-          
+
             using (var response = await _client.GetAsync(url)) //, content))
             {
                 string apiResponse = await response.Content.ReadAsStringAsync();
@@ -1116,7 +1121,7 @@ namespace kist_api.Services
         }
 
         public async Task<List<AssetStatusHistory>> GetAssetStatusHistory_SQL(long id)
-       // public List<AssetStatusHistory> GetAssetStatusHistory(long id)
+        // public List<AssetStatusHistory> GetAssetStatusHistory(long id)
         {
             List<AssetStatusHistory> aList = new List<AssetStatusHistory>();
             string commandText = @"SELECT * FROM [dbo].[vwKISTAssetStatusHistory] where assetid = @assetId ";
@@ -1167,7 +1172,7 @@ namespace kist_api.Services
             return aList;
         }
 
-        public void SaveActivity_SQL(long operatorId , string appArea , string username , string desc)
+        public void SaveActivity_SQL(long operatorId, string appArea, string username, string desc)
         // public List<AssetStatusHistory> GetAssetStatusHistory(long id)
         {
             List<AssetStatusHistory> aList = new List<AssetStatusHistory>();
@@ -1225,7 +1230,7 @@ namespace kist_api.Services
 
                             //    aList.Add(itemContent);
                             //}
-                           // await rdr.CloseAsync();
+                            // await rdr.CloseAsync();
                         }
                         catch (Exception Ex)
                         {
@@ -1245,18 +1250,18 @@ namespace kist_api.Services
             {
                 var _ClientConfig = new ClientConfig
                 {
-                 //   Endpoint = _Endpoint,
+                    //   Endpoint = _Endpoint,
                     ContentType = "application/json",
-                 //   APIUserName = _APIUserName,
-                  //  APIPassword = _APIPassword,
-                  //  APIToken = _APIToken,
-                  //  EmailRecipient = _EmailRecipient,
-                  //  EmailRegex = _EmailRegex
+                    //   APIUserName = _APIUserName,
+                    //  APIPassword = _APIPassword,
+                    //  APIToken = _APIToken,
+                    //  EmailRecipient = _EmailRecipient,
+                    //  EmailRegex = _EmailRegex
                 };
 
                 //var _APIEndpoint = _configuration.GetValue<string>("email:APIEndPoint"); // ConfigurationManager.AppSettings["APIEndPoint"];
 
-            //    _ClientConfig.EmailRecipient = emailRecipient;
+                //    _ClientConfig.EmailRecipient = emailRecipient;
                 _ClientConfig.HttpMethod = "POST";
                 _ClientConfig.Destination = "DTDEAD";
                 _ClientConfig.DatabaseName = "DTKIST";
@@ -1317,7 +1322,7 @@ namespace kist_api.Services
             //req.UserName = "";
             req.CreatedBy = _configuration.GetValue<string>("dtdead:CreatedBy");  // "DTKistUser";
             req.ObjectName = _configuration.GetValue<string>("dtdead:ObjectName");  //"EventData";
-            req.Report = "QR Scan from KIST Mobile using ID:"+req.KeyValue + " was not located";  //"body";
+            req.Report = "QR Scan from KIST Mobile using ID:" + req.KeyValue + " was not located";  //"body";
 
 
             var res = new List<APIReturn>();
@@ -1355,6 +1360,25 @@ namespace kist_api.Services
             }
 
             return reportsResponse.value;
+        }
+
+
+        public async Task<List<AssetView>> GetAssetsOPOC()
+        {
+            GetAssetResponse userDetailsResponse = new GetAssetResponse();
+            StringContent content = new StringContent("{}", Encoding.UTF8, "application/json");
+
+            var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("api:apiUser") + ":" + _configuration.GetValue<string>("api:apiPassword"));
+            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+
+            using (var response = await _client.PostAsync(_configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:GetAssetsOPOC"), content)) //, content))
+            {
+
+                string apiResponse = await response.Content.ReadAsStringAsync();
+                userDetailsResponse = JsonConvert.DeserializeObject<GetAssetResponse>(apiResponse);
+            }
+
+            return userDetailsResponse.Value;
         }
 
         private string generateJwtToken(MembershipUser user, LoginRequest loginReq)

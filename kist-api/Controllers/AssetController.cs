@@ -324,7 +324,11 @@ namespace kist_api.Controllers
             return await _vehicleCheckService.GetAssetVehicleChecks(id);
         }
 
-
+        [HttpGet("GetAssetsOPOC")]
+        public async Task<List<AssetView>> GetAssetsOPOC()
+        {
+            return await _kistService.GetAssetsOPOC();
+        }
 
     }
 }
