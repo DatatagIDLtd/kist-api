@@ -324,10 +324,30 @@ namespace kist_api.Controllers
             return await _vehicleCheckService.GetAssetVehicleChecks(id);
         }
 
-        [HttpGet("GetAssetsOPOC")]
-        public async Task<List<AssetView>> GetAssetsOPOC()
+        [Authorize]
+        [HttpGet("GetIndexedDBData")]
+        public async Task<GetIndexedDBDataResponse> GetIndexedDBData()
         {
-            return await _kistService.GetAssetsOPOC();
+            var userId = (string)HttpContext.Items["User"];
+
+            UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
+            userDetailsRequest.id = userId;
+
+            var userDetails = await _kistService.UsersDetails(userDetailsRequest);
+
+
+            var userAudits =  await _kistService.GetRecentAudits(userDetails.ID);
+            var assets =  await _kistService.GetAssetsOPOC();
+
+            userDetailsRequest.id = userDetails.ID.ToString();
+            var dashboard = await _kistService.GetMobileDashboard(userDetailsRequest);
+
+            return new GetIndexedDBDataResponse
+            {
+                Assets = assets,
+                Audits = userAudits,
+                Dashboard = dashboard
+            };
         }
 
     }
