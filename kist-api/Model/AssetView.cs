@@ -37,7 +37,9 @@ namespace kist_api.Model
         public string lastScandData { get; set; }
         public string allocatedTo { get; set; }
         public string allocatedToType { get; set; }
-
+		public string allocationdAuditId { get; set; }
+		public string allocationAuditStatusId { get; set; }
+		public string auditId { get; set; }
 
 		[JsonIgnore]
 		public string showTabs { get; set; }
