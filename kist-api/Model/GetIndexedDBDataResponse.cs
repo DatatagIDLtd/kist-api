@@ -12,6 +12,6 @@ namespace kist_api.Model
 
         public List<Audit> Audits { get; set; }
 
-        public Dashboard Dashboard { get; set; }
+        public List<Dashboard> Dashboard { get; set; }
     }
 }

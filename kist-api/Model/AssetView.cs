@@ -37,13 +37,18 @@ namespace kist_api.Model
         public string lastScandData { get; set; }
         public string allocatedTo { get; set; }
         public string allocatedToType { get; set; }
-		public string allocationdAuditId { get; set; }
-		public string allocationAuditStatusId { get; set; }
-		public string auditId { get; set; }
+		public long allocationdAuditId { get; set; }
+		public int allocationAuditStatusId { get; set; }
+		public int auditId { get; set; }
+        public int assetStatusId { get; set; }
+        public DateTime checkedOn { get; set; }
+        public string checkedBy { get; set; }
+        public string assignTo { get; set; }
+        public int siteId { get; set; }
+        public string notes { get; set; }
 
-		[JsonIgnore]
+        [JsonIgnore]
 		public string showTabs { get; set; }
 
 	}
 }
-

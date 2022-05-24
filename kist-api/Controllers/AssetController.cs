@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ceup_api.Model.dtdead;
 using kist_api.Model;
+using kist_api.Model.dashboard;
 using kist_api.Model.dtcusid;
 using kist_api.Model.dtmobile;
 using kist_api.Models.Account;
@@ -335,20 +336,16 @@ namespace kist_api.Controllers
 
             var userDetails = await _kistService.UsersDetails(userDetailsRequest);
 
-
             var userAudits =  await _kistService.GetRecentAudits(userDetails.ID);
             var assets =  await _kistService.GetAssetsOPOC();
 
             userDetailsRequest.id = userDetails.ID.ToString();
-            var dashboard = await _kistService.GetMobileDashboard(userDetailsRequest);
 
             return new GetIndexedDBDataResponse
             {
                 Assets = assets,
                 Audits = userAudits,
-                Dashboard = dashboard
             };
         }
-
     }
 }
