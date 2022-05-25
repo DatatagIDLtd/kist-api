@@ -198,6 +198,7 @@ namespace kist_api.Controllers
                     attachment.attachmentType = kFile.attachmentType;
                     attachment.notes = kFile.Note;
                     attachment.tags = kFile.Tags;
+                    attachment.isActive = true;
 
 
                     attachment.createdBy = userName;//userDetails.Forename + " " + userDetails.Surname;
