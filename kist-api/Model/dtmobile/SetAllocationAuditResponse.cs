@@ -11,7 +11,6 @@ namespace kist_api.Model.dtmobile
         public long? assetId { get; set; }
         public long? allocationAuditId { get; set; }
         public long? auditId { get; set; }
-
         public string? error { get; set; }
     }
 }

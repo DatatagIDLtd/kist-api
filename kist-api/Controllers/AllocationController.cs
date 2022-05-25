@@ -174,5 +174,19 @@ namespace kist_api.Controllers
           //  return tList;
 
         }
+
+        [Authorize]
+        [HttpPost("SyncAllAudits")]
+        public async Task<SyncAllAuditsResponse> SyncAllAudits(SyncAllAuditsRequest request)
+        {
+            _logger.LogInformation(@"Sync All Audit");
+            var userId = (string)HttpContext.Items["User"];
+
+            UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
+            userDetailsRequest.id = userId;
+
+            var userDetails = await _kistService.UsersDetails(userDetailsRequest);
+            return await _kistService.SyncAllAudits(request,userDetails.ID);
+        }
     }
 }

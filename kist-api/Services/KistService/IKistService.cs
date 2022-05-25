@@ -58,5 +58,9 @@ namespace kist_api.Services
         Task<List<CustomReport>> GetCustomReports(string userName);
 
         Task<List<AssetView>> GetAssetsOPOC();
+
+        Task<SyncAllAuditsResponse> SyncAllAudits(SyncAllAuditsRequest request, long userId);
+
+        Task CompleteAudit(long auditId);
     }
 }

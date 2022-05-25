@@ -1446,5 +1446,83 @@ namespace kist_api.Services
             //}
             return userDetailsResponse;
         }
+
+
+        public async Task<SyncAllAuditsResponse> SyncAllAudits(SyncAllAuditsRequest request, long userId)
+        {
+
+            try
+            {
+                foreach (var singleRequest in request.RequestList)
+                {
+                    var currentAuditId = singleRequest.Audit.ID;
+                    //If its a brand-new audit create it
+                    if (currentAuditId == 0)
+                    {
+                        var createAuditResponse = await CreateAudit(new CreateAuditRequest
+                        {
+                            assetId = singleRequest.Audit.AssetId,
+                            auditDate = singleRequest.Audit.CreatedOn,
+                            auditType = singleRequest.Audit.AuditType,
+                            operatorId = 1,
+                            siteId = singleRequest.Assets.First().siteId,
+                            userId = userId
+                        });
+
+                        if (createAuditResponse.auditid.HasValue)
+                        {
+                            currentAuditId = createAuditResponse.auditid.Value;
+                        }
+                    }
+
+                    //Set new allocation audit statuses for current audit
+                    foreach (var asset in singleRequest.Assets)
+                    {
+                        await SetAllocationAudit(new SetAllocationAuditRequest
+                        {
+                            allocationAuditId = asset.allocationdAuditId,
+                            assetId = asset.id,
+                            auditId = currentAuditId,
+                            note = asset.notes,
+                            operatorId = 1,
+                            userid = userId,
+                            status = asset.allocationAuditStatusId
+                        });
+                    }
+
+                    if (singleRequest.Audit.AuditStatus == "Complete")
+                    {
+                        await CompleteAudit(currentAuditId);
+                    }
+                }
+
+                return new SyncAllAuditsResponse
+                {
+                    Succeeded = true
+                };
+            }
+            catch (Exception)
+            {
+                return new SyncAllAuditsResponse
+                {
+                    Succeeded = false
+                };
+            }
+
+        }
+
+        public async Task CompleteAudit(long auditId)
+        {
+            GetAssetResponse userDetailsResponse = new GetAssetResponse();
+            StringContent content = new StringContent(JsonConvert.SerializeObject(new { auditId }), Encoding.UTF8, "application/json");
+
+            var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("api:apiUser") + ":" + _configuration.GetValue<string>("api:apiPassword"));
+            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+
+            using (var response = await _client.PostAsync(_configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:CompleteAudit"), content)) //, content))
+            {
+                 await response.Content.ReadAsStringAsync();
+            }
+        }
     }
 }
