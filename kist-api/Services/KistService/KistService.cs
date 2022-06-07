@@ -1455,9 +1455,8 @@ namespace kist_api.Services
             {
                 foreach (var singleRequest in request.RequestList)
                 {
-                    var currentAuditId = singleRequest.Audit.ID;
                     //If its a brand-new audit create it
-                    if (currentAuditId == 0)
+                    if (singleRequest.Audit.isLocal)
                     {
                         var createAuditResponse = await CreateAudit(new CreateAuditRequest
                         {
@@ -1465,40 +1464,73 @@ namespace kist_api.Services
                             auditDate = singleRequest.Audit.CreatedOn,
                             auditType = singleRequest.Audit.AuditType,
                             operatorId = 1,
-                            siteId = singleRequest.Assets.First().siteId,
                             userId = userId
                         });
 
                         if (createAuditResponse.auditid.HasValue)
                         {
-                            currentAuditId = createAuditResponse.auditid.Value;
+                            var dbInventoryList = await GetInventoryAllocationAudits(createAuditResponse.auditid.Value);
+
+                            foreach (var inventoryAllocationAudit in dbInventoryList)
+                            {
+                                var requestAllocationAudit = singleRequest.Assets.FirstOrDefault(x => x.id == inventoryAllocationAudit.assetId)
+                                    ?.allocationAudits.FirstOrDefault(y => y.auditId == singleRequest.Audit.ID);
+
+                                await SetAllocationAudit(new SetAllocationAuditRequest
+                                {
+                                    allocationAuditId = inventoryAllocationAudit.id,
+                                    assetId = inventoryAllocationAudit.assetId,
+                                    auditId = createAuditResponse.auditid.Value,
+                                    note = null,
+                                    operatorId = 1,
+                                    userid = userId,
+                                    status = requestAllocationAudit.allocationAuditStatusId
+                                });
+                            }
+
+                            if (singleRequest.Audit.AuditStatus == "Complete")
+                            {
+                                await CompleteAudit(createAuditResponse.auditid.Value);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        var dbInventoryList = await GetInventoryAllocationAudits(singleRequest.Audit.ID);
+
+                        foreach (var inventoryAllocationAudit in dbInventoryList)
+                        {
+                            var requestAllocationAudit = singleRequest.Assets.FirstOrDefault(x => x.id == inventoryAllocationAudit.assetId)
+                                ?.allocationAudits.FirstOrDefault(y => y.auditId == singleRequest.Audit.ID);
+
+                            await SetAllocationAudit(new SetAllocationAuditRequest
+                            {
+                                allocationAuditId = inventoryAllocationAudit.id,
+                                assetId = inventoryAllocationAudit.assetId,
+                                auditId = singleRequest.Audit.ID,
+                                note = null,
+                                operatorId = 1,
+                                userid = userId,
+                                status = requestAllocationAudit.allocationAuditStatusId
+                            });
+                        }
+
+                        if (singleRequest.Audit.AuditStatus == "Complete")
+                        {
+                            await CompleteAudit(singleRequest.Audit.ID);
                         }
                     }
 
-                    //Set new allocation audit statuses for current audit
-                    foreach (var asset in singleRequest.Assets)
-                    {
-                        await SetAllocationAudit(new SetAllocationAuditRequest
-                        {
-                            allocationAuditId = asset.allocationdAuditId,
-                            assetId = asset.id,
-                            auditId = currentAuditId,
-                            note = asset.notes,
-                            operatorId = 1,
-                            userid = userId,
-                            status = asset.allocationAuditStatusId
-                        });
-                    }
-
-                    if (singleRequest.Audit.AuditStatus == "Complete")
-                    {
-                        await CompleteAudit(currentAuditId);
-                    }
                 }
+
+                var userAudits = await GetRecentAudits(userId);
+                var assets = await GetAssetsOPOC();
 
                 return new SyncAllAuditsResponse
                 {
-                    Succeeded = true
+                    Succeeded = true,
+                    Assets = assets,
+                    Audits = userAudits,
                 };
             }
             catch (Exception)
@@ -1521,8 +1553,26 @@ namespace kist_api.Services
 
             using (var response = await _client.PostAsync(_configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:CompleteAudit"), content)) //, content))
             {
-                 await response.Content.ReadAsStringAsync();
+                await response.Content.ReadAsStringAsync();
             }
+        }
+
+        public async Task<List<InventoryAllocationAudit>> GetInventoryAllocationAudits(long auditId)
+        {
+            GetInventoryAllocationAuditsResponse allocationAuditResponse = new GetInventoryAllocationAuditsResponse();
+            StringContent content = new StringContent(JsonConvert.SerializeObject(new { auditId }), Encoding.UTF8, "application/json");
+
+            var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("api:apiUser") + ":" + _configuration.GetValue<string>("api:apiPassword"));
+            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+
+            using (var response = await _client.PostAsync(_configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:GetInventoryAllocationAudits"), content)) //, content))
+            {
+
+                string apiResponse = await response.Content.ReadAsStringAsync();
+                allocationAuditResponse = JsonConvert.DeserializeObject<GetInventoryAllocationAuditsResponse>(apiResponse);
+            }
+
+            return allocationAuditResponse.Value;
         }
     }
 }

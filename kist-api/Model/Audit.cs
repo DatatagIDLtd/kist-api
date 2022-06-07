@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -24,5 +25,8 @@ namespace kist_api.Model
 		public string assignedToInfo { get; set; }
 		public string timeToCompleteAudit { get; set; }
 
-	}
+		[JsonIgnore]
+        public bool isLocal { get; set; }
+
+    }
 }

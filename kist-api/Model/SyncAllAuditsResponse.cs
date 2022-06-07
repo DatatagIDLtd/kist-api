@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace kist_api.Model
 {
-    public class SyncAllAuditsResponse
+    public class SyncAllAuditsResponse : GetIndexedDBDataResponse
     {
         public bool Succeeded { get; set; }
     }

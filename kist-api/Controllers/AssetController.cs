@@ -339,8 +339,6 @@ namespace kist_api.Controllers
             var userAudits =  await _kistService.GetRecentAudits(userDetails.ID);
             var assets =  await _kistService.GetAssetsOPOC();
 
-            userDetailsRequest.id = userDetails.ID.ToString();
-
             return new GetIndexedDBDataResponse
             {
                 Assets = assets,
