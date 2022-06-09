@@ -12,6 +12,17 @@ namespace kist_api.Model
 
         public List<Audit> Audits { get; set; }
 
-        public List<Dashboard> Dashboard { get; set; }
+        public IndexedDBLookupData IndexedDbLookupData { get; set; }
+    }
+
+    public class IndexedDBLookupData
+    {
+        public List<Lookup> Contracts { get; set; }
+
+        public List<Lookup> AssetTypes { get; set; }
+
+        public List<Lookup> Oem { get; set; }
+
+        public List<Lookup> AssetStatus { get; set; }
     }
 }

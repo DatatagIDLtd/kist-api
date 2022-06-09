@@ -336,13 +336,37 @@ namespace kist_api.Controllers
 
             var userDetails = await _kistService.UsersDetails(userDetailsRequest);
 
-            var userAudits =  await _kistService.GetRecentAudits(userDetails.ID);
-            var assets =  await _kistService.GetAssetsOPOC();
+            UserDetailsRequest userDetailsRequest2 = new UserDetailsRequest();
+            userDetailsRequest2.id = userDetails.ID.ToString();
+
+
+            //var userAudits =  await _kistService.GetRecentAudits(userDetails.ID);
+            //var lookupData = await _kistService.GetLookUpData(userDetailsRequest2);
+            //var assets =  await _kistService.GetAssetsOPOC();
+
+            var userAuditsTask = _kistService.GetRecentAudits(userDetails.ID);
+            var lookupTask =  _kistService.GetLookUpData(userDetailsRequest2);
+            var assetsTask =  _kistService.GetAssetsOPOC();
+
+            await Task.WhenAll(userAuditsTask, lookupTask , assetsTask);
+
+            var userAudits = userAuditsTask.Result;
+            var lookupData = lookupTask.Result;
+            var assets = assetsTask.Result;
+
+            var contractsLookupData = lookupData.contracts?.Select(x => new Lookup { ID = x.ID, value = x.Name }).ToList();
 
             return new GetIndexedDBDataResponse
             {
                 Assets = assets,
                 Audits = userAudits,
+                IndexedDbLookupData = new IndexedDBLookupData
+                {
+                    AssetStatus = lookupData.assetStatus,
+                    AssetTypes = lookupData.assetTypes,
+                    Oem = lookupData.oem,
+                    Contracts = contractsLookupData
+                }
             };
         }
     }
