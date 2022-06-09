@@ -1476,16 +1476,19 @@ namespace kist_api.Services
                                 var requestAllocationAudit = singleRequest.Assets.FirstOrDefault(x => x.id == inventoryAllocationAudit.assetId)
                                     ?.allocationAudits.FirstOrDefault(y => y.auditId == singleRequest.Audit.ID);
 
-                                await SetAllocationAudit(new SetAllocationAuditRequest
+                                if (requestAllocationAudit.allocationAuditStatusId != inventoryAllocationAudit.statusId)
                                 {
-                                    allocationAuditId = inventoryAllocationAudit.id,
-                                    assetId = inventoryAllocationAudit.assetId,
-                                    auditId = createAuditResponse.auditid.Value,
-                                    note = null,
-                                    operatorId = 1,
-                                    userid = userId,
-                                    status = requestAllocationAudit.allocationAuditStatusId
-                                });
+                                    await SetAllocationAudit(new SetAllocationAuditRequest
+                                    {
+                                        allocationAuditId = inventoryAllocationAudit.id,
+                                        assetId = inventoryAllocationAudit.assetId,
+                                        auditId = createAuditResponse.auditid.Value,
+                                        note = null,
+                                        operatorId = 1,
+                                        userid = userId,
+                                        status = requestAllocationAudit.allocationAuditStatusId
+                                    }); 
+                                }
                             }
 
                             if (singleRequest.Audit.AuditStatus == "Complete")
@@ -1503,16 +1506,19 @@ namespace kist_api.Services
                             var requestAllocationAudit = singleRequest.Assets.FirstOrDefault(x => x.id == inventoryAllocationAudit.assetId)
                                 ?.allocationAudits.FirstOrDefault(y => y.auditId == singleRequest.Audit.ID);
 
-                            await SetAllocationAudit(new SetAllocationAuditRequest
+                            if (requestAllocationAudit.allocationAuditStatusId != inventoryAllocationAudit.statusId)
                             {
-                                allocationAuditId = inventoryAllocationAudit.id,
-                                assetId = inventoryAllocationAudit.assetId,
-                                auditId = singleRequest.Audit.ID,
-                                note = null,
-                                operatorId = 1,
-                                userid = userId,
-                                status = requestAllocationAudit.allocationAuditStatusId
-                            });
+                                await SetAllocationAudit(new SetAllocationAuditRequest
+                                {
+                                    allocationAuditId = inventoryAllocationAudit.id,
+                                    assetId = inventoryAllocationAudit.assetId,
+                                    auditId = singleRequest.Audit.ID,
+                                    note = null,
+                                    operatorId = 1,
+                                    userid = userId,
+                                    status = requestAllocationAudit.allocationAuditStatusId
+                                }); 
+                            }
                         }
 
                         if (singleRequest.Audit.AuditStatus == "Complete")
@@ -1560,7 +1566,7 @@ namespace kist_api.Services
         public async Task<List<InventoryAllocationAudit>> GetInventoryAllocationAudits(long auditId)
         {
             GetInventoryAllocationAuditsResponse allocationAuditResponse = new GetInventoryAllocationAuditsResponse();
-            StringContent content = new StringContent(JsonConvert.SerializeObject(new { auditId }), Encoding.UTF8, "application/json");
+            StringContent content = new StringContent(JsonConvert.SerializeObject(new { auditId , userId = 0, assetId = 0, parentId = 0, siteid = 0 , uniqueID = 0  }), Encoding.UTF8, "application/json");
 
             var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("api:apiUser") + ":" + _configuration.GetValue<string>("api:apiPassword"));
             _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
