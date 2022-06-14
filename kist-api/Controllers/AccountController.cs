@@ -41,8 +41,6 @@ namespace kist_api.Controllers
         public Task<LoginResponse> Login(LoginRequest loginReq)
         {
 
-            _realtimeService.NotifyAssetsUpdated();
-
             _logger.LogInformation(@"Controller\Account\Login(Post)");
             return _kistService.Login(loginReq);
         }

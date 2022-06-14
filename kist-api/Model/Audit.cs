@@ -25,8 +25,7 @@ namespace kist_api.Model
 		public string assignedToInfo { get; set; }
 		public string timeToCompleteAudit { get; set; }
 
-		[JsonIgnore]
-        public bool isLocal { get; set; }
+        public bool IsLocal { get; set; }
 
     }
 }
