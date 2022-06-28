@@ -21,6 +21,6 @@ namespace kist_api.Services
         Task<VehicleCheck> SetAssetVehicleChecks(SetAssetVehicleCheckRequest req);
         Task<VehicleCheck> CreateVehicleCheckAudit(CreateVehicleCheckAuditRequest req);
 
-
+        Task<List<VehicleCheckScreenParameter>> GetVehicleChecksScreenParameters(long operatorId);
     }
 }

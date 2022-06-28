@@ -339,20 +339,17 @@ namespace kist_api.Controllers
             UserDetailsRequest userDetailsRequest2 = new UserDetailsRequest();
             userDetailsRequest2.id = userDetails.ID.ToString();
 
-
-            //var userAudits =  await _kistService.GetRecentAudits(userDetails.ID);
-            //var lookupData = await _kistService.GetLookUpData(userDetailsRequest2);
-            //var assets =  await _kistService.GetAssetsOPOC();
-
             var userAuditsTask = _kistService.GetRecentAudits(userDetails.ID);
             var lookupTask =  _kistService.GetLookUpData(userDetailsRequest2);
             var assetsTask =  _kistService.GetAssetsOPOC();
+            var vehicleChecksTask = _vehicleCheckService.GetVehicleChecksScreenParameters(1);
 
-            await Task.WhenAll(userAuditsTask, lookupTask , assetsTask);
+            await Task.WhenAll(userAuditsTask, lookupTask , assetsTask, vehicleChecksTask);
 
             var userAudits = userAuditsTask.Result;
             var lookupData = lookupTask.Result;
             var assets = assetsTask.Result;
+            var vehicleCheckScreenParameters = vehicleChecksTask.Result;
 
             var contractsLookupData = lookupData.contracts?.Select(x => new Lookup { ID = x.ID, value = x.Name }).ToList();
 
@@ -360,6 +357,7 @@ namespace kist_api.Controllers
             {
                 Assets = assets,
                 Audits = userAudits,
+                VehicleCheckScreenParameters = vehicleCheckScreenParameters,
                 IndexedDbLookupData = new IndexedDBLookupData
                 {
                     AssetStatus = lookupData.assetStatus,

@@ -56,21 +56,22 @@ namespace kist_api.Model
             }
         }
 
-        //public long allocationdAuditId { get; set; }
-        //public int allocationAuditStatusId { get; set; }
-        //public int auditId { get; set; }
-        //public int assetStatusId { get; set; }
-        //public DateTime checkedOn { get; set; }
-        //public string checkedBy { get; set; }
-        //public string assignTo { get; set; }
-        //public int siteId { get; set; }
-        //public string notes { get; set; }
-
         [Newtonsoft.Json.JsonIgnore]
         public string showTabs { get; set; }
 
         [Newtonsoft.Json.JsonIgnore]
         public AssetAllocationAudit selectedAllocationAudit { get; set; }
+
+        //Vehicle Checks
+        public string VehicleCheckVehicleName { get; set; }
+
+        public string VehicleCheckLastCheckedBy { get; set; }
+
+        public DateTime? VehicleCheckLastCheckedOn { get; set; }
+
+        public string VehicleCheckMileage { get; set; }
+
+
     }
 
 

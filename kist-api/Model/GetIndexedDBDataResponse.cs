@@ -12,6 +12,8 @@ namespace kist_api.Model
 
         public List<Audit> Audits { get; set; }
 
+        public List<VehicleCheckScreenParameter> VehicleCheckScreenParameters { get; set; }
+
         public IndexedDBLookupData IndexedDbLookupData { get; set; }
     }
 

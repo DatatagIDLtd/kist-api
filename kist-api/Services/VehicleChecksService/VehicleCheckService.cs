@@ -106,5 +106,23 @@ namespace kist_api.Services
 
             return res;
         }
+
+
+        public async Task<List<VehicleCheckScreenParameter>> GetVehicleChecksScreenParameters(long operatorId)
+        {
+            GetVehicleCheckParametersResponse parameterResponse = new GetVehicleCheckParametersResponse();
+            StringContent content = new StringContent(JsonConvert.SerializeObject(new { operatorId }), Encoding.UTF8, "application/json");
+
+            var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("api:apiUser") + ":" + _configuration.GetValue<string>("api:apiPassword"));
+            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+
+            using (var response = await _client.PostAsync(_configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:GetVehicleChecksScreenParameters"), content))
+            {
+                string apiResponse = await response.Content.ReadAsStringAsync();
+                parameterResponse = JsonConvert.DeserializeObject<GetVehicleCheckParametersResponse>(apiResponse);
+            }
+
+            return parameterResponse.Value;
+        }
     }
 }

@@ -62,5 +62,6 @@ namespace kist_api.Services
         Task<SyncAllAuditsResponse> SyncAllAudits(SyncAllAuditsRequest request, long userId);
 
         Task CompleteAudit(long auditId);
+
     }
 }

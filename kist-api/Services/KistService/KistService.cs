@@ -41,13 +41,15 @@ namespace kist_api.Services
         readonly IConfiguration _configuration;
         public string _connStr = String.Empty;
         private readonly ILogger<KistService> _logger;
+        private readonly IVehicleCheckService _vehicleCheckService;
 
-        public KistService(HttpClient client, IConfiguration configuration, ILogger<KistService> logger)
+        public KistService(HttpClient client, IConfiguration configuration, ILogger<KistService> logger, IVehicleCheckService vehicleCheckService)
         {
             _client = client;
             _configuration = configuration;
             _connStr = _configuration.GetConnectionString("DevConnection");
             _logger = logger;
+            _vehicleCheckService = vehicleCheckService;
         }
 
         public async Task<LoginResponse> Login(LoginRequest loginReq)
@@ -1529,14 +1531,26 @@ namespace kist_api.Services
 
                 }
 
-                var userAudits = await GetRecentAudits(userId);
-                var assets = await GetAssetsOPOC();
+                //var userAudits = await GetRecentAudits(userId);
+                //var assets = await GetAssetsOPOC();
+
+
+                var userAuditsTask =  GetRecentAudits(userId);
+                var assetsTask =   GetAssetsOPOC();
+                var vehicleChecksTask = _vehicleCheckService.GetVehicleChecksScreenParameters(1);
+
+                await Task.WhenAll(userAuditsTask, assetsTask, vehicleChecksTask);
+
+                var userAudits = userAuditsTask.Result;
+                var assets = assetsTask.Result;
+                var vehicleCheckScreenParameters = vehicleChecksTask.Result;
 
                 return new SyncAllAuditsResponse
                 {
                     Succeeded = true,
                     Assets = assets,
                     Audits = userAudits,
+                    VehicleCheckScreenParameters = vehicleCheckScreenParameters
                 };
             }
             catch (Exception ex)
@@ -1580,5 +1594,7 @@ namespace kist_api.Services
 
             return allocationAuditResponse.Value;
         }
+
+
     }
 }
