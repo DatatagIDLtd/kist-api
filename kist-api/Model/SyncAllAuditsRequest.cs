@@ -8,6 +8,8 @@ namespace kist_api.Model
     public class SyncAllAuditsRequest
     {
         public List<SyncAuditRequest> RequestList { get; set; }
+
+        public List<AssetView> VehicleChecksAssetList { get; set; }
     }
 
     public class SyncAuditRequest

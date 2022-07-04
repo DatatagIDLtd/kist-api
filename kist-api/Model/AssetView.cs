@@ -71,6 +71,7 @@ namespace kist_api.Model
 
         public string VehicleCheckMileage { get; set; }
 
+        public string VehicleChecksXMLToSync { get; set; }
 
     }
 

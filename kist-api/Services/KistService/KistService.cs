@@ -1450,11 +1450,30 @@ namespace kist_api.Services
         }
 
 
-        public async Task<SyncAllAuditsResponse> SyncAllAudits(SyncAllAuditsRequest request, long userId)
+        public async Task<SyncAllAuditsResponse> SyncAllAudits(SyncAllAuditsRequest request, long userId,string userName)
         {
 
             try
             {
+                //Vehicle Checks Syncronization
+                if(request.VehicleChecksAssetList?.Count > 0)
+                {
+                    foreach (var vehicleCheckAsset in request.VehicleChecksAssetList)
+                    {
+                        var vehicleCheckRequest = new SetAssetVehicleCheckRequest
+                        {
+                            assetId = vehicleCheckAsset.id,
+                            mileage = long.Parse(vehicleCheckAsset.VehicleCheckMileage ?? ""),
+                            userName = userName,
+                            xml = vehicleCheckAsset.VehicleChecksXMLToSync
+                        };
+
+                        await _vehicleCheckService.SetAssetVehicleChecks(vehicleCheckRequest);
+                    }
+                }
+
+
+                //Audit Syncronization
                 foreach (var singleRequest in request.RequestList)
                 {
                     //If its a brand-new audit create it

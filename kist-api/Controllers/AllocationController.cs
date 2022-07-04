@@ -181,12 +181,14 @@ namespace kist_api.Controllers
         {
             _logger.LogInformation(@"Sync All Audit");
             var userId = (string)HttpContext.Items["User"];
+            var userName = (string)HttpContext.Items["UserName"];
+
 
             UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
             userDetailsRequest.id = userId;
 
             var userDetails = await _kistService.UsersDetails(userDetailsRequest);
-            return await _kistService.SyncAllAudits(request,userDetails.ID);
+            return await _kistService.SyncAllAudits(request,userDetails.ID, userName);
         }
     }
 }

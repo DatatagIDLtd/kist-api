@@ -59,7 +59,7 @@ namespace kist_api.Services
 
         Task<List<AssetView>> GetAssetsOPOC();
 
-        Task<SyncAllAuditsResponse> SyncAllAudits(SyncAllAuditsRequest request, long userId);
+        Task<SyncAllAuditsResponse> SyncAllAudits(SyncAllAuditsRequest request, long userId, string userName);
 
         Task CompleteAudit(long auditId);
 
