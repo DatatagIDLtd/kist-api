@@ -71,7 +71,7 @@ namespace kist_api.Services
 
             using (var response = await _client.PostAsync(url, content))
             {
-                _logger.LogInformation(@"getting Response");
+                 _logger.LogInformation(@"getting Response");
 
                 string apiResponse = await response.Content.ReadAsStringAsync();
                 _logger.LogInformation(@"Response:" + apiResponse);
@@ -83,13 +83,18 @@ namespace kist_api.Services
                 {
                     UserDetailsRequest userDetailsRequest = new UserDetailsRequest() { id = loginRes.userDetails._ProviderUserKey.ToString() };
                     UserDetails usersDetails = UsersDetails(userDetailsRequest).Result;
-                    var roleID = _configuration.GetValue<long>("access:role");
 
-                    if (usersDetails.RoleID != roleID)
+                    if(loginReq.app != "Mobile")
                     {
-                        _logger.LogWarning(@"Role not Super User");
-                        loginRes.response = "Insufficient permissions to access the KIST portal";
+                        var roleID = _configuration.GetValue<long>("access:role");
+
+                        if (usersDetails.RoleID != roleID)
+                        {
+                            _logger.LogWarning(@"Role not Super User");
+                            loginRes.response = "Insufficient privileges";
+                        }
                     }
+                  
 
                     // fetch userdetails to find company
                     // UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
@@ -109,11 +114,22 @@ namespace kist_api.Services
                         loginRes.response = "User not approved";
                     }
                     //  loginRes.userDetails.token = generateJwtToken(loginRes.userDetails);
-                } else
+                }
+                else if(loginRes.userDetails == null && loginRes.response != null)
                 {
+                    _logger.LogWarning(@"User does not exist" + content.ToString());
+                    loginRes.response = "User does not exist";
+
+                }
+                
+                else
+                {
+                    
                     _logger.LogWarning(@"Invalid Credentials " + content.ToString());
+                    loginRes.response = "Invalid Credentials ";
                     // SaveActivity_SQL(0, "login", loginReq.username, "Failed to logon");
                 }
+
                 // authentication successful so generate jwt token
             }
 
