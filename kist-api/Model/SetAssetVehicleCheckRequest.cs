@@ -19,6 +19,8 @@ namespace kist_api.Model
 
         public string userName { get; set; }
 
+        public DateTime? createdOn { get; set; }
+
     }
 
 

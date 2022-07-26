@@ -90,7 +90,8 @@ namespace kist_api.Services
             //if (req.VehicleCheckId == null) { req.VehicleCheckId = 0; };
             //if (req.assetVehicleCheckId == null) { req.assetVehicleCheckId = 0; };
             if (req.assetId == null) { req.assetId = 0; };
- 
+            if (!req.createdOn.HasValue) { req.createdOn = DateTime.Now; };
+
             var res = new VehicleCheck();
             StringContent content = new StringContent(JsonConvert.SerializeObject(req), Encoding.UTF8, "application/json");
 

@@ -73,6 +73,7 @@ namespace kist_api.Model
 
         public string VehicleChecksXMLToSync { get; set; }
 
+        public DateTime? VehicleCheckCreatedOn { get; set; }
     }
 
 

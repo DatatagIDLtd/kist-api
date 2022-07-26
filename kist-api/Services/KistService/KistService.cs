@@ -83,29 +83,33 @@ namespace kist_api.Services
 
                 if (loginRes.userDetails != null && loginRes.response == null)
                 {
-                    _logger.LogInformation(@"We have Login Details , so lets call Kist API and get user Details");
-
                     UserDetailsRequest userDetailsRequest = new UserDetailsRequest() { id = loginRes.userDetails._ProviderUserKey.ToString() };
                     UserDetails usersDetails = UsersDetails(userDetailsRequest).Result;
-                    var roleID = _configuration.GetValue<long>("access:role");
 
-                    if (usersDetails.RoleID != roleID)
+                    if (loginReq.app != "Mobile")
                     {
-                        _logger.LogWarning(@"Role not Super User");
-                        loginRes.response = "Insufficient permissions to access the KIST portal";
+                        var roleID = _configuration.GetValue<long>("access:role");
+
+                        if (usersDetails.RoleID != roleID)
+                        {
+                            _logger.LogWarning(@"Role not Super User");
+                            loginRes.response = "Insufficient privileges";
+                        }
                     }
 
+
                     // fetch userdetails to find company
-                    //UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
+                    // UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
                     //userDetailsRequest.id = loginRes.userDetails._ProviderUserKey.ToString();
-                    //UserDetails userDetails = await UsersDetails(userDetailsRequest)
+
+                    //  UserDetails userDetails = await UsersDetails(userDetailsRequest)
+                    _logger.LogInformation(@"We have Login Details , so lets call Kist API and get user Details");
 
                     if (loginRes.userDetails._IsApproved)
                     {
                         _logger.LogInformation(@"User Approved - Generate token");
                         loginRes.userDetails.token = generateJwtToken(loginRes.userDetails, loginReq);
-                        //loginRes.userDetails.role = "NGMUSR";
-                        loginRes.userDetails.role = usersDetails.RoleID == 13 ? "Ganger" : usersDetails.RoleID == 14 ? "Supervisor" : "Super User";
+                        loginRes.userDetails.role = "NGMUSR";
                     }
                     else
                     {
@@ -114,11 +118,21 @@ namespace kist_api.Services
                     }
                     //  loginRes.userDetails.token = generateJwtToken(loginRes.userDetails);
                 }
+                else if (loginRes.userDetails == null && loginRes.response != null)
+                {
+                    _logger.LogWarning(@"User does not exist" + content.ToString());
+                    loginRes.response = "User does not exist";
+
+                }
+
                 else
                 {
+
                     _logger.LogWarning(@"Invalid Credentials " + content.ToString());
+                    loginRes.response = "Invalid Credentials ";
                     // SaveActivity_SQL(0, "login", loginReq.username, "Failed to logon");
                 }
+
                 // authentication successful so generate jwt token
             }
 
@@ -1465,7 +1479,8 @@ namespace kist_api.Services
                             assetId = vehicleCheckAsset.id,
                             mileage = long.Parse(vehicleCheckAsset.VehicleCheckMileage ?? ""),
                             userName = userName,
-                            xml = vehicleCheckAsset.VehicleChecksXMLToSync
+                            xml = vehicleCheckAsset.VehicleChecksXMLToSync,
+                            createdOn = vehicleCheckAsset.VehicleCheckCreatedOn ?? DateTime.Now
                         };
 
                         await _vehicleCheckService.SetAssetVehicleChecks(vehicleCheckRequest);
@@ -1507,7 +1522,8 @@ namespace kist_api.Services
                                         note = requestAllocationAudit.notes,
                                         operatorId = 1,
                                         userid = userId,
-                                        status = requestAllocationAudit.allocationAuditStatusId
+                                        status = requestAllocationAudit.allocationAuditStatusId,
+                                        createdOn = singleRequest.Audit.CreatedOn
                                     });
                                 }
                             }
@@ -1537,7 +1553,8 @@ namespace kist_api.Services
                                     note = requestAllocationAudit.notes,
                                     operatorId = 1,
                                     userid = userId,
-                                    status = requestAllocationAudit.allocationAuditStatusId
+                                    status = requestAllocationAudit.allocationAuditStatusId,
+                                    createdOn = singleRequest.Audit.CreatedOn
                                 });
                             }
                         }

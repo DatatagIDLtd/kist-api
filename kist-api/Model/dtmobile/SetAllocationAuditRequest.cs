@@ -21,7 +21,7 @@ namespace kist_api.Model
 
 		public string note { get; set; }
 	
-
+		public DateTime? createdOn { get; set; }
 
 		public SetAllocationAuditRequest()
 		{
