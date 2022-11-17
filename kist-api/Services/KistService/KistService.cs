@@ -1406,14 +1406,14 @@ namespace kist_api.Services
         private string generateJwtToken(MembershipUser user, LoginRequest loginReq)
         {
             //MembershipUser
-            // generate token that is valid for 7 days
+            // generate token that is valid for 2 hours
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("TokenAuthentication:Secret"));
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new[] { new Claim("id", user._ProviderUserKey), new Claim("userName", loginReq.username) }),
-                Expires = DateTime.UtcNow.AddDays(99),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                Expires = DateTime.UtcNow.AddHours(2),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
