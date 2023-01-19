@@ -134,7 +134,52 @@
         "button": "Allocate",
         "fromStep": 1,
         "toStep": 3
+      },
+
+      {
+        "id": 5,
+        "name": "Allocate equipment to Box",
+        "description": "Scan equipments and Allocate to a Box in Bulk",
+        "button": "Scan QR Codes",
+        "steps": [
+          {
+            "step": 1,
+            "type": "Scan",
+            "name": null,
+            "label": "Scan Asset",
+            "placeholder": "Scan or Enter Asset ID",
+            "assetTypes": "Equipment",
+            "maxItems": 0,
+            "multiple": true,
+            "button": "Finished"
+          },
+          {
+            "step": 2,
+            "type": "AssetDetails",
+            "name": null,
+            "label": "Confirm Asset Details",
+            "AssetsFromStep": 1,
+            "button": "Scan Location QR Code"
+          },
+          {
+            "step": 3,
+            "type": "Scan",
+            "name": null,
+            "label": "Scan Location Code",
+            "placeholder": "Enter Id Number To Search...",
+            "assetTypes": "Equipment",
+            "maxItems": 0,
+            "multiple": false
+          },
+          {
+            "step": 4,
+            "type": "Action",
+            "name": null,
+            "label": "Ready to Allocate",
+            "button": "Allocate",
+            "fromStep": 1,
+            "toStep": 3
+          }
+        ]
       }
     ]
-  } 
-]
