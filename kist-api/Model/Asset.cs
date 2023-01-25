@@ -32,5 +32,8 @@ namespace kist_api.Model
 
 		public DateTime? modifiedOn { get; set; }
 		public string modifiedBy { get; set; }
+
+		public bool containsItems { get; set; }
+
 	}
 }

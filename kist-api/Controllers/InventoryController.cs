@@ -45,11 +45,48 @@ namespace kist_api.Controllers
             userDetailsRequest.id = userId;
             var userDetails = await _kistService.UsersDetails(userDetailsRequest);
 
+            var resultList = new List<AssetView>();
+
             //UserDetailsRequest userDetailsRequest2 = new UserDetailsRequest();
             //userDetailsRequest2.id = userDetails.ID.ToString();
             //userDetailsRequest2.searchQuery = search;
             asset.userId = userDetails.ID; // fudge for now to pass in user id 
-            return await _kistService.GetInventoryByUser(asset);
+            var inventoryList =  await _kistService.GetInventoryByUser(asset);
+
+            if(inventoryList?.Count > 0)
+            {
+                if (asset.assetTypeID == 2 || asset.assetTypeID == 3)
+                {
+                    foreach (var inventoryAsset in inventoryList)
+                    {
+                        resultList.Add(inventoryAsset);
+
+                        if (inventoryAsset.assetTypeID == 1 && inventoryAsset.containsItems)
+                        {
+                            var boxInventoryList = await _kistService.GetInventoryByUser(new GetAssetRequest
+                            {
+                                userId = userDetails.ID,
+                                parentId = inventoryAsset.id,
+                                siteId = 0,
+                                uniqueID = "",
+                                location = "",
+                                status = "",
+                                name = ""
+                            });
+
+                            resultList.AddRange(boxInventoryList);
+                        }
+                    }
+                }
+                else
+                {
+                    resultList.AddRange(inventoryList);
+                }
+               
+            }
+
+            return resultList;
+
         }
 
         [Authorize]

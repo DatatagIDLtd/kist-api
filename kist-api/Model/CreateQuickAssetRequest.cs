@@ -33,6 +33,9 @@ namespace kist_api.Model
 		public string ContractRef { get; set; }
 		public string OwnerRef { get; set; }
 
+		public bool containsItems { get; set; }
+
+
 		public CreateQuickAssetRequest()
 		{
 			modifiedBy = "system";
@@ -59,6 +62,7 @@ namespace kist_api.Model
 			lifeType = "";
 			ContractRef = "";
 			OwnerRef = "";
+			containsItems = false;
 		}
 
 		//@OperatorRef = N'CL1',
