@@ -24,7 +24,8 @@ namespace kist_api.Model
 		public DateTime? effectiveTo { get; set; }
 		public string? imgUrl { get; set; }
 		public string allocation { get; set; }
-		public bool containsItems { get; set; }
+
+		public long? parentAssetTypeID { get; set; }
 
 
 	}
