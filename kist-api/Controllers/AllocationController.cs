@@ -69,9 +69,14 @@ namespace kist_api.Controllers
             UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
             userDetailsRequest.id = userId;
 
+            if(req.assetId == 0)
+            {
+                req.assetId = 1;
+            }
+
             var userDetails = await _kistService.UsersDetails(userDetailsRequest);
-            req.userid = 20060;
-            req.assetId = 1;
+            req.userid = userDetails.ID;
+            req.createdby = userDetails.ID;
 
             return await _kistService.SetAllocationAudit(req);
         }

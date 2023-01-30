@@ -23,6 +23,7 @@ namespace kist_api.Model
 		public string ModifiedBy { get; set; }
 		public string assignedToInfo { get; set; }
 		public string timeToCompleteAudit { get; set; }
+        public long assettypeid { get; set; }
 
-	}
+    }
 }

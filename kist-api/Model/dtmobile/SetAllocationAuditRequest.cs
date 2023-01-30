@@ -18,8 +18,9 @@ namespace kist_api.Model
 		public long? auditId { get; set; }
 		public long? status { get; set; }
 		public long? allocationAuditId { get; set; }
+        public long? createdby { get; set; }
 
-		public string note { get; set; }
+        public string note { get; set; }
 	
 
 
