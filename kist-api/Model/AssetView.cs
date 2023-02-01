@@ -20,11 +20,11 @@ namespace kist_api.Model
 		public string? uniqueID { get; set; }
 		public string? allocationStatus { get; set; }
 		public string?allocationId { get; set; }
-		public DateTime? effectiveFrom { get; set; }
+		public DateTime? effectiveFrom { get; set; }	
 		public DateTime? effectiveTo { get; set; }
 		public string? imgUrl { get; set; }
 		public string allocation { get; set; }
-
+		public int? boxItemCount { get; set; }
 		public long? parentAssetTypeID { get; set; }
 
 

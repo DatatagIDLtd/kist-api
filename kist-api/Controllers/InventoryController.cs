@@ -74,7 +74,7 @@ namespace kist_api.Controllers
                                 name = ""
                             });
 
-                            resultList.AddRange(boxInventoryList);
+                            inventoryAsset.boxItemCount = boxInventoryList.Count;
                         }
                     }
                 }
