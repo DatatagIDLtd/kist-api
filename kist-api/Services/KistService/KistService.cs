@@ -905,10 +905,42 @@ namespace kist_api.Services
             {
                 string apiResponse = await response.Content.ReadAsStringAsync();
                 aList = JsonConvert.DeserializeObject<GetStatusHistoryResponse> (apiResponse);
-
             }
 
             return aList.Value;
+        }
+
+        public async Task<AssetGeoData> GetAssetGeoData(long id)
+        {
+            GetAssetGeoDataResponse assetGeoData = new GetAssetGeoDataResponse();
+            var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("api:apiUser") + ":" + _configuration.GetValue<string>("api:apiPassword"));
+            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+            var url = _configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:GetAssetGeoData") + "?$filter=AssetId eq " + id.ToString();
+
+            using (var response = await _client.GetAsync(url)) //, content))
+            {
+                string apiResponse = await response.Content.ReadAsStringAsync();
+                assetGeoData = JsonConvert.DeserializeObject<GetAssetGeoDataResponse>(apiResponse);
+            }
+
+            return assetGeoData.Value.First();
+        }
+
+        public async Task<AssetGeoData> PutAssetGeoData(AssetGeoData agd)
+        {
+            AssetGeoData geoDataResponse = new AssetGeoData();
+            StringContent content = new StringContent(JsonConvert.SerializeObject(agd), Encoding.UTF8, "application/json");
+            var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("api:apiUser") + ":" + _configuration.GetValue<string>("api:apiPassword"));
+            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+
+            var url = _configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:PutAssetGeoData") + "(" + agd.id + ")";
+            using (var response = await _client.PutAsync(url, content)) //, content))
+            {
+                string apiResponse = await response.Content.ReadAsStringAsync();
+                geoDataResponse = JsonConvert.DeserializeObject<AssetGeoData>(apiResponse);
+            }
+
+            return geoDataResponse;
         }
 
         public async Task<List<Activity>> GetActivity(GetActivityRequest getActivityRequest)
@@ -927,7 +959,6 @@ namespace kist_api.Services
                 aList = JsonConvert.DeserializeObject<GetActivityResponse>(apiResponse);
 
             }
-
             
             return aList.Value;
         }
@@ -949,10 +980,7 @@ namespace kist_api.Services
                 string apiResponse = await response.Content.ReadAsStringAsync();
             //    aList = JsonConvert.DeserializeObject<GetActivityResponse>(apiResponse);
                res = JsonConvert.DeserializeObject<List<RecentAllocation>>(JObject.Parse(apiResponse).GetValue("value").ToString());
-
-
             }
-
 
             return res;
         }
@@ -1278,11 +1306,6 @@ namespace kist_api.Services
                     }
                 }
             }
-
-
-
-           
-
         }
 
         public async Task<String> Test2()

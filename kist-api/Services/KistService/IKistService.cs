@@ -38,16 +38,14 @@ namespace kist_api.Services
         Task<Note> PutNote(Note note);
         Task<List<Attachment>> GetAttachments(Attachment attachment);
         Task<List<Note>> GetNotes(Note note);
+        Task<AssetGeoData> GetAssetGeoData(long id);
+        Task<AssetGeoData> PutAssetGeoData(AssetGeoData ai);
         Task<List<Activity>> GetActivity(GetActivityRequest getActivityRequest);
-
         Task<List<GeoLocationEvent>> GetDTMobile_ScanEvents(string lookupCode);
         Task<List<GeoLocationEvent>> GetDTMobile_ScanEvents(GetScanRequest req);
         Task<GeoLocationEvent> PostGeoLocationEvent(GeoLocationEvent req);
-
-
         Task<SetAllocationAuditResponse> SetAllocationAudit(SetAllocationAuditRequest req);
         Task<CreateAuditResponse> CreateAudit(CreateAuditRequest req);
-
         Task<List<MyScan>> GetMyScans(String Id);
         Task<Dashboard> Dashboard(UserDetailsRequest userDetailsRequest);
         Task<Dashboard> GetMobileDashboard(UserDetailsRequest userDetailsRequest);
@@ -55,8 +53,6 @@ namespace kist_api.Services
         Task<List<AssetStatusHistory>> GetAssetStatusHistory(long id);
         Task<GetMapPopupResponse> GetMapPopupInfo(String id);
         void SaveActivity_SQL(long operatorId, string appArea, string username, string desc);
-
         Task<List<CustomReport>> GetCustomReports(string userName);
-
     }
 }
