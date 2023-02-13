@@ -49,8 +49,7 @@ namespace kist_api.Services
         //
         public async Task<VehicleCheck> CreateVehicleCheckAudit(CreateVehicleCheckAuditRequest req)
         {
-        
-              var res = new VehicleCheck();
+            var res = new VehicleCheck();
             StringContent content = new StringContent(JsonConvert.SerializeObject(req), Encoding.UTF8, "application/json");
 
             var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("api:apiUser") + ":" + _configuration.GetValue<string>("api:apiPassword"));
@@ -61,18 +60,13 @@ namespace kist_api.Services
             {
                 string apiResponse = await response.Content.ReadAsStringAsync();
                 res = JsonConvert.DeserializeObject<List<VehicleCheck>>(JObject.Parse(apiResponse).GetValue("value").ToString()).First();
-
-
             }
 
-
             return res;
-
         }
 
         public async Task<List<VehicleCheck>> GetAssetVehicleChecks(long id)
         {
-
             var req = new { assetId = id, operatorId = 1};
 
             var res = new List<VehicleCheck>();
@@ -86,10 +80,7 @@ namespace kist_api.Services
             {
                 string apiResponse = await response.Content.ReadAsStringAsync();
                 res = JsonConvert.DeserializeObject<List<VehicleCheck>>(JObject.Parse(apiResponse).GetValue("value").ToString());
-
-
             }
-
 
             return res;
         }
@@ -99,9 +90,7 @@ namespace kist_api.Services
             //if (req.VehicleCheckId == null) { req.VehicleCheckId = 0; };
             //if (req.assetVehicleCheckId == null) { req.assetVehicleCheckId = 0; };
             if (req.assetId == null) { req.assetId = 0; };
-        
-
-
+ 
             var res = new VehicleCheck();
             StringContent content = new StringContent(JsonConvert.SerializeObject(req), Encoding.UTF8, "application/json");
 
@@ -113,16 +102,9 @@ namespace kist_api.Services
             {
                 string apiResponse = await response.Content.ReadAsStringAsync();
                 res = JsonConvert.DeserializeObject<List<VehicleCheck>>(JObject.Parse(apiResponse).GetValue("value").ToString()).First();
-
-
             }
 
-
             return res;
-
         }
-
     }
-
-
 }
