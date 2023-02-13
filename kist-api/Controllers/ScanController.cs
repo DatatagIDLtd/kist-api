@@ -120,6 +120,21 @@ namespace kist_api.Controllers
             return await _kistService.GetMyScans(userId);
         }
 
+        [Authorize]
+        [HttpGet("GeoLocationScanPointCodes")]
+        public async Task<List<GeoLocationScanPointCodes>> GeoLocationScanPointCodes()
+        {
+            var userId = (string)HttpContext.Items["User"];
+
+            //UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
+            //userDetailsRequest.id = userId;
+
+            //var userDetails = await _kistService.UsersDetails(userDetailsRequest);
+
+
+            return await _kistService.GeoLocationScanPointCodes();
+        }
+
 
         [HttpPost("MapPopupInfo")]
         public async Task<GetMapPopupResponse> MapPopupInfo(GetScanRequest req)

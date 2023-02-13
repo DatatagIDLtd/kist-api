@@ -34,5 +34,6 @@ namespace kist_api.Model
 		public string modifiedBy { get; set; }
 
 		public bool containsItems { get; set; }
-	}
+        public bool geoLocation { get; set; }
+    }
 }

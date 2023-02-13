@@ -404,6 +404,24 @@ namespace kist_api.Services
             return userDetailsResponse.Value;
         }
 
+
+        public async Task<List<GeoLocationScanPointCodes>> GeoLocationScanPointCodes()
+        {
+            GeoLocationScanPointCodesResponse geoLocationResponse = new GeoLocationScanPointCodesResponse();
+
+
+            var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("api:apiUser") + ":" + _configuration.GetValue<string>("api:apiPassword"));
+            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+
+            using (var response = await _client.GetAsync(_configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:GeoLocationScanPointCodes"))) //, content))
+            {
+                string apiResponse = await response.Content.ReadAsStringAsync();
+                geoLocationResponse = JsonConvert.DeserializeObject<GeoLocationScanPointCodesResponse>(apiResponse);
+            }
+
+            return geoLocationResponse.Value;
+        }
+
         public async Task<List<AssetView>> GetAssetsByUser(GetAssetRequest asset)
         {
             GetAssetResponse userDetailsResponse = new GetAssetResponse();
