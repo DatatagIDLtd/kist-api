@@ -3,19 +3,16 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using ceup_api.Model.dtdead;
 using kist_api.Model;
-using kist_api.Model.dtcusid;
 using kist_api.Model.dtmobile;
-using kist_api.Models.Account;
+using kist_api.Model.Geocoding;
 using kist_api.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using PdfSharp.Drawing;
 using PdfSharp.Pdf;
 using PdfSharp.Pdf.IO;
@@ -30,13 +27,15 @@ namespace kist_api.Controllers
         private readonly ILogger<AccountController> _logger;
         readonly IConfiguration _configuration;
         readonly IKistService _kistService;
+        readonly IGeocodingService _geocodingService;
         readonly IVehicleCheckService _vehicleCheckService;
 
-        public AssetController(ILogger<AccountController> logger, IConfiguration configuration , IKistService kistService, IVehicleCheckService vehicleCheckService)
+        public AssetController(ILogger<AccountController> logger, IConfiguration configuration , IKistService kistService, IGeocodingService geocodingService, IVehicleCheckService _vehicleCheckService)
         {
             _logger = logger;
             _configuration = configuration;
             _kistService = kistService;
+            _geocodingService = geocodingService;
             _vehicleCheckService = vehicleCheckService;
         }
 
@@ -243,6 +242,53 @@ namespace kist_api.Controllers
             var aList = await _kistService.GetAssetStatusHistory(id);
 
             return aList;
+        }
+
+        [HttpGet("GeoData/{id}")]
+        public Task<AssetGeoData> GetGeoData(long id)
+        {
+            return _kistService.GetAssetGeoData(id);
+        }
+
+        [HttpPost]
+        [Route("GeoData/Put")]
+        public async Task<AssetGeoData> PutGeoData(AssetGeoData geoData)
+        {
+            var userId = (string)HttpContext.Items["User"];
+            UserDetailsRequest userDetailsRequest = new UserDetailsRequest
+            {
+                id = userId
+            };
+
+            var userDetails = await _kistService.UsersDetails(userDetailsRequest);
+            geoData.modifiedBy = userDetails.Forename + " " + userDetails.Surname;
+            geoData.modifiedOn = DateTime.Now;
+
+            GeocodingRequestModel geocodingRequestModel = new GeocodingRequestModel
+            {
+                Latitude = geoData.latitude,
+                Longitude = geoData.longitude
+            };
+
+            try
+            {
+                geoData.wtw = _geocodingService.GetWTW(geocodingRequestModel).words;
+            }
+            catch { }
+
+            try
+            {
+                foreach (var addressComponent in _geocodingService.GetAddress(geocodingRequestModel).results.FirstOrDefault().address_components)
+                {
+                    if (addressComponent.types.Any(x => x == "postal_code"))
+                    {
+                        geoData.postCode = addressComponent.short_name;
+                    }
+                }
+            }
+            catch { }
+            
+            return await _kistService.PutAssetGeoData(geoData);
         }
 
         [Authorize]

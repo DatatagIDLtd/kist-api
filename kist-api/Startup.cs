@@ -27,9 +27,9 @@ namespace kist_api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-       
             services.AddSingleton(Configuration);
             services.AddHttpClient<IKistService, KistService>();
+            services.AddHttpClient<IGeocodingService, GeocodingService>();
             services.AddHttpClient<IScanService, ScanService>();
             services.AddHttpClient<IVehicleCheckService, VehicleCheckService>();
             services.AddHttpClient<IAuditService, AuditService>();
