@@ -64,10 +64,8 @@ namespace kist_api.Controllers
         {
             // should be via company id or user id 
             var userId = (string)HttpContext.Items["User"];
-
             UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
             userDetailsRequest.id = userId;
-
             var userDetails = await _kistService.UsersDetails(userDetailsRequest);
             UserDetailsRequest userDetailsRequest2 = new UserDetailsRequest();
             userDetailsRequest2.id = userDetails.ID.ToString();
@@ -79,7 +77,6 @@ namespace kist_api.Controllers
         // [HttpGet("{search}")]
         public async Task<List<AssetView>> Search2(GetAssetRequest req)
         {
-            // should be via company id or user id 
             var userId = (string)HttpContext.Items["User"];
             UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
             userDetailsRequest.id = userId;
@@ -106,10 +103,6 @@ namespace kist_api.Controllers
         [HttpGet("{id}")]
         public  Task<Asset> Get(long id)
         {
-            var userId = (string)HttpContext.Items["User"];
-            //UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
-            //userDetailsRequest.id = userId;
-            //var userDetails = await _kistService.UsersDetails(userDetailsRequest);
             return _kistService.GetAsset(id);
         }
 

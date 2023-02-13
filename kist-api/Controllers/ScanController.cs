@@ -21,7 +21,6 @@ namespace kist_api.Controllers
     [Route("[controller]")]
     public class ScanController : ControllerBase
     {
-
         private readonly ILogger<AccountController> _logger;
         readonly IConfiguration _configuration;
         readonly IKistService _kistService;
@@ -36,10 +35,8 @@ namespace kist_api.Controllers
 
         }
 
-
         //[Route("UsersDetails")]
         //[HttpPost]
-
 
         [Route("Scan/")]
         // [HttpGet("{search}")]
@@ -70,12 +67,7 @@ namespace kist_api.Controllers
 
         }
 
-
-
-
-
         [Authorize]
-
         [HttpGet("{id}")]
         public Task<Asset> Get(long id)
         {
@@ -104,7 +96,6 @@ namespace kist_api.Controllers
             return await _kistService.GetDTMobile_ScanEvents(codeLookup);
         }
 
-
         [Authorize]
         [HttpPost("MyScans")]
         public async Task<List<MyScan>> MyScans()
@@ -125,28 +116,12 @@ namespace kist_api.Controllers
         public async Task<List<GeoLocationScanPointCodes>> GeoLocationScanPointCodes()
         {
             var userId = (string)HttpContext.Items["User"];
-
-            //UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
-            //userDetailsRequest.id = userId;
-
-            //var userDetails = await _kistService.UsersDetails(userDetailsRequest);
-
-
             return await _kistService.GeoLocationScanPointCodes();
         }
-
 
         [HttpPost("MapPopupInfo")]
         public async Task<GetMapPopupResponse> MapPopupInfo(GetScanRequest req)
         {
-            //  var userId = (string)HttpContext.Items["User"];
-
-            //UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
-            //userDetailsRequest.id = userId;
-
-            //var userDetails = await _kistService.UsersDetails(userDetailsRequest);
-
-
             return await _kistService.GetMapPopupInfo(req.AssetID);
         }
 
@@ -155,53 +130,27 @@ namespace kist_api.Controllers
         [HttpPost("Create")]
         public async Task<CreateAssetResult> Create(CreateQuickAssetRequest req)
         {
-            var userId = (string)HttpContext.Items["User"];
-
-            //UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
-            //userDetailsRequest.id = userId;
-
-            //var userDetails = await _kistService.UsersDetails(userDetailsRequest);
-
-
             return await _kistService.CreateAsset(req);
         }
 
         [HttpPost("ScanEvents")]
         public async Task<List<GeoLocationEvent>> Post(GetScanRequest req)
         {
-            var userId = (string)HttpContext.Items["User"];
-
-            //UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
-            //userDetailsRequest.id = userId;
-
-            //var userDetails = await _kistService.UsersDetails(userDetailsRequest);
-
-
             return await _kistService.GetDTMobile_ScanEvents(req);
         }
 
         [HttpPost("ByLocation")]
         public async Task<List<GeoLocationEventMapFlag>> ByLocation(GetScanByLocationRequest req)
         {
-            var userId = (string)HttpContext.Items["User"];
-
             _logger.LogInformation(@"ByLocation ");
-
             _logger.LogInformation(@"payload " + req.ToString());
-
             //UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
             //userDetailsRequest.id = userId;
-
             //var userDetails = await _kistService.UsersDetails(userDetailsRequest);
-
             var res = await _scanService.GetScansByLocation(req);
-
             _logger.LogInformation(@"rows " + res.Count.ToString());
-
             return res;
         }
-
-
 
         // PUT: api/Default/5
         [HttpPut("{id}")]
@@ -210,10 +159,7 @@ namespace kist_api.Controllers
             var userId = (string)HttpContext.Items["User"];
             UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
             userDetailsRequest.id = userId;
-
             var userDetails = await _kistService.UsersDetails(userDetailsRequest);
-
-
             asset.modifiedBy = userDetails.Forename + " " + userDetails.Surname;
             asset.modifiedOn = DateTime.Now;
             return await _kistService.PutAsset(asset);
@@ -222,99 +168,67 @@ namespace kist_api.Controllers
         [HttpGet("Identity/{id}")]
         public Task<AssetIdentity> Identity(long id)
         {
-            var userId = (string)HttpContext.Items["User"];
-
-
-
             return _kistService.GetAssetIdentity(id);
         }
 
         [HttpPost]
         [Route("Identity/Put")]
         public async Task<AssetIdentity> PutIdentity(AssetIdentity note)
-        //     public async Task<IActionResult> Index([FromForm]IFormFile file)
         {
             var userId = (string)HttpContext.Items["User"];
             UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
             userDetailsRequest.id = userId;
-
             var userDetails = await _kistService.UsersDetails(userDetailsRequest);
-
             note.modifiedBy = userDetails.Forename + " " + userDetails.Surname;
             note.modifiedOn = DateTime.Now;
             return await _kistService.PutIdentity(note);
-
         }
-
-
 
         [HttpGet("System/{id}")]
         public Task<AssetSystem> System(long id)
         {
-            var userId = (string)HttpContext.Items["User"];
-
-
-
             return _kistService.GetAssetSystem(id);
         }
+
         [HttpPost]
         [Route("System/Put")]
         public async Task<AssetSystem> PutSystem(AssetSystem note)
-        //     public async Task<IActionResult> Index([FromForm]IFormFile file)
         {
             var userId = (string)HttpContext.Items["User"];
             UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
             userDetailsRequest.id = userId;
-
             var userDetails = await _kistService.UsersDetails(userDetailsRequest);
-
             note.modifiedBy = userDetails.Forename + " " + userDetails.Surname;
             note.modifiedOn = DateTime.Now;
             return await _kistService.PutAssetSystem(note);
-
         }
 
         [HttpGet("StatusHistory/{id}")]
         public async Task<List<AssetStatusHistory>> StatusHistory(long id)
         {
-            var userId = (string)HttpContext.Items["User"];
-
             var aList = await _kistService.GetAssetStatusHistory(id);
-
             return aList;
         }
-
 
         [HttpPost("GetScannedAssetDetails")]
         public async Task<ApiResponseModel> GetScannedAssetDetails([FromBody] ScanAssetDetailsRequestModel request)
         {
-            var userId = (string)HttpContext.Items["User"];
-
             var scannedAssetsData = await _scanService.GetScannedAssetDetails(request);
-
             return scannedAssetsData;
         }
 
         [HttpPost("CreateGeoLocationEvents")]
         public async Task<ApiResponseModel> CreateGeoLocationEvents([FromBody] ScanEventRequestModel request)
         {
-            var userId = (string)HttpContext.Items["User"];
-
             var geoLocationEventData = await _scanService.CreateGeoLocationEvents(request);
-
             return geoLocationEventData;
         }
 
         [HttpPost("GetAssetDocumentList")]
         public async Task<ApiResponseModel> GetAssetDocumentList([FromBody] ScanAssetDetailsRequestModel request)
         {
-            var userId = (string)HttpContext.Items["User"];
-
             var scannedAssetsData = await _scanService.GetAssetDocumentList(request);
-
             return scannedAssetsData;
         }
-
-
     }
 }

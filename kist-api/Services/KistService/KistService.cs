@@ -96,13 +96,11 @@ namespace kist_api.Services
                             loginRes.response = "Insufficient privileges";
                         }
                     }
-                  
-
+  
                     // fetch userdetails to find company
                     //UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
                     //userDetailsRequest.id = loginRes.userDetails._ProviderUserKey.ToString();
                     //UserDetails userDetails = await UsersDetails(userDetailsRequest)
-
                     if (loginRes.userDetails._IsApproved)
                     {
                         _logger.LogInformation(@"User Approved - Generate token");
@@ -120,17 +118,13 @@ namespace kist_api.Services
                 {
                     _logger.LogWarning(@"User does not exist" + content.ToString());
                     loginRes.response = "User does not exist";
-
                 }
-                
                 else
                 {
-                    
                     _logger.LogWarning(@"Invalid Credentials " + content.ToString());
                     loginRes.response = "Invalid Credentials ";
                     // SaveActivity_SQL(0, "login", loginReq.username, "Failed to logon");
                 }
-
                 // authentication successful so generate jwt token
             }
 
@@ -154,15 +148,10 @@ namespace kist_api.Services
 
         public async Task<Dashboard> Dashboard(UserDetailsRequest userDetailsRequest)
         {
-
             GetDashboardResponse dashboardResponse = new GetDashboardResponse();
-
             StringContent content = new StringContent(JsonConvert.SerializeObject(userDetailsRequest), Encoding.UTF8, "application/json");
-
             var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("api:apiUser") + ":" + _configuration.GetValue<string>("api:apiPassword"));
             _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
-
-
             using (var response = await _client.PostAsync(_configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:GetDashboard"), content))
             {
                 string apiResponse = await response.Content.ReadAsStringAsync();
@@ -175,12 +164,9 @@ namespace kist_api.Services
                 apiResponse = apiResponse.Replace("\"dashboard\": \"", "\"dashboard\": ");  //savs frig
                 apiResponse = apiResponse.Replace("}]}]\"", "}]}]");  //savs frig
                 apiResponse = apiResponse.Replace("\\\"", "\"");  //savs frig
-
                 File.WriteAllText(@"c:\temp\payload2.json", apiResponse);
                 // loginRes = System.Text.Json.JsonSerializer.Deserialize<GetUserDetailsResponse>(apiResponse, options);
                 dashboardResponse = JsonConvert.DeserializeObject<GetDashboardResponse>(apiResponse);
-
-
             }
             // proc should only return one row , but comes back as a list regardless from API
             return dashboardResponse.Value.First().dashboard.First();
@@ -188,15 +174,10 @@ namespace kist_api.Services
 
         public async Task<Dashboard> GetMobileDashboard(UserDetailsRequest userDetailsRequest)
         {
-
             GetDashboardResponse dashboardResponse = new GetDashboardResponse();
-
             StringContent content = new StringContent(JsonConvert.SerializeObject(userDetailsRequest), Encoding.UTF8, "application/json");
-
             var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("api:apiUser") + ":" + _configuration.GetValue<string>("api:apiPassword"));
             _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
-
-
             using (var response = await _client.PostAsync(_configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:GetMobileDashboard"), content))
             {
                 string apiResponse = await response.Content.ReadAsStringAsync();
@@ -209,12 +190,8 @@ namespace kist_api.Services
                 apiResponse = apiResponse.Replace("\"dashboard\": \"", "\"dashboard\": ");  //savs frig
                 apiResponse = apiResponse.Replace("}]}]\"", "}]}]");  //savs frig
                 apiResponse = apiResponse.Replace("\\\"", "\"");  //savs frig
-
-              
                 // loginRes = System.Text.Json.JsonSerializer.Deserialize<GetUserDetailsResponse>(apiResponse, options);
                 dashboardResponse = JsonConvert.DeserializeObject<GetDashboardResponse>(apiResponse);
-
-
             }
             // proc should only return one row , but comes back as a list regardless from API
             return dashboardResponse.Value.First().dashboard.First();
@@ -223,24 +200,14 @@ namespace kist_api.Services
         public async Task<List<AssetImages>> GetAssetImages(long id, long userId )
         {
             var req = new { AssetId = id,  userId = userId , tags = ""};
-
              List<AssetImages> res ;
-
             StringContent content = new StringContent(JsonConvert.SerializeObject(req), Encoding.UTF8, "application/json");
-
             var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("api:apiUser") + ":" + _configuration.GetValue<string>("api:apiPassword"));
             _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
-
-
             using (var response = await _client.PostAsync(_configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:GetAssetImages"), content))
             {
                 string apiResponse = await response.Content.ReadAsStringAsync();
-
                 res = JsonConvert.DeserializeObject<List<AssetImages>>(JObject.Parse(apiResponse).GetValue("value").ToString());
-
-
-         
-
             }
            
             return res;
@@ -249,12 +216,8 @@ namespace kist_api.Services
         public async Task<long> CreateAllocation(long Pid , long id , long siteid , String status, long userId)
         {
             var req = new { AssetId = id  , siteid=siteid , ParentId = Pid , status = status ,operatorId = 1 , userId = userId };
-
             GetMapPopupResponse res = new GetMapPopupResponse();
-
-
             StringContent content = new StringContent(Regex.Unescape(JsonConvert.SerializeObject(req)), Encoding.UTF8, "application/json");
-
             var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("api:apiUser") + ":" + _configuration.GetValue<string>("api:apiPassword"));
             _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
 
@@ -262,10 +225,7 @@ namespace kist_api.Services
             using (var response = await _client.PostAsync(url, content))
             {
                 string apiResponse = await response.Content.ReadAsStringAsync();
-   
                 res = JsonConvert.DeserializeObject<GetMapPopupResponse>(apiResponse);
-
-
             }
             // proc should only return one row , but comes back as a list regardless from API
             return 1;
@@ -274,12 +234,8 @@ namespace kist_api.Services
         public async Task<long> RemoveAllocation(long id , long userid)
         {
             var req = new { AllocationId = id ,  AssetId = 1,  operatorId = 1, userId = userid, status="History"};
-
             GetMapPopupResponse res = new GetMapPopupResponse();
-
-
             StringContent content = new StringContent(JsonConvert.SerializeObject(req), Encoding.UTF8, "application/json");
-
             var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("api:apiUser") + ":" + _configuration.GetValue<string>("api:apiPassword"));
             _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
 
@@ -287,10 +243,7 @@ namespace kist_api.Services
             using (var response = await _client.PostAsync(url, content))
             {
                 string apiResponse = await response.Content.ReadAsStringAsync();
-
                 res = JsonConvert.DeserializeObject<GetMapPopupResponse>(apiResponse);
-
-
             }
             // proc should only return one row , but comes back as a list regardless from API
             return 1;
@@ -299,12 +252,8 @@ namespace kist_api.Services
         public async Task<GetMapPopupResponse> GetMapPopupInfo(String id)
         {
             var req = new { AssetId = id };
-
             GetMapPopupResponse res = new GetMapPopupResponse();
-
-
             StringContent content = new StringContent(JsonConvert.SerializeObject(req), Encoding.UTF8, "application/json");
-
             var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("api:apiUser") + ":" + _configuration.GetValue<string>("api:apiPassword"));
             _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
 
@@ -321,8 +270,6 @@ namespace kist_api.Services
 
                 // loginRes = System.Text.Json.JsonSerializer.Deserialize<GetUserDetailsResponse>(apiResponse, options);
                 res = JsonConvert.DeserializeObject<GetMapPopupResponse>(apiResponse);
-
-
             }
             // proc should only return one row , but comes back as a list regardless from API
             return res;
@@ -360,7 +307,6 @@ namespace kist_api.Services
             {
                 string apiResponse = await response.Content.ReadAsStringAsync();
                 userDetailsResponse = JsonConvert.DeserializeObject<GetAssetResponse>(apiResponse);
-
             }
 
             return userDetailsResponse.Value;
@@ -405,7 +351,6 @@ namespace kist_api.Services
             return userDetailsResponse.Value;
         }
 
-
         public async Task<List<GeoLocationScanPointCodes>> GeoLocationScanPointCodes()
         {
             GeoLocationScanPointCodesResponse geoLocationResponse = new GeoLocationScanPointCodesResponse();
@@ -438,7 +383,7 @@ namespace kist_api.Services
             if (asset.status == null) { asset.status = ""; };
             if (asset.searchText == null) { asset.searchText = ""; };
 
-            if ( asset.assetStatusId > 0 )
+            if (asset.assetStatusId > 0 )
             {
                 asset.status = asset.assetStatusId.ToString();
                 asset.assetStatusId = null;
@@ -453,7 +398,6 @@ namespace kist_api.Services
             {
                 string apiResponse = await response.Content.ReadAsStringAsync();
                 userDetailsResponse = JsonConvert.DeserializeObject<GetAssetResponse>(apiResponse);
-
             }
             // proc should only return one row , but comes back as a list regardless from API
             return userDetailsResponse.Value;
@@ -645,21 +589,12 @@ namespace kist_api.Services
 
             var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("api:apiUser") + ":" + _configuration.GetValue<string>("api:apiPassword") );
             _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
-
             using (var response = await _client.GetAsync(_configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:GetAsset") + "(" + id.ToString() + ")")) //, content))
             {
                 string apiResponse = await response.Content.ReadAsStringAsync();
                 userDetailsResponse = JsonConvert.DeserializeObject<Asset>(apiResponse);
-
             }
-            // proc should only return one row , but comes back as a list regardless from API
-            //perform post prod validation
 
-            //if (userDetailsResponse.companyID != companyId)
-            //{
-            //    // requested asset for in correct company id , fail ! 
-
-            //}
             return userDetailsResponse;
         }
 
@@ -1183,7 +1118,6 @@ namespace kist_api.Services
         }
 
         public async Task<List<AssetStatusHistory>> GetAssetStatusHistory_SQL(long id)
-       // public List<AssetStatusHistory> GetAssetStatusHistory(long id)
         {
             List<AssetStatusHistory> aList = new List<AssetStatusHistory>();
             string commandText = @"SELECT * FROM [dbo].[vwKISTAssetStatusHistory] where assetid = @assetId ";
@@ -1235,7 +1169,6 @@ namespace kist_api.Services
         }
 
         public void SaveActivity_SQL(long operatorId , string appArea , string username , string desc)
-        // public List<AssetStatusHistory> GetAssetStatusHistory(long id)
         {
             List<AssetStatusHistory> aList = new List<AssetStatusHistory>();
             string commandText = @"INSERT INTO [dbo].[Activity]
