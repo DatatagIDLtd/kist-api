@@ -30,7 +30,7 @@ namespace kist_api.Controllers
         readonly IGeocodingService _geocodingService;
         readonly IVehicleCheckService _vehicleCheckService;
 
-        public AssetController(ILogger<AccountController> logger, IConfiguration configuration , IKistService kistService, IGeocodingService geocodingService, IVehicleCheckService _vehicleCheckService)
+        public AssetController(ILogger<AccountController> logger, IConfiguration configuration , IKistService kistService, IGeocodingService geocodingService, IVehicleCheckService vehicleCheckService)
         {
             _logger = logger;
             _configuration = configuration;
