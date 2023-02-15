@@ -34,9 +34,10 @@ namespace kist_api.Model
 		public string OwnerRef { get; set; }
 
 		public bool containsItems { get; set; }
+        public bool geoLocation { get; set; }
 
 
-		public CreateQuickAssetRequest()
+        public CreateQuickAssetRequest()
 		{
 			modifiedBy = "system";
 			operatorRef = "";
@@ -63,6 +64,7 @@ namespace kist_api.Model
 			ContractRef = "";
 			OwnerRef = "";
 			containsItems = false;
+			geoLocation = false;
 		}
 
 		//@OperatorRef = N'CL1',
