@@ -22,6 +22,7 @@
         "name": null,
         "label": "Confirm Asset Details",
         "AssetsFromStep": 1,
+        "assetTypes": "Equipment",
         "button": "Scan Parent Asset QR Code"
       },
       {
@@ -68,6 +69,7 @@
         "name": null,
         "label": "Confirm Asset Details",
         "AssetsFromStep": 1,
+        "assetTypes": "Vehicle,Container",
         "button": "Scan Van or Container QR Code"
       },
       {
@@ -113,6 +115,7 @@
         "type": "AssetDetails",
         "name": null,
         "label": "Confirm Asset Details",
+        "assetTypes": "Location",
         "AssetsFromStep": 1,
         "button": "Scan Location QR Code"
       },
@@ -160,6 +163,7 @@
         "name": null,
         "label": "Confirm Asset Details",
         "AssetsFromStep": 1,
+        "assetTypes": "Location",
         "button": "Scan Location QR Code"
       },
       {
