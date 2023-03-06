@@ -86,13 +86,9 @@ namespace kist_api.Controllers
         public async Task<List<GeoLocationEvent>> Get(string codeLookup)
         {
             var userId = (string)HttpContext.Items["User"];
-
             //UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
             //userDetailsRequest.id = userId;
-
             //var userDetails = await _kistService.UsersDetails(userDetailsRequest);
-
-
             return await _kistService.GetDTMobile_ScanEvents(codeLookup);
         }
 

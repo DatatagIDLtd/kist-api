@@ -265,12 +265,19 @@ namespace kist_api.Controllers
 
             try
             {
+                geoData.wtw = null;
                 geoData.wtw = _geocodingService.GetWTW(geocodingRequestModel).words;
             }
             catch { }
 
+            if (geoData.wtw == null)
+            {
+                geoData.wtw = "NA";
+            }
+
             try
             {
+                geoData.postCode = null;
                 foreach (var addressComponent in _geocodingService.GetAddress(geocodingRequestModel).results.FirstOrDefault().address_components)
                 {
                     if (addressComponent.types.Any(x => x == "postal_code"))
@@ -280,7 +287,12 @@ namespace kist_api.Controllers
                 }
             }
             catch { }
-            
+
+            if (geoData.postCode == null)
+            {
+                geoData.postCode = "NA";
+            }
+
             return await _kistService.PutAssetGeoData(geoData);
         }
 
