@@ -10,8 +10,7 @@ namespace kist_api.Model.dtmobile
         public long? result { get; set; }
         public long? assetId { get; set; }
         public long? systemId { get; set; }
-        public long? indentityId { get; set; }
-
+        public long? identityId { get; set; }
         public string? error { get; set; }
     }
 }

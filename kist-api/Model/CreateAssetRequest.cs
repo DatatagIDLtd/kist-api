@@ -26,27 +26,5 @@ namespace kist_api.Model
 		public long? parentAssetId { get; set; }
 		public string? dtIdnumber { get; set; }
 		public string? dtMembershipNumber { get; set; }
-		
-
-		//@OperatorRef = N'CL1',
-		//@Name = N'New Gang',
-		//@OemRef = NULL,
-		//@ModelRef = NULL,
-		//@Colour = NULL,
-		//@Type = N'Gang',
-		//@Status = N'Active',
-		//@Description = N'New Gang',
-		//@PurchaseDate = NULL,
-		//@SerialNumber = NULL,
-		//@VRN = NULL,
-		//@EngineNumber = NULL,
-		//@VIN_Chassis = NULL,
-		//@UniqueReference = NULL,
-		//@ParentAssetId = NULL,
-		//@DTIdNumber = NULL,
-		//@DTMembershipNumber = NULL
-
-
-
 	}
 }

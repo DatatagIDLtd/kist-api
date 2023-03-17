@@ -600,10 +600,7 @@ namespace kist_api.Services
 
         public async Task<AssetIdentity> GetAssetIdentity(long id)
         {
-            GetAssetIndentyResponse assetIndentity = new GetAssetIndentyResponse();
-
-            //   StringContent content = new StringContent(JsonConvert.SerializeObject(getAssetRequest), Encoding.UTF8, "application/json");
-
+            GetAssetIdentyResponse assetIdentity = new GetAssetIdentyResponse();
             var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("api:apiUser") + ":" + _configuration.GetValue<string>("api:apiPassword"));
             _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
             var url = _configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:GetAssetIdentity") + "?$filter=AssetId eq " + id.ToString() ;
@@ -611,21 +608,10 @@ namespace kist_api.Services
             using (var response = await _client.GetAsync(url)) //, content))
             {
                 string apiResponse = await response.Content.ReadAsStringAsync();
-                assetIndentity = JsonConvert.DeserializeObject<GetAssetIndentyResponse>(apiResponse);
-
+                assetIdentity = JsonConvert.DeserializeObject<GetAssetIdentyResponse>(apiResponse);
             }
-            // proc should only return one row , but comes back as a list regardless from API
-            //perform post prod validation
 
-            //if (userDetailsResponse.companyID != companyId)
-            //{
-            //    // requested asset for in correct company id , fail ! 
-
-            //}
-          //  AssetIdentity a = new AssetIdentity();
-            var a = assetIndentity.Value.First();
-
-            return a;
+            return assetIdentity.Value.First();
         }
 
         public async Task<AssetSystem> GetAssetSystem(long id)

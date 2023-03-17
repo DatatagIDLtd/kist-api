@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace kist_api.Model
 {
-    public class GetAssetIndentyResponse
+    public class GetAssetIdentyResponse
     {
         public List<AssetIdentity> Value { get; set; }
     }
