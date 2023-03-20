@@ -1,7 +1,7 @@
 [
   {
     "id": 5,
-    "name": "Allocate Multiple Equipment to a Box",
+    "name": "Allocate Mutliple Pieces of Equipment to a Box",
     "description": "Scan multiple pieces of equipment and allocate to a box",
     "button": "Scan QR Codes",
     "steps": [
