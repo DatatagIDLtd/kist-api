@@ -371,35 +371,33 @@ namespace kist_api.Services
         public async Task<List<AssetView>> GetAssetsByUser(GetAssetRequest asset)
         {
             GetAssetResponse userDetailsResponse = new GetAssetResponse();
-
-            if (asset.location == null) { asset.location = ""; };
-            if (asset.uniqueID == null) { asset.uniqueID = ""; };
-            if (asset.fleetNo == null) { asset.fleetNo = ""; };
-            if (asset.assetTypeID == null) { asset.assetTypeID = 0; };
-            if (asset.contractId == null) { asset.contractId = 0; };
-            if (asset.make == null) { asset.make = ""; };
-            if (asset.model == null) { asset.model = ""; };
-            if (asset.name == null) { asset.name = ""; };
-            if (asset.status == null) { asset.status = ""; };
-            if (asset.searchText == null) { asset.searchText = ""; };
+            if (asset.location == null) asset.location = "";
+            if (asset.uniqueID == null) asset.uniqueID = "";
+            if (asset.fleetNo == null) asset.fleetNo = "";
+            if (asset.assetTypeID == null) asset.assetTypeID = 0;
+            if (asset.contractId == null) asset.contractId = 0;
+            if (asset.make == null) asset.make = "";
+            if (asset.model == null) asset.model = "";
+            if (asset.name == null) asset.name = "";
+            if (asset.status == null) asset.status = "";
+            if (asset.searchText == null) asset.searchText = "";
+            if (asset.searchText == null) asset.searchText = "";
 
             if (asset.assetStatusId > 0 )
             {
                 asset.status = asset.assetStatusId.ToString();
                 asset.assetStatusId = null;
             }
-            if (asset.searchText == null) { asset.searchText = ""; };
 
             StringContent content = new StringContent(JsonConvert.SerializeObject(asset), Encoding.UTF8, "application/json");
             var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("api:apiUser") + ":" + _configuration.GetValue<string>("api:apiPassword"));
             _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
-
             using (var response = await _client.PostAsync(_configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:GetAssetsByUser"), content)) //, content))
             {
                 string apiResponse = await response.Content.ReadAsStringAsync();
                 userDetailsResponse = JsonConvert.DeserializeObject<GetAssetResponse>(apiResponse);
             }
-            // proc should only return one row , but comes back as a list regardless from API
+
             return userDetailsResponse.Value;
         }
 
@@ -421,10 +419,7 @@ namespace kist_api.Services
                 asset.assetStatusId = null;
             }
 
-
-
             StringContent content = new StringContent(JsonConvert.SerializeObject(asset), Encoding.UTF8, "application/json");
-
             var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("api:apiUser") + ":" + _configuration.GetValue<string>("api:apiPassword"));
             _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
 
@@ -432,9 +427,8 @@ namespace kist_api.Services
             {
                 string apiResponse = await response.Content.ReadAsStringAsync();
                 userDetailsResponse = JsonConvert.DeserializeObject<GetAssetResponse>(apiResponse);
-
             }
-            // proc should only return one row , but comes back as a list regardless from API
+
             return userDetailsResponse.Value;
         }
 
@@ -1018,14 +1012,6 @@ namespace kist_api.Services
         public async Task<List<GeoLocationEvent>> GetDTMobile_ScanEvents(GetScanRequest req)
         {
             GetScanResponse aList = new GetScanResponse();
-            //GetQRCodeRequest aReq = new GetQRCodeRequest();
-
-            //     aReq.IDNumber = id;
-            //  aReq.SystemType = systemType;
-
-            //$filter=TypeCode eq TC
-            //  StringContent content = new StringContent(JsonConvert.SerializeObject(aReq), Encoding.UTF8, "application/json");
-
             var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("DTMobile:apiUser") + ":" + _configuration.GetValue<string>("DTMobile:apiPassword"));
             _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
             var url = _configuration.GetValue<string>("DTMobile:APIEndPoint") + _configuration.GetValue<string>("DTMobile:GetGeoLocationEvents") + "?$filter=";
@@ -1045,26 +1031,22 @@ namespace kist_api.Services
                 url += "startswith(LookupCode,'" + req.AssetID + "')&";
             }
 
-            if (req.SystemType != "")
+            if (req.SystemType != "" && req.SystemType != "OTHER")
             {
-                url += "startswith(systemType,'" + req.SystemType + "')&";
+                url += "startswith(SystemType,'" + req.SystemType + "')&";
             }
 
-            //if (lookupCode != "ALL")
-            //{
-            //    url = url + "?$filter=LookupCode eq " + lookupCode + "&$orderby=createdon desc";
-            //}
-            //else
-            //{
             url += "&$orderby=createdon desc";
-            //}
 
             using (var response = await _client.GetAsync(url)) //, content))
             {
                 string apiResponse = await response.Content.ReadAsStringAsync();
                 aList = JsonConvert.DeserializeObject<GetScanResponse>(apiResponse);
+            }
 
-
+            if (req.SystemType == "OTHER")
+            {
+                aList.Value = aList.Value.Where(x => x.SystemType != "QRCES" && x.SystemType != "QRCSRM" && x.SystemType != "QRSCANPOINT" && x.SystemType != "QRTTAG" && x.SystemType != "QRVEH").ToList();
             }
 
             return aList.Value;
@@ -1073,14 +1055,6 @@ namespace kist_api.Services
         public async Task<List<GeoLocationEvent>> GetDTMobile_ScanEvents(string lookupCode)
         {
             GetScanResponse aList = new GetScanResponse();
-            //GetQRCodeRequest aReq = new GetQRCodeRequest();
-
-       //     aReq.IDNumber = id;
-          //  aReq.SystemType = systemType;
-
-            //$filter=TypeCode eq TC
-          //  StringContent content = new StringContent(JsonConvert.SerializeObject(aReq), Encoding.UTF8, "application/json");
-
             var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("DTMobile:apiUser") + ":" + _configuration.GetValue<string>("DTMobile:apiPassword"));
             _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
             var url = _configuration.GetValue<string>("DTMobile:APIEndPoint") + _configuration.GetValue<string>("DTMobile:GetGeoLocationEvents");
@@ -1096,8 +1070,6 @@ namespace kist_api.Services
             {
                 string apiResponse = await response.Content.ReadAsStringAsync();
                 aList = JsonConvert.DeserializeObject<GetScanResponse>(apiResponse);
-
-
             }
 
             return aList.Value;

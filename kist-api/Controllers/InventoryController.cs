@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using kist_api.Model;
 using kist_api.Model.dtmobile;
@@ -53,7 +54,6 @@ namespace kist_api.Controllers
                     foreach (var inventoryAsset in inventoryList)
                     {
                         resultList.Add(inventoryAsset);
-
                         if (inventoryAsset.assetTypeID == 1 && inventoryAsset.containsItems)
                         {
                             var boxInventoryList = await _kistService.GetInventoryByUser(new GetAssetRequest
@@ -71,11 +71,36 @@ namespace kist_api.Controllers
                         }
                     }
                 }
+                else if (asset.assetTypeID == 5 && inventoryList.Any(x => x.virtualContainer))
+                {
+                    var virtualContainerItems = new List<AssetView>();
+                    foreach (var inventoryAsset in inventoryList)
+                    {
+                        if (inventoryAsset.virtualContainer)
+                        {
+                            var virtualContainerInventoryList = await _kistService.GetInventoryByUser(new GetAssetRequest
+                            {
+                                userId = userDetails.ID,
+                                parentId = inventoryAsset.id,
+                                siteId = 0,
+                                uniqueID = "",
+                                location = "",
+                                status = "",
+                                name = ""
+                            });
+
+                            virtualContainerItems.AddRange(virtualContainerInventoryList);
+                        }
+                    }
+
+                    inventoryList.AddRange(virtualContainerItems);
+                    inventoryList.RemoveAll(x => x.assetTypeID == 3 && x.virtualContainer);
+                    resultList.AddRange(inventoryList);
+                }
                 else
                 {
                     resultList.AddRange(inventoryList);
                 }
-               
             }
 
             return resultList;

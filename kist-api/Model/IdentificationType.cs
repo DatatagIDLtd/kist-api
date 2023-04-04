@@ -10,10 +10,8 @@ namespace kist_api.Model
   
         public long ID { get; set; }
         public string identificationType { get; set; }
-
         public string description { get; set; }
-      
-
+        public string webpage { get; set; }
     }
 
 }

@@ -85,16 +85,12 @@ namespace kist_api.Controllers
             // if payload contains geo event data log that first
             if (req.geo != null )
             {
-                //req.geo.CreatedBy = userDetails.;
                 req.geo.CreatedOn = DateTime.Now;
                 req.geo.WFStatus = "N";
                 req.geo.UserGUID = userId;
                 await _kistService.PostGeoLocationEvent(req.geo);
             }
 
-            //UserDetailsRequest userDetailsRequest2 = new UserDetailsRequest();
-            //userDetailsRequest2.id = userDetails.ID.ToString();
-            //userDetailsRequest2.searchQuery = search;
             req.userId = userDetails.ID; // fudge for now to pass in user id 
             return await _kistService.GetAssetsByUser(req);
         }
@@ -110,9 +106,6 @@ namespace kist_api.Controllers
         public async Task<List<GeoLocationEvent>> Get(string codeLookup)
         {
             var userId = (string)HttpContext.Items["User"];
-            //UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
-            //userDetailsRequest.id = userId;
-            //var userDetails = await _kistService.UsersDetails(userDetailsRequest);
             return await _kistService.GetDTMobile_ScanEvents(codeLookup);
         }
       

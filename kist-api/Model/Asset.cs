@@ -35,5 +35,6 @@ namespace kist_api.Model
 
 		public bool containsItems { get; set; }
         public bool geoLocation { get; set; }
+		public bool virtualContainer { get; set; }
     }
 }

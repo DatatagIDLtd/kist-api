@@ -26,7 +26,5 @@ namespace kist_api.Model
 		public string allocation { get; set; }
 		public int? boxItemCount { get; set; }
 		public long? parentAssetTypeID { get; set; }
-
-
 	}
 }
