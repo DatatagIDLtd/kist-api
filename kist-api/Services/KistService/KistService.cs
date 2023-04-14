@@ -1380,5 +1380,32 @@ namespace kist_api.Services
             //}
             return userDetailsResponse;
         }
+
+
+        public async Task<List<GeoLocationEvent>> GetNearestGeoLocations(LocationModel request)
+        {
+            GeoLocationEvent attachmentResponse = new GeoLocationEvent();
+
+
+            StringContent content = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
+            //req.Latitude = (req.Latitude == null) ? 0 : req.Latitude;
+
+            //'x-rssbus-authtoken' : '5x1S6d8z7X4w6b4S0v0y'
+
+            var byteArray = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("DTMobile:apiUser") + ":" + _configuration.GetValue<string>("DTMobile:apiPassword"));
+            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+            // _client.DefaultRequestHeaders.Add("x-rssbus-authtoken", "5x1S6d8z7X4w6b4S0v0y");
+
+            //using (var response = await _client.PutAsync(_configuration.GetValue<string>("api:APIEndPoint") + _configuration.GetValue<string>("api:PutAttachment") + "(" + asset.ID.ToString() + ")", content)) //, content))
+            var url = _configuration.GetValue<string>("DTMobile:APIEndPoint") + _configuration.GetValue<string>("DTMobile:GetNearestGeoLocations");
+            using (var response = await _client.PostAsync(url, content)) //, content))
+            {
+                string apiResponse = await response.Content.ReadAsStringAsync();
+                attachmentResponse = JsonConvert.DeserializeObject<GeoLocationEvent>(apiResponse);
+
+            }
+            // proc should only return one row , but comes back as a list regardless from API
+            return attachmentResponse;
+        }
     }
 }
