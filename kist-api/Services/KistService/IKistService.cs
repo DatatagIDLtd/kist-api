@@ -55,6 +55,7 @@ namespace kist_api.Services
         void SaveActivity_SQL(long operatorId, string appArea, string username, string desc);
         Task<List<CustomReport>> GetCustomReports(string userName);
         Task<List<GeoLocationScanPointCodes>> GeoLocationScanPointCodes();
+        Task<List<NearestGeoLocationModel>> GetNearestGeoLocations(LocationModel request);
 
     }
 }

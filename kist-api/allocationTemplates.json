@@ -189,8 +189,8 @@
   },
   {
     "id": 6,
-    "name": "Allocate Multiple Equipment to Geo Location",
-    "description": "Scan Locations and Allocate to a Location in Bulk",
+    "name": "Allocate Multiple Equipment to GeoLocation",
+    "description": "Scan Equipments and Allocate to a GeoLocation in Bulk",
     "button": "Scan QR Codes",
     "steps": [
       {
@@ -212,7 +212,7 @@
         "AssetsFromStep": 1,
         "assetTypes": "Location",
         "isGeo": true,
-        "button": "Scan Location QR Code"
+        "button": "Select Geo Location"
       },
       {
         "step": 3,

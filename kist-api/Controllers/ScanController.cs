@@ -226,5 +226,17 @@ namespace kist_api.Controllers
             var scannedAssetsData = await _scanService.GetAssetDocumentList(request);
             return scannedAssetsData;
         }
+
+
+        [HttpPost]
+        [Route("GetNearestGeoLocations")]
+        public async Task<List<NearestGeoLocationModel>> GetNearestGeoLocations(LocationModel request)
+        {
+            var userId = (string)HttpContext.Items["User"];
+            UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
+            userDetailsRequest.id = userId;
+            var userDetails = await _kistService.UsersDetails(userDetailsRequest);
+            return await _kistService.GetNearestGeoLocations(request);
+        }
     }
 }

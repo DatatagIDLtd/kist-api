@@ -1382,9 +1382,9 @@ namespace kist_api.Services
         }
 
 
-        public async Task<List<GeoLocationEvent>> GetNearestGeoLocations(LocationModel request)
+        public async Task<List<NearestGeoLocationModel>> GetNearestGeoLocations(LocationModel request)
         {
-            GeoLocationEvent attachmentResponse = new GeoLocationEvent();
+            NearestGeoLocationApiResponseModel  geoEventResponse = new NearestGeoLocationApiResponseModel();
 
 
             StringContent content = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
@@ -1401,11 +1401,10 @@ namespace kist_api.Services
             using (var response = await _client.PostAsync(url, content)) //, content))
             {
                 string apiResponse = await response.Content.ReadAsStringAsync();
-                attachmentResponse = JsonConvert.DeserializeObject<GeoLocationEvent>(apiResponse);
-
+                geoEventResponse = JsonConvert.DeserializeObject<NearestGeoLocationApiResponseModel>(apiResponse);
             }
             // proc should only return one row , but comes back as a list regardless from API
-            return attachmentResponse;
+            return geoEventResponse.value;
         }
     }
 }

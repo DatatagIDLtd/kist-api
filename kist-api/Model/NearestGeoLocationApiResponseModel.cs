@@ -5,10 +5,8 @@ using System.Threading.Tasks;
 
 namespace kist_api.Model
 {
-    public class LocationModel
+    public class NearestGeoLocationApiResponseModel
     {
-        public float Latitude { get; set; }
-        public float Longitude { get; set; }
-
+        public List<NearestGeoLocationModel> value { get; set; }
     }
 }
