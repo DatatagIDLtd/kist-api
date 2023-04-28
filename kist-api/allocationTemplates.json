@@ -199,7 +199,7 @@
         "name": null,
         "label": "Scan Asset",
         "placeholder": "Scan or Enter Asset ID",
-        "assetTypes": "Equipment,Vehicle,Container",
+        "assetTypes": "Equipment",
         "maxItems": 0,
         "multiple": true,
         "button": "Finished"
