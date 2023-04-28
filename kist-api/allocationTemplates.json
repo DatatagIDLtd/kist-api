@@ -95,8 +95,8 @@
   },
   {
     "id": 2,
-    "name": "Allocate Multiple Vans or Containers to a Location",
-    "description": "Scan multiple van or containers and allocate to a location",
+    "name": "Allocate Multiple Vans or Containers to a Location or Geo Location",
+    "description": "Scan multiple van or containers and allocate to a location or geo location",
     "button": "Scan QR Code",
     "steps": [
       {
@@ -143,7 +143,7 @@
   {
     "id": 3,
     "name": "Allocate Multiple Sub Locations to a Location",
-    "description": "Scan multiple sub locations and allocate to a location",
+    "description": "Scan multiple sub locations and allocate to a location or geo location",
     "button": "Scan QR Codes",
     "steps": [
       {
@@ -189,17 +189,17 @@
   },
   {
     "id": 6,
-    "name": "Allocate Multiple Equipment to GeoLocation",
-    "description": "Scan Equipments and Allocate to a GeoLocation in Bulk",
+    "name": "Allocate Multiple Pieces of Equipment to a Geo Location",
+    "description": "Scan multiple pieces of equipment and allocate to a geo location",
     "button": "Scan QR Codes",
     "steps": [
       {
         "step": 1,
         "type": "Scan",
         "name": null,
-        "label": "Scan Asset",
-        "placeholder": "Scan or Enter Asset ID",
-        "assetTypes": "Equipment,Vehicle,Container",
+        "label": "Scan Equipment Codes",
+        "placeholder": "Scan or enter equipment ID",
+        "assetTypes": "Equipment",
         "maxItems": 0,
         "multiple": true,
         "button": "Finished"
@@ -208,7 +208,7 @@
         "step": 2,
         "type": "AssetDetails",
         "name": null,
-        "label": "Confirm Asset Details",
+        "label": "Confirm Equipment details",
         "AssetsFromStep": 1,
         "assetTypes": "Location",
         "isGeo": true,

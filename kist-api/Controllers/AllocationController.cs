@@ -85,7 +85,7 @@ namespace kist_api.Controllers
         [HttpPost("CreateAudit")]               
         public async Task<CreateAuditResponse> CreateAudit(CreateAuditRequest req)
         {
-            _logger.LogInformation(@"Creat Audit");
+            _logger.LogInformation(@"Create Audit");
             var userId = (string)HttpContext.Items["User"];
 
             UserDetailsRequest userDetailsRequest = new UserDetailsRequest();
