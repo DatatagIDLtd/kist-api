@@ -6,6 +6,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Repository\**" />
+    <Content Remove="Repository\**" />
+    <EmbeddedResource Remove="Repository\**" />
+    <None Remove="Repository\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="DTCommsLib1">
       <HintPath>..\..\..\..\DTCommLib1\DTCommsLib1\bin\Debug\DTCommsLib1.dll</HintPath>
     </Reference>
@@ -13,7 +20,6 @@
 
   <ItemGroup>
     <Folder Include="bin\" />
-    <Folder Include="Repository\" />
   </ItemGroup>
 
   <ItemGroup>
